@@ -1,0 +1,63 @@
+---
+title: "Translating with i18next"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{i18next}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  error = FALSE)
+```
+
+The `i18next` R package provides a wrapper around the [`i18next` JavaScript library](https://i18next.com).  It presents an alternative interface to R's built-in internationalisation functions, with a focus on the ability to change the target language within a session.  Currently the package presents only a stripped down interface to the underlying library, though this may expand in future.
+
+First, prepare a `json` file with your translations.  For example, the included file `examples/simple.json` contains:
+
+```{r, results = "asis", echo = FALSE}
+path <- system.file("examples/simple.json", package = "i18next",
+                    mustWork = TRUE)
+writeLines(c("```json",  readLines(path), "```"))
+```
+
+We can create a translator, setting the default language to English (en) as:
+
+```{r}
+translator <- i18next::i18n(path, "en")
+translator
+```
+
+With this object we can perform translations with the `t` method by passing in a key from within our translations:
+
+```{r}
+translator$t("hello")
+```
+
+Specify the `language` argument to change language:
+
+```{r}
+translator$t("hello", language = "fr")
+```
+
+## Pluralisation
+
+Pluralisation of results is supported using keys that include `_plural` suffix (see the [`i18next` documentation](https://www.i18next.com/translation-function/plurals)) and by passing a `count` argument in to the translation:
+
+```{r}
+translator$t("pluralex1", count = 1, language = "en")
+translator$t("pluralex1", count = 2, language = "en")
+```
+
+## Interpolation
+
+String interpolation is done using a syntax very similar to [`glue`](https://cran.r-project.org/package=glue) (see the [`i18next` documentation](https://www.i18next.com/translation-function/interpolation))
+
+```{r}
+translator$t("interpolate", list(what = "i18next", how = "easy"),
+             language = "en")
+translator$t("interpolate", list(what = "i18next", how = "facile"),
+             language = "fr")
+```
