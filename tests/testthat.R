@@ -1,4 +1,4 @@
 library(testthat)
-library(i18next)
+library(traduire)
 
-test_check("i18next")
+test_check("traduire")
