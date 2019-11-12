@@ -37,4 +37,13 @@ pkgdown:
 website: pkgdown
 	./scripts/update_web.sh
 
+js/bundle.js: js/package.json js/in.js
+	./js/build
+
+inst/js/bundle.js: js/bundle.js
+	mkdir -p inst/js
+	cp $< $@
+	cp js/node_modules/i18next/LICENSE inst/js/LICENSE.i18next
+
+
 .PHONY: all test document install vignettes

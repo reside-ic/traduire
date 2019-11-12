@@ -1,1 +1,3 @@
 docs
+js/node_modules
+js/bundle*js

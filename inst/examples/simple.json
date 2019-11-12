@@ -1,0 +1,22 @@
+{
+    "en": {
+        "translation": {
+            "hello": "hello world",
+            "interpolate": "{{what}} is {{how}}",
+            "pluralex1": "nose",
+            "pluralex1_plural": "noses",
+            "pluralex2": "sheep",
+            "pluralex2_plural": "sheep"
+        }
+    },
+    "fr": {
+        "translation": {
+            "hello": "bonjour le monde",
+            "interpolate": "{{what}} est {{how}}",
+            "pluralex1": "nez",
+            "pluralex1_plural": "nez",
+            "pluralex2": "mouton",
+            "pluralex2_plural": "moutons"
+        }
+    }
+}
