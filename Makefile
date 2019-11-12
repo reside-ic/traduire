@@ -45,7 +45,7 @@ inst/js/bundle.js: js/bundle.js
 	cp $< $@
 	cp js/node_modules/i18next/LICENSE inst/js/LICENSE.i18next
 
-vignettes: vignettes/i18next.Rmd
+vignettes: vignettes/traduire.Rmd
 	${RSCRIPT} -e 'tools::buildVignettes(dir = ".")'
 	mkdir -p inst/doc
 	cp vignettes/*.html vignettes/*.Rmd inst/doc

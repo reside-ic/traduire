@@ -4,8 +4,8 @@
 ##' @param language The default language for the translation
 ##' @export
 ##' @examples
-##' path <- system.file("examples/simple.json", package = "i18next")
-##' obj <- i18next::i18n(path)
+##' path <- system.file("examples/simple.json", package = "traduire")
+##' obj <- traduire::i18n(path)
 ##' obj$t("hello", language = "fr")
 i18n <- function(translations, language = "en") {
   R6_i18n$new(translations, language)
@@ -24,7 +24,7 @@ R6_i18n <- R6::R6Class(
     initialize = function(translations, language) {
       translations_js <- read_input(translations)
       private$context <- V8::v8()
-      private$context$source(i18n_file("js/bundle.js"))
+      private$context$source(traduire_file("js/bundle.js"))
       private$context$call("init", translations_js, language)
     },
 

@@ -1,8 +1,8 @@
 ---
-title: "Translating with i18next"
+title: "Translating with traduire"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{i18next}
+  %\VignetteIndexEntry{traduire}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -13,12 +13,12 @@ knitr::opts_chunk$set(
   error = FALSE)
 ```
 
-The `i18next` R package provides a wrapper around the [`i18next` JavaScript library](https://i18next.com).  It presents an alternative interface to R's built-in internationalisation functions, with a focus on the ability to change the target language within a session.  Currently the package presents only a stripped down interface to the underlying library, though this may expand in future.
+The `traduire` R package provides a wrapper around the [`i18next` JavaScript library](https://i18next.com).  It presents an alternative interface to R's built-in internationalisation functions, with a focus on the ability to change the target language within a session.  Currently the package presents only a stripped down interface to the underlying library, though this may expand in future.
 
 First, prepare a `json` file with your translations.  For example, the included file `examples/simple.json` contains:
 
 ```{r, results = "asis", echo = FALSE}
-path <- system.file("examples/simple.json", package = "i18next",
+path <- system.file("examples/simple.json", package = "traduire",
                     mustWork = TRUE)
 writeLines(c("```json",  readLines(path), "```"))
 ```
@@ -26,7 +26,7 @@ writeLines(c("```json",  readLines(path), "```"))
 We can create a translator, setting the default language to English (en) as:
 
 ```{r}
-translator <- i18next::i18n(path, "en")
+translator <- traduire::i18n(path, "en")
 translator
 ```
 

@@ -3,8 +3,8 @@
 }
 
 
-i18n_file <- function(path) {
-  system.file(path, package = "i18next", mustWork = TRUE)
+traduire_file <- function(path) {
+  system.file(path, package = "traduire", mustWork = TRUE)
 }
 
 

@@ -1,4 +1,4 @@
-Package: i18next
+Package: traduire
 Title: Example Translation in a Package
 Version: 0.0.1
 Authors@R:
@@ -22,6 +22,6 @@ Suggests:
     knitr,
     rmarkdown,
     testthat
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.0
 VignetteBuilder: knitr
 Language: en-GB

@@ -1,7 +1,7 @@
-context("i18next")
+context("i18n")
 
 test_that("simple usage works", {
-  obj <- i18n(i18n_file("examples/simple.json"))
+  obj <- i18n(traduire_file("examples/simple.json"))
   expect_equal(obj$t("hello"), "hello world")
   expect_equal(obj$t("hello", language = "en"), "hello world")
   expect_equal(obj$t("hello", language = "fr"), "bonjour le monde")
@@ -9,7 +9,7 @@ test_that("simple usage works", {
 
 
 test_that("interpolation", {
-  obj <- i18n(i18n_file("examples/simple.json"))
+  obj <- i18n(traduire_file("examples/simple.json"))
   expect_equal(
     obj$t("interpolate", list(what = "i18next", how = "easy"),
           language = "en"),
@@ -22,7 +22,7 @@ test_that("interpolation", {
 
 
 test_that("plurals", {
-  obj <- i18n(i18n_file("examples/simple.json"))
+  obj <- i18n(traduire_file("examples/simple.json"))
   expect_equal(obj$t("pluralex1", count = 1), "nose")
   expect_equal(obj$t("pluralex1", count = 2), "noses")
   expect_equal(obj$t("pluralex2", count = 1), "sheep")
