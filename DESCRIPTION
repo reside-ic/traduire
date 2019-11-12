@@ -19,9 +19,9 @@ Imports:
     V8,
     R6
 Suggests:
-    testthat,
     knitr,
-    rmarkdown
+    rmarkdown,
+    testthat
 RoxygenNote: 6.1.1
 VignetteBuilder: knitr
 Language: en-GB
