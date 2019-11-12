@@ -1,0 +1,16 @@
+Package: i18next
+Title: Example Translation in a Package
+Version: 0.0.1
+Authors@R:
+    c(person(given = "Rich",
+             family = "FitzJohn",
+             role = c("aut", "cre"),
+             email = "rich.fitzjohn@gmail.com"),
+      person("Imperial College of Science, Technology and Medicine",
+             role = "cph"))
+Description: Example package for trying to get R's translation
+    infrastructure working. This is not a package to be used!
+License: MIT + file LICENSE
+Encoding: UTF-8
+Suggests:
+    testthat
