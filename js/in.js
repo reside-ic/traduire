@@ -22,3 +22,11 @@ global.init = function(resources, lng) {
 global.t = function(x, options) {
     return i18next.t(x, options);
 }
+
+global.language = function() {
+    return i18next.language;
+}
+
+global.languages = function() {
+    return i18next.languages;
+}

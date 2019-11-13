@@ -33,3 +33,15 @@ test_that("plurals", {
   expect_equal(obj$t("pluralex2", count = 1, language = "fr"), "mouton")
   expect_equal(obj$t("pluralex2", count = 2, language = "fr"), "moutons")
 })
+
+
+test_that("default languages", {
+  obj <- i18n(traduire_file("examples/simple.json"))
+  expect_equal(obj$language(), "en")
+  expect_equal(obj$languages(), c("en", "dev"))
+
+  obj$set_language("fr")
+
+  expect_equal(obj$language(), "fr")
+  expect_equal(obj$languages(), c("fr", "dev"))
+})

@@ -29,13 +29,36 @@ R6_i18n <- R6::R6Class(
     },
 
     t = function(string, data = NULL, language = NULL, count = NULL) {
-      data <- data %||% list()
-      data$lng <- language
-      data$count <- count
-      if (length(data) == 0) {
-        data <- NA
-      }
-      private$context$call("t", string, data)
+      options <- i18n_options(dasta, language, count)
+      private$context$call("t", string, options)
+    },
+
+    exists = function(string, data = NULL, language = NULL, count = NULL) {
+      options <- i18n_options(dasta, language, count)
+      private$context$call("exists", string, options)
+    },
+
+    set_language = function(language) {
+      private$context$call("i18next.changeLanguage", language)
+    },
+
+    language = function() {
+      private$context$call("language")
+    },
+
+    languages = function() {
+      private$context$call("languages")
     }
   )
 )
+
+
+i18n_options <- function(data, language, count) {
+  data <- data %||% list()
+  data$lng <- language
+  data$count <- count
+  if (length(data) == 0) {
+    data <- NA
+  }
+  data
+}
