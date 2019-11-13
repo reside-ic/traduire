@@ -37,4 +37,17 @@ pkgdown:
 website: pkgdown
 	./scripts/update_web.sh
 
+js/bundle.js: js/package.json js/in.js
+	./js/build
+
+inst/js/bundle.js: js/bundle.js
+	mkdir -p inst/js
+	cp $< $@
+	cp js/node_modules/i18next/LICENSE inst/js/LICENSE.i18next
+
+vignettes: vignettes/traduire.Rmd
+	${RSCRIPT} -e 'tools::buildVignettes(dir = ".")'
+	mkdir -p inst/doc
+	cp vignettes/*.html vignettes/*.Rmd inst/doc
+
 .PHONY: all test document install vignettes

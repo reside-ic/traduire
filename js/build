@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -e
+HERE=$(dirname $0)
+cd $HERE
+
+echo "Working in $(pwd)"
+
+if [[ $# -eq 1 && $1 == "quick" ]]; then
+    echo "Keeping node modules"
+else
+    echo "Refreshing node modules"
+    rm -rf node_modules
+fi
+
+npm install
+./node_modules/.bin/browserify in.js > bundle.js
