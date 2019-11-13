@@ -29,12 +29,12 @@ R6_i18n <- R6::R6Class(
     },
 
     t = function(string, data = NULL, language = NULL, count = NULL) {
-      options <- i18n_options(dasta, language, count)
+      options <- i18n_options(data, language, count)
       private$context$call("t", string, options)
     },
 
     exists = function(string, data = NULL, language = NULL, count = NULL) {
-      options <- i18n_options(dasta, language, count)
+      options <- i18n_options(data, language, count)
       private$context$call("exists", string, options)
     },
 
