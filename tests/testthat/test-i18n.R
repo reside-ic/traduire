@@ -45,3 +45,12 @@ test_that("default languages", {
   expect_equal(obj$language(), "fr")
   expect_equal(obj$languages(), c("fr", "dev"))
 })
+
+
+test_that("exists", {
+  obj <- i18n(traduire_file("examples/simple.json"))
+  expect_true(obj$exists("hello"))
+  expect_true(obj$exists("hello", language = "fr"))
+  expect_false(obj$exists("hello", language = "es"))
+  expect_false(obj$exists("goodbye"))
+})

@@ -58,7 +58,7 @@ i18n_options <- function(data, language, count) {
   data$lng <- language
   data$count <- count
   if (length(data) == 0) {
-    data <- NA
+    data <- list()
   }
   data
 }

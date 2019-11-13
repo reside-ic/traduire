@@ -23,6 +23,10 @@ global.t = function(x, options) {
     return i18next.t(x, options);
 }
 
+global.exists = function(x, options) {
+    return i18next.exists(x, options);
+}
+
 global.language = function() {
     return i18next.language;
 }
