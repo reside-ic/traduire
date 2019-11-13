@@ -55,11 +55,20 @@ R6_i18n <- R6::R6Class(
 )
 
 
+## NOTE: This silently overwrites any data stored in language, count,
+## context if they are present in data and provided as an explicit
+## argument.
 i18n_options <- function(data, language, count, context) {
   data <- data %||% list()
-  data$lng <- language
-  data$count <- count
-  data$context <- context
+  if (!is.null(language)) {
+    data$lng <- language
+  }
+  if (!is.null(count)) {
+    data$count <- count
+  }
+  if (!is.null(context)) {
+    data$context <- context
+  }
   if (length(data) == 0) {
     data <- list()
   }
