@@ -28,13 +28,15 @@ R6_i18n <- R6::R6Class(
       private$context$call("init", translations_js, language)
     },
 
-    t = function(string, data = NULL, language = NULL, count = NULL) {
-      options <- i18n_options(data, language, count)
+    t = function(string, data = NULL, language = NULL, count = NULL,
+                 context = NULL) {
+      options <- i18n_options(data, language, count, context)
       private$context$call("t", string, options)
     },
 
-    exists = function(string, data = NULL, language = NULL, count = NULL) {
-      options <- i18n_options(data, language, count)
+    exists = function(string, data = NULL, language = NULL, count = NULL,
+                      context = NULL) {
+      options <- i18n_options(data, language, count, context)
       private$context$call("exists", string, options)
     },
 
@@ -53,10 +55,11 @@ R6_i18n <- R6::R6Class(
 )
 
 
-i18n_options <- function(data, language, count) {
+i18n_options <- function(data, language, count, context) {
   data <- data %||% list()
   data$lng <- language
   data$count <- count
+  data$context <- context
   if (length(data) == 0) {
     data <- list()
   }

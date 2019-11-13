@@ -54,3 +54,22 @@ test_that("exists", {
   expect_false(obj$exists("hello", language = "es"))
   expect_false(obj$exists("goodbye"))
 })
+
+
+test_that("context", {
+  resources <- jsonlite::toJSON(
+    list(en = list(
+           translation =
+             list(
+               house = "A house",
+               house_large = "A mansion",
+               house_small = "A cottage",
+               house_small_plural = "{{count}} cottages"))),
+    auto_unbox = TRUE)
+  obj <- i18n(resources)
+  expect_equal(obj$t("house"), "A house")
+  expect_equal(obj$t("house", context = "large"), "A mansion")
+  expect_equal(obj$t("house", context = "small"), "A cottage")
+  expect_equal(obj$t("house", context = "small", count = 1), "A cottage")
+  expect_equal(obj$t("house", context = "small", count = 3), "3 cottages")
+})
