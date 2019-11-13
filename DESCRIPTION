@@ -19,6 +19,7 @@ Imports:
     V8,
     R6
 Suggests:
+    jsonlite,
     knitr,
     rmarkdown,
     testthat
