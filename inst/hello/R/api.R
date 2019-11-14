@@ -10,7 +10,6 @@ api <- function(port = 8888) {
   pr$run(port = port)
 }
 
-
 ## This a hook for use with plumber to change the language at the
 ## start of the request.
 api_set_language <- function(data, req, res) {
@@ -19,7 +18,6 @@ api_set_language <- function(data, req, res) {
     data$reset_language <- traduire::translator_set_language(language)
   }
 }
-
 
 ## And this wll be used to reset it to whatever was used at the start
 ## of the request.

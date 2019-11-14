@@ -5,7 +5,6 @@ function(res, req) {
   paste0(hello::world(language, type = "string"), "\n")
 }
 
-
 #' @get /hello/<animal>
 #' @html
 function(res, req, animal) {

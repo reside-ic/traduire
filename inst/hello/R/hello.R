@@ -6,7 +6,6 @@ hello <- function(...) {
   cowsay::say("Hello", "cow", ...)
 }
 
-
 ##' Say hello, in some language, with a cow.  This version uses an
 ##' explicit language argument
 ##' @title Say hello to the world with a cow
@@ -18,7 +17,6 @@ world <- function(language = "en", ...) {
   cowsay::say(t_("hello", language = language), "cow", ...)
 }
 
-
 ##' Say hello, in some language, with a cow.  This version uses an
 ##' implicit language argument
 ##' @title Say hello to the world with a cow
@@ -27,7 +25,6 @@ world <- function(language = "en", ...) {
 monde <- function(...) {
   cowsay::say(t_("hello"), ...)
 }
-
 
 ## This enables use of traduire::translate
 .onLoad <- function(...) {
