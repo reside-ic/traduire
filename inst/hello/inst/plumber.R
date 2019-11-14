@@ -8,5 +8,5 @@ function(res, req) {
 #' @get /hello/<animal>
 #' @html
 function(res, req, animal) {
-  paste0(hello::monde(what = animal, type = "string"), "\n")
+  paste0(hello::monde(by = animal, type = "string"), "\n")
 }
