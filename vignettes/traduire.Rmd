@@ -121,24 +121,43 @@ So at the beginning of each api request we are calling `traduire::translator_set
 The full package is available at `system.file("hello", package = "traduire")`.  If you run the API, it can be used like:
 
 ```
-$ curl -H "Accept-Language: fr" http://localhost:8888/hello-world
+$ curl -H "Accept-Language: fr" http://localhost:8888
 
  -----
-bonjour le monde
+Salut le monde !
  ------
     \   ^__^
      \  (oo)\ ________
         (__)\         )\ /\
              ||------w|
              ||      ||
-$ curl -H "Accept-Language: en" http://localhost:8888/hello-world
+$ curl -H "Accept-Language: en" http://localhost:8888
 
  -----
-hello world
+Hello world!
  ------
     \   ^__^
      \  (oo)\ ________
         (__)\         )\ /\
              ||------w|
              ||      ||
+
+$ curl -H "Accept-Language: ko" http://localhost:8888/hello/cat
+
+ --------------
+반갑다 세상아
+ --------------
+    \
+      \
+        \
+            |\___/|
+          ==) ^Y^ (==
+            \  ^  /
+             )=*=(
+            /     \
+            |     |
+           /| | | |\
+           \| | |_|/\
+      jgs  //_// ___/
+               \_)
 ```
