@@ -1,0 +1,21 @@
+Package: hello
+Title: Say Hello in Several Languages, With Cows
+Version: 0.1.0
+Authors@R:
+    c(person(given = "Rich",
+             family = "FitzJohn",
+             role = c("aut", "cre"),
+             email = "rich.fitzjohn@gmail.com"),
+      person("Imperial College of Science, Technology and Medicine",
+             role = "cph"))
+Author: Rich FitzJohn
+Maintainer: Rich FitzJohn <rich.fitzjohn@gmail.com>
+Description: An example package that uses translation.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Imports:
+    cowsay,
+    plumber,
+    traduire
+RoxygenNote: 7.0.0
