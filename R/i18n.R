@@ -7,8 +7,10 @@
 ##' path <- system.file("examples/simple.json", package = "traduire")
 ##' obj <- traduire::i18n(path)
 ##' obj$t("hello", language = "fr")
-i18n <- function(translations, language = "en") {
-  R6_i18n$new(translations, language)
+i18n <- function(translations, language = NULL) {
+  ## TODO: better defaults here, but there's lots to consider with
+  ## fallbacks still
+  R6_i18n$new(translations, language %||% "en")
 }
 
 

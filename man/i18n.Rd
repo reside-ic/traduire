@@ -4,7 +4,7 @@
 \alias{i18n}
 \title{Create translator object}
 \usage{
-i18n(translations, language = "en")
+i18n(translations, language = NULL)
 }
 \arguments{
 \item{translations}{Path to a json file containing translations}
