@@ -43,7 +43,9 @@ R6_i18n <- R6::R6Class(
     },
 
     set_language = function(language) {
+      prev <- self$language()
       private$context$call("i18next.changeLanguage", language)
+      invisible(function() self$set_language(prev))
     },
 
     language = function() {
