@@ -11,6 +11,9 @@ vignette: >
 knitr::opts_chunk$set(
   collapse = TRUE,
   error = FALSE)
+lang_output <- function(language, text) {
+  writeLines(c(paste0("```", language),  text, "```"))
+}
 ```
 
 The `traduire` R package provides a wrapper around the [`i18next` JavaScript library](https://i18next.com).  It presents an alternative interface to R's built-in internationalisation functions, with a focus on the ability to change the target language within a session.  Currently the package presents only a stripped down interface to the underlying library, though this may expand in future.
@@ -20,7 +23,7 @@ First, prepare a `json` file with your translations.  For example, the included 
 ```{r, results = "asis", echo = FALSE}
 path <- system.file("examples/simple.json", package = "traduire",
                     mustWork = TRUE)
-writeLines(c("```json",  readLines(path), "```"))
+lang_output("json", readLines(path))
 ```
 
 We can create a translator, setting the default language to English (en) as:
@@ -60,4 +63,82 @@ translator$t("interpolate", list(what = "i18next", how = "easy"),
              language = "en")
 translator$t("interpolate", list(what = "i18next", how = "facile"),
              language = "fr")
+```
+
+## Use within a package
+
+We provide an optional workflow for using translations within a package, or some other piece of code where the translations will be fairly invasive to add, allowing you to write essentially:
+
+```r
+traduire::t_(...)
+```
+
+and have all the `...` arguments forwarded to the appropriate translator object. There are several details here:
+
+* how do we determine what ios the "appropriate" translator object
+* how do we determine what language is active for this translation?
+
+
+
+To do this, we allow packages (or other simiar code) to "register" a translator, like
+
+```r
+traduire::translator_register(resources)
+```
+
+where `name` is the key representing your object (more on this later) and `...` are arguments to `traduire::i18n`
+
+```{r, results = "asis", echo = FALSE}
+path_hello <- system.file("hello", package = "traduire", mustWork = TRUE)
+content <- readLines(file.path(path_hello, "R", "hello.R"))
+lang_output("r", content[!grepl("^#", content)])
+```
+
+Here,
+
+* `hello` is a simple function that does no translation
+* `world` is a function that translates with an explicit language argument, but finds the translations automagically
+* `monde` is a function that translates and finds both the translations and the language automagically
+
+The `.onLoad` function contains a call to `traduire::translator_register` which registers a translator database for the package.  All calls to `t_` that come from this package will use this registered translator.
+
+Why would we want to do this?  If we were using [plumber](https://www.rplumber.io/) to build an API we might want to allow the requests to come in with a header indicating the language.  Our plumber api might look like:
+
+```{r, results = "asis", echo = FALSE}
+content <- readLines(file.path(path_hello, "inst", "plumber.R"))
+lang_output("r", content)
+```
+
+The first endpoint inspects the endpoint's `req` object to get the requested language, but the second gets it automagically.  This can be understood by looking at the code used to run the API:
+
+```{r, results = "asis", echo = FALSE}
+content <- readLines(file.path(path_hello, "R", "api.R"))
+lang_output("r", content[!grepl("^#", content)])
+```
+
+So at the beginning of each api request we are calling `traduire::translator_set_language`, which affects only this package as a ["preroute" hook](https://www.rplumber.io/docs/programmatic-usage.html#router-hooks) and resetting this in the "postserialize" hook.
+
+The full package is available at `system.file("hello", package = "traduire")`.  If you run the API, it can be used like:
+
+```
+$ curl -H "Accept-Language: fr" http://localhost:8888/hello-world
+
+ -----
+bonjour le monde
+ ------
+    \   ^__^
+     \  (oo)\ ________
+        (__)\         )\ /\
+             ||------w|
+             ||      ||
+$ curl -H "Accept-Language: en" http://localhost:8888/hello-world
+
+ -----
+hello world
+ ------
+    \   ^__^
+     \  (oo)\ ________
+        (__)\         )\ /\
+             ||------w|
+             ||      ||
 ```
