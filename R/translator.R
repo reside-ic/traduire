@@ -100,7 +100,7 @@ translator_set_language <- function(language, name = NULL) {
 }
 
 
-name_from_context <- function(name = NULL, allow_package = TRUE) {
+name_from_context <- function(name = NULL) {
   if (is.null(name)) {
     depth <- 1L
     name <- utils::packageName(parent.frame(depth))

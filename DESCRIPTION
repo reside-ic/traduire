@@ -21,6 +21,7 @@ Imports:
 Suggests:
     jsonlite,
     knitr,
+    mockery,
     rmarkdown,
     testthat
 RoxygenNote: 7.0.0
