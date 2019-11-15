@@ -75,7 +75,7 @@ traduire::t_(...)
 
 and have all the `...` arguments forwarded to the appropriate translator object. There are several details here:
 
-* how do we determine what ios the "appropriate" translator object
+* how do we determine what is the "appropriate" translator object
 * how do we determine what language is active for this translation?
 
 To do this, we allow packages (or other similar code) to "register" a translator, like

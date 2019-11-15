@@ -1,9 +1,9 @@
 ##' Register a translator within the \code{traduire} package, and use
 ##' it directly. This will allow your code to access translations via
-##' \code{translator_translate} (or more concicely \code{t_}) without
+##' \code{translator_translate} (or more concisely \code{t_}) without
 ##' having to pass around a translation object.  If called from
 ##' package code (and assuming a single translator per package) then
-##' the \code{name} argument can be ommited and will be automatically
+##' the \code{name} argument can be omitted and will be automatically
 ##' converted into \code{package:<packagename}).
 ##'
 ##' @section Use in package code:
@@ -18,7 +18,7 @@
 ##' }
 ##' }
 ##'
-##' and then used fromm that package's code as
+##' and then used from that package's code as
 ##'
 ##' \preformatted{
 ##' traduire::t_("key")
@@ -38,7 +38,7 @@
 ##' @title Register a translator
 ##' @inheritParams i18n
 ##'
-##' @param name Optional name for the translator.  If ommitted, this
+##' @param name Optional name for the translator.  If omitted, this
 ##'   will be determined automatically if called from package code
 ##'
 ##' @export
