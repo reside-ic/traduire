@@ -85,6 +85,8 @@ test_that("replace", {
   expect_equal(obj$replace(str), '{"greeting": "hello world"}')
   obj$set_language("fr")
   expect_equal(obj$replace(str), '{"greeting": "bonjour le monde"}')
+  expect_equal(obj$replace(str, language = "en"),
+               '{"greeting": "hello world"}')
 })
 
 

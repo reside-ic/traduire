@@ -36,8 +36,11 @@ R6_i18n <- R6::R6Class(
       private$context$call("t", string, options)
     },
 
-    replace = function(text) {
-      vapply(text, i18n_replace1, "", self, USE.NAMES = !is.null(names(text)))
+    replace = function(text, ...) {
+      t <- function(string) {
+        self$t(string, ...)
+      }
+      vapply(text, i18n_replace1, "", t, USE.NAMES = !is.null(names(text)))
     },
 
     exists = function(string, data = NULL, language = NULL, count = NULL,
@@ -84,32 +87,13 @@ i18n_options <- function(data, language, count, context) {
 }
 
 
-## This approach does not support getting additional arguments into a
-## replacement (e.g., count, data, context, language) and it's not
-## currently obvious that is desirable if this to act as a fairly
-## logic-free replacement. It would be straightforward enough though,
-## by parsing the 'text' argument:
-##
-##   eval(parse(text = sprintf("i18n$t(%s)", text)))
-##
-## which feels extremely dirty to be, but that's clearly how glue
-## wants to be driven.  Somewhat less icky but equivalent might be
-##
-##   args <- eval(parse(text = sprintf("list(%s)", text)), envir)
-##   do.call(i18n$t, args)
-##
-## which does the argument evaluation in the correct environment.
-i18n_transformer <- function(i18n) {
-  force(i18n)
-  function(text, envir) {
-    i18n$t(text)
-  }
-}
-
-
-i18n_replace1 <- function(text, i18n) {
+## This approach does not support getting additional arguments into
+## different replacements (e.g., count, data, context, language) and
+## it's not currently obvious that is desirable if this to act as a
+## fairly logic-free replacement.
+i18n_replace1 <- function(text, t) {
   res <- glue::glue(text,
-                    .transformer = i18n_transformer(i18n),
+                    .transformer = function(text, envir) t(text),
                     .open = "t_(", .close = ")")
   ## glue leaves a 'glue' class here, which we don't need or want,
   ## and it's not obviously documented what that class is actually
