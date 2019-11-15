@@ -29,20 +29,20 @@ lang_output("json", readLines(path))
 We can create a translator, setting the default language to English (en) as:
 
 ```{r}
-translator <- traduire::i18n(path, "en")
-translator
+tr <- traduire::i18n(path, "en")
+tr
 ```
 
 With this object we can perform translations with the `t` method by passing in a key from within our translations:
 
 ```{r}
-translator$t("hello")
+tr$t("hello")
 ```
 
 Specify the `language` argument to change language:
 
 ```{r}
-translator$t("hello", language = "fr")
+tr$t("hello", language = "fr")
 ```
 
 ## Pluralisation
@@ -50,8 +50,8 @@ translator$t("hello", language = "fr")
 Pluralisation of results is supported using keys that include `_plural` suffix (see the [`i18next` documentation](https://www.i18next.com/translation-function/plurals)) and by passing a `count` argument in to the translation:
 
 ```{r}
-translator$t("pluralex1", count = 1, language = "en")
-translator$t("pluralex1", count = 2, language = "en")
+tr$t("pluralex1", count = 1, language = "en")
+tr$t("pluralex1", count = 2, language = "en")
 ```
 
 ## Interpolation
@@ -59,10 +59,10 @@ translator$t("pluralex1", count = 2, language = "en")
 String interpolation is done using a syntax very similar to [`glue`](https://cran.r-project.org/package=glue) (see the [`i18next` documentation](https://www.i18next.com/translation-function/interpolation))
 
 ```{r}
-translator$t("interpolate", list(what = "i18next", how = "easy"),
-             language = "en")
-translator$t("interpolate", list(what = "i18next", how = "facile"),
-             language = "fr")
+tr$t("interpolate", list(what = "i18next", how = "easy"),
+     language = "en")
+tr$t("interpolate", list(what = "i18next", how = "facile"),
+     language = "fr")
 ```
 
 ## Use within a package
