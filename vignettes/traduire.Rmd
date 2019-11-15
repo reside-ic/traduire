@@ -78,15 +78,13 @@ and have all the `...` arguments forwarded to the appropriate translator object.
 * how do we determine what ios the "appropriate" translator object
 * how do we determine what language is active for this translation?
 
-
-
-To do this, we allow packages (or other simiar code) to "register" a translator, like
+To do this, we allow packages (or other similar code) to "register" a translator, like
 
 ```r
 traduire::translator_register(resources)
 ```
 
-where `name` is the key representing your object (more on this later) and `...` are arguments to `traduire::i18n`
+Here is the code in use in an example package, which can say rough translations of "hello world" in a number of languages:
 
 ```{r, results = "asis", echo = FALSE}
 path_hello <- system.file("hello", package = "traduire", mustWork = TRUE)
