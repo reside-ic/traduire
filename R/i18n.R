@@ -37,13 +37,7 @@ R6_i18n <- R6::R6Class(
     },
 
     replace = function(text) {
-      res <- glue::glue(text,
-                        .transformer = i18n_transformer(self),
-                        .open = "t_(", .close = ")")
-      ## glue leaves a 'glue' class here, which we don't need or want,
-      ## and it's not obviously documented what that class is actually
-      ## *for*.
-      unclass(res)
+      vapply(text, i18n_replace1, "", self, USE.NAMES = !is.null(names(text)))
     },
 
     exists = function(string, data = NULL, language = NULL, count = NULL,
@@ -110,4 +104,15 @@ i18n_transformer <- function(i18n) {
   function(text, envir) {
     i18n$t(text)
   }
+}
+
+
+i18n_replace1 <- function(text, i18n) {
+  res <- glue::glue(text,
+                    .transformer = i18n_transformer(i18n),
+                    .open = "t_(", .close = ")")
+  ## glue leaves a 'glue' class here, which we don't need or want,
+  ## and it's not obviously documented what that class is actually
+  ## *for*.
+  unclass(res)
 }
