@@ -45,15 +45,6 @@ Specify the `language` argument to change language:
 tr$t("hello", language = "fr")
 ```
 
-## Pluralisation
-
-Pluralisation of results is supported using keys that include `_plural` suffix (see the [`i18next` documentation](https://www.i18next.com/translation-function/plurals)) and by passing a `count` argument in to the translation:
-
-```{r}
-tr$t("pluralex1", count = 1, language = "en")
-tr$t("pluralex1", count = 2, language = "en")
-```
-
 ## Interpolation
 
 String interpolation is done using a syntax very similar to [`glue`](https://cran.r-project.org/package=glue) (see the [`i18next` documentation](https://www.i18next.com/translation-function/interpolation))
@@ -63,6 +54,40 @@ tr$t("interpolate", list(what = "i18next", how = "easy"),
      language = "en")
 tr$t("interpolate", list(what = "i18next", how = "facile"),
      language = "fr")
+```
+
+## Pluralisation
+
+The example here is derived from a [web API](https://github.com/mrc-ide/hintr) that we developed the package to support.  We wanted to, as a service, validate incoming data and return information back to user about what to fix; if the data is missing one or more columns we will report back the columns that they are missing.  This requires different translations for the singular case ("Data missing column X") and plural ("Data missing **columns** X, Y").
+
+The translaion file looks like:
+
+```
+path_validation <- system.file("examples/validation.json",
+                               package = "traduire", mustWork = TRUE)
+lang_output("json", readLines(path))
+```
+
+where the `_plural` suffix is important for `i18next` for determining the string to return for a singular or plural case, and the `count` element determines if the string is singular or plural.
+
+Then we can use this as:
+
+```{r}
+tr <- traduire::i18n(path_validation)
+```
+
+Pluralisation of results is supported using keys that include `_plural` suffix (see the [`i18next` documentation](https://www.i18next.com/translation-function/plurals)) and by passing a `count` argument in to the translation:
+
+```{r}
+tr$t("nocols", list(missing = "A"), count = 1)
+tr$t("nocols", list(missing = "A, B"), count = 2)
+```
+
+or, changing the language:
+
+```{r}
+tr$t("nocols", list(missing = "A"), count = 1, language = "fr")
+tr$t("nocols", list(missing = "A, B"), count = 2, language = "fr")
 ```
 
 ## Use within a package

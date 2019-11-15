@@ -1,0 +1,15 @@
+{
+    "en": {
+        "translation": {
+            "nocols": "Data missing column {{missing}}",
+            "nocols_plural": "Data missing columns {{missing}}",
+        }
+    },
+
+    "fr": {
+        "translation": {
+            "nocols": "les données sont manquantes colonne {{missing}}",
+            "nocols_plural": "les données sont manquantes colonnes {{missing}}"
+        }
+    }
+}
