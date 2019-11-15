@@ -27,3 +27,5 @@ Suggests:
 RoxygenNote: 7.0.0
 VignetteBuilder: knitr
 Language: en-GB
+URL: https://github.com/reside-ic/traduire
+BugReports: https://github.com/reside-ic/traduire/issues
