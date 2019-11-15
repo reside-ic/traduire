@@ -84,7 +84,9 @@ To do this, we allow packages (or other similar code) to "register" a translator
 traduire::translator_register(resources)
 ```
 
-Here is the code in use in an example package, which can say rough translations of "hello world" in a number of languages:
+where `resources` is passed to `traduire::i18n`.
+
+Below is the code in use in an example package, which can say rough translations of "hello world" in a number of languages:
 
 ```{r, results = "asis", echo = FALSE}
 path_hello <- system.file("hello", package = "traduire", mustWork = TRUE)
