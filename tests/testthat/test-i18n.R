@@ -40,10 +40,14 @@ test_that("default languages", {
   expect_equal(obj$language(), "en")
   expect_equal(obj$languages(), c("en", "dev"))
 
-  obj$set_language("fr")
+  reset <- obj$set_language("fr")
+  expect_is(reset, "function")
 
   expect_equal(obj$language(), "fr")
   expect_equal(obj$languages(), c("fr", "dev"))
+
+  reset()
+  expect_equal(obj$language(), "en")
 })
 
 

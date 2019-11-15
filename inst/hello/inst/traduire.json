@@ -1,0 +1,342 @@
+{
+  "af": {
+    "translation": {
+      "hello": "Hallo, wêreld!"
+    }
+  },
+  "sq": {
+    "translation": {
+      "hello": "Pershëndetje Botë"
+    }
+  },
+  "ar": {
+    "translation": {
+      "hello": "أهلاً بالعالم"
+    }
+  },
+  "hy": {
+    "translation": {
+      "hello": "Բարե՛ւ, աշխարհ։"
+    }
+  },
+  "cs": {
+    "translation": {
+      "hello": "Ahoj Světe!"
+    }
+  },
+  "eu": {
+    "translation": {
+      "hello": "Kaixo mundua!"
+    }
+  },
+  "be": {
+    "translation": {
+      "hello": "Прывітанне свет"
+    }
+  },
+  "bn": {
+    "translation": {
+      "hello": "Shagatam Prithivi!"
+    }
+  },
+  "bs": {
+    "translation": {
+      "hello": "Zdravo Svijete!"
+    }
+  },
+  "bg": {
+    "translation": {
+      "hello": "Здравей, свят!"
+    }
+  },
+  "km": {
+    "translation": {
+      "hello": "ជំរាបសួរ ពិភពលោក"
+    }
+  },
+  "ca": {
+    "translation": {
+      "hello": "Hola món!"
+    }
+  },
+  "zh": {
+    "translation": {
+      "hello": "你好世界"
+    }
+  },
+  "hr": {
+    "translation": {
+      "hello": "Bok Svijete!"
+    }
+  },
+  "da": {
+    "translation": {
+      "hello": "Hej, Verden!"
+    }
+  },
+  "nl": {
+    "translation": {
+      "hello": "Hallo, wereld!"
+    }
+  },
+  "en": {
+    "translation": {
+      "hello": "Hello World!"
+    }
+  },
+  "eo": {
+    "translation": {
+      "hello": "Saluton mondo!"
+    }
+  },
+  "et": {
+    "translation": {
+      "hello": "Tere maailm!"
+    }
+  },
+  "fi": {
+    "translation": {
+      "hello": "Hei maailma!"
+    }
+  },
+  "fr": {
+    "translation": {
+      "hello": "Bonjour le Monde!"
+    }
+  },
+  "de": {
+    "translation": {
+      "hello": "Hallo Welt!"
+    }
+  },
+  "el": {
+    "translation": {
+      "hello": "Γεια σου κόσμε!"
+    }
+  },
+  "he": {
+    "translation": {
+      "hello": "שלום עולם"
+    }
+  },
+  "hi": {
+    "translation": {
+      "hello": "नमस्ते दुनिया"
+    }
+  },
+  "hu": {
+    "translation": {
+      "hello": "Helló világ!"
+    }
+  },
+  "is": {
+    "translation": {
+      "hello": "Halló heimur!"
+    }
+  },
+  "ig": {
+    "translation": {
+      "hello": "Ndewo Ụwa"
+    }
+  },
+  "id": {
+    "translation": {
+      "hello": "Halo Dunia!"
+    }
+  },
+  "ga": {
+    "translation": {
+      "hello": "Dia dhaoibh, a dhomhain!"
+    }
+  },
+  "it": {
+    "translation": {
+      "hello": "Ciao Mondo!"
+    }
+  },
+  "ja": {
+    "translation": {
+      "hello": "こんにちは、 世界！"
+    }
+  },
+  "kn": {
+    "translation": {
+      "hello": "ಹಲೋ ವರ್ಲ್ಡ್"
+    }
+  },
+  "sw": {
+    "translation": {
+      "hello": "Habari dunia!"
+    }
+  },
+  "ki": {
+    "translation": {
+      "hello": "Niatia thi!"
+    }
+  },
+  "ko": {
+    "translation": {
+      "hello": "반갑다 세상아"
+    }
+  },
+  "lo": {
+    "translation": {
+      "hello": "ສະບາຍດີ,ໂລກ"
+    }
+  },
+  "la": {
+    "translation": {
+      "hello": "AVE MVNDE"
+    }
+  },
+  "lv": {
+    "translation": {
+      "hello": "Sveika, Pasaule!"
+    }
+  },
+  "lt": {
+    "translation": {
+      "hello": "Sveikas, Pasauli"
+    }
+  },
+  "lb": {
+    "translation": {
+      "hello": "Moien Welt!"
+    }
+  },
+  "mg": {
+    "translation": {
+      "hello": "Manao ahoana ry tany!"
+    }
+  },
+  "ml": {
+    "translation": {
+      "hello": "Namaskaram, lokame"
+    }
+  },
+  "mt": {
+    "translation": {
+      "hello": "Merhba lid-dinja"
+    }
+  },
+  "no": {
+    "translation": {
+      "hello": "Hallo verden!"
+    }
+  },
+  "fa": {
+    "translation": {
+      "hello": "!سلام دنیا"
+    }
+  },
+  "pl": {
+    "translation": {
+      "hello": "Witaj świecie!"
+    }
+  },
+  "pt": {
+    "translation": {
+      "hello": "Olá, mundo!"
+    }
+  },
+  "pa": {
+    "translation": {
+      "hello": "ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ ਦੁਨਿਆ"
+    }
+  },
+  "ro": {
+    "translation": {
+      "hello": "Salut lume!"
+    }
+  },
+  "ru": {
+    "translation": {
+      "hello": "Здравствуй, мир!"
+    }
+  },
+  "gd": {
+    "translation": {
+      "hello": "Halò, a Shaoghail!"
+    }
+  },
+  "sr": {
+    "translation": {
+      "hello": "Zdravo Svete!"
+    }
+  },
+  "sk": {
+    "translation": {
+      "hello": "Ahoj, svet!"
+    }
+  },
+  "sl": {
+    "translation": {
+      "hello": "Pozdravljen svet!"
+    }
+  },
+  "es": {
+    "translation": {
+      "hello": "¡Hola mundo!"
+    }
+  },
+  "sv": {
+    "translation": {
+      "hello": "Hallå världen!"
+    }
+  },
+  "tl": {
+    "translation": {
+      "hello": "Kamusta mundo!"
+    }
+  },
+  "ta": {
+    "translation": {
+      "hello": "ஹலோ உலகம்"
+    }
+  },
+  "te": {
+    "translation": {
+      "hello": "హలో వరల్డ్"
+    }
+  },
+  "th": {
+    "translation": {
+      "hello": "สวัสดีโลก!"
+    }
+  },
+  "tr": {
+    "translation": {
+      "hello": "Merhaba Dünya!"
+    }
+  },
+  "uk": {
+    "translation": {
+      "hello": "Привiт, свiте!"
+    }
+  },
+  "ur": {
+    "translation": {
+      "hello": "ہیلو دنیا والو"
+    }
+  },
+  "vi": {
+    "translation": {
+      "hello": "Xin chào thế giới"
+    }
+  },
+  "cy": {
+    "translation": {
+      "hello": "S'mae byd!"
+    }
+  },
+  "yi": {
+    "translation": {
+      "hello": "העלא וועלט"
+    }
+  },
+  "zu": {
+    "translation": {
+      "hello": "Sawubona Mhlaba"
+    }
+  }
+}

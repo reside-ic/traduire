@@ -6,7 +6,7 @@
 [![codecov.io](https://codecov.io/github/reside-ic/traduire/coverage.svg?branch=master)](https://codecov.io/github/reside-ic/traduire?branch=master)
 <!-- badges: end -->
 
-The `traduire` R package provides a wrapper around the [`i18next` JavaScript library](https://i18next.com).  It presents an alternative interface to R's built-in internationalisation functions, with a focus on the ability to change the target language within a session.  Currently the package presents only a stripped down interface to the underlying library, though this may expand in future.
+The `traduire` R package provides a wrapper around the [`i18next` JavaScript library](https://www.i18next.com).  It presents an alternative interface to R's built-in internationalisation functions, with a focus on the ability to change the target language within a session.  Currently the package presents only a stripped down interface to the underlying library, though this may expand in future.
 
 ## Installation
 
