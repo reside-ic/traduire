@@ -2,6 +2,7 @@
     "en": {
         "translation": {
             "hello": "hello world",
+            "query": "how are you?",
             "interpolate": "{{what}} is {{how}}",
             "pluralex1": "nose",
             "pluralex1_plural": "noses",
@@ -12,6 +13,7 @@
     "fr": {
         "translation": {
             "hello": "bonjour le monde",
+            "query": "ça va ?",
             "interpolate": "{{what}} est {{how}}",
             "pluralex1": "nez",
             "pluralex1_plural": "nez",

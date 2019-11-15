@@ -77,3 +77,38 @@ test_that("context", {
   expect_equal(obj$t("house", context = "small", count = 1), "A cottage")
   expect_equal(obj$t("house", context = "small", count = 3), "3 cottages")
 })
+
+
+test_that("replace", {
+  obj <- i18n(traduire_file("examples/simple.json"))
+  str <- '{"greeting": "t_(hello)"}'
+  expect_equal(obj$replace(str), '{"greeting": "hello world"}')
+  obj$set_language("fr")
+  expect_equal(obj$replace(str), '{"greeting": "bonjour le monde"}')
+  expect_equal(obj$replace(str, language = "en"),
+               '{"greeting": "hello world"}')
+})
+
+
+test_that("replace works on multiline strings", {
+  obj <- i18n(traduire_file("examples/simple.json"))
+  obj$set_language("fr")
+  str <- c("{",
+           '  "x": "t_(hello)",',
+           '  "y": "t_(query)"',
+           "}")
+  expected <- c("{",
+                '  "x": "bonjour le monde",',
+                '  "y": "ça va ?"',
+                "}")
+  expect_equal(obj$replace(str), expected)
+})
+
+
+test_that("replace retains names on multiline strings", {
+  obj <- i18n(traduire_file("examples/simple.json"))
+  x <- c(a = "t_(hello)", b = "t_(query)")
+  y <- c(a = "hello world", b = "how are you?")
+  expect_equal(obj$replace(x), y)
+  expect_equal(obj$replace(unname(x)), unname(y))
+})

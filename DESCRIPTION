@@ -17,7 +17,8 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 Imports:
     V8,
-    R6
+    R6,
+    glue
 Suggests:
     jsonlite,
     knitr,
