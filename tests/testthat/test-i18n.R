@@ -77,3 +77,12 @@ test_that("context", {
   expect_equal(obj$t("house", context = "small", count = 1), "A cottage")
   expect_equal(obj$t("house", context = "small", count = 3), "3 cottages")
 })
+
+
+test_that("replace", {
+  obj <- i18n(traduire_file("examples/simple.json"))
+  str <- '{"greeting": "t_(hello)"}'
+  expect_equal(obj$replace(str), '{"greeting": "hello world"}')
+  obj$set_language("fr")
+  expect_equal(obj$replace(str), '{"greeting": "bonjour le monde"}')
+})
