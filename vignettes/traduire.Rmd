@@ -90,6 +90,80 @@ tr$t("nocols", list(missing = "A"), count = 1, language = "fr")
 tr$t("nocols", list(missing = "A, B"), count = 2, language = "fr")
 ```
 
+## Translating multiple keys in a block of text
+
+There are two ways of achieving this; one is native to `i18next` using its [nesting](https://www.i18next.com/translation-function/nesting) functionality, the other uses [`glue`](https://cran.r-project.org/package=glue) and a custom transformer.
+
+The motivating use case we had was translating a json file for use in an [upstream web application](http://github.com/mrc-ide/hint), so the text to translate might contain data like:
+
+```
+{
+  "id": "area_scope",
+  "label": "element label",
+  "type": "multiselect",
+  "description": "element description"
+}
+```
+
+where the json contains a mix of elements to be internationalised (such as the values of `label` and `description`) and elements to be left as-is (such as the values of `id` and `type`).  The snippet above is a simplified version of the [full data](https://github.com/mrc-ide/naomi/blob/178fc4a955dd37e5bc39783afa68cc02e818ce51/inst/metadata/general_run_options.json) where the values to translate might occur at any depth within the json.
+
+To support this, the `i18n` object has a `replace` method, which performs string replacement of text wrapped in `t_(...)`.  So we rewrite our json:
+
+```{r}
+string <- '{
+  "id": "area_scope",
+  "label": "t_(element_label)",
+  "type": "multiselect",
+  "description": "t_(element_description)"
+}'
+```
+
+and we provide a set of translations:
+
+```{r}
+translations <- '{
+    "en": {
+        "translation": {
+            "element_label": "Country",
+            "element_description": "Select your countries"
+        }
+    },
+    "fr": {
+        "translation": {
+            "element_label": "Payes",
+            "element_description": "Sélectionnez vos payes"
+        }
+    }
+}'
+```
+
+We construct a translator object  with these translations:
+
+```{r}
+tr <- traduire::i18n(translations)
+```
+
+We can then use the `replace` method to translate all strings (wrapped here in `writeLines` to make it easier to read with all json quotes:
+
+```{r}
+writeLines(tr$replace(string))
+```
+
+or, into French:
+
+```{r}
+writeLines(tr$replace(string, language = "fr"))
+```
+
+This functionality can also be achieved using i18next's ["nesting"](https://www.i18next.com/translation-function/nesting) functionality, with a slight change in the format of the input string, using `$t(...)` instead of `t_(...)`:
+
+```{t}
+string2 <- gsub("t_(", "$t(", string, fixed = TRUE)
+writeLines(tr$t(string2, language = "fr"))
+```
+
+The two methods are very similar - `replace` is possibly more flexible with inputs as it allows strings and character vectors, the native `i18next` method allows the `$t(...)` strings to contain additional options to be passed directly to translator (but the behaviour of the native method depends on the way that the translator has been configured and ity can be disabled with some options).
+
 ## Use within a package
 
 We provide an optional workflow for using translations within a package, or some other piece of code where the translations will be fairly invasive to add, allowing you to write essentially:
