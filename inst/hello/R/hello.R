@@ -1,27 +1,33 @@
-##' Say Hello with a cow
-##' @title Say hello with a cow
+##' Say Hello with a cow, possiblty internationalised.
+##'
+##' \itemize{
+##' \item{hello always says hello, always with a cow}
+##'
+##' \item{world says "Hello world!" in a number of languages, using an
+##' explicit trasnslation argument, and always uses a cow}
+##'
+##' \item{monde says "Hello world!" in a number of languages, using an
+##' implicit trasnslation argument, and can use many animals}
+##' }
+##'
+##' @title Say hello with a cow (or other animal)
 ##' @param ... Arguments passed to \code{cowsay::say}
 ##' @export
+##' @rdname hello
 hello <- function(...) {
   cowsay::say("Hello", "cow", ...)
 }
 
-##' Say hello, in some language, with a cow.  This version uses an
-##' explicit language argument
-##' @title Say hello to the world with a cow
-##' @param ... Arguments passed to \code{cowsay::say}
 ##' @param language Language to translate into
 ##' @export
 ##' @importFrom traduire t_
+##' @rdname hello
 world <- function(language = "en", ...) {
   cowsay::say(t_("hello", language = language), "cow", ...)
 }
 
-##' Say hello, in some language, with a cow.  This version uses an
-##' implicit language argument
-##' @title Say hello to the world with a cow
-##' @param ... Arguments passed to \code{cowsay::say}
 ##' @export
+##' @rdname hello
 monde <- function(...) {
   cowsay::say(t_("hello"), ...)
 }
