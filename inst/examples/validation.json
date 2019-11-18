@@ -8,8 +8,8 @@
 
     "fr": {
         "translation": {
-            "nocols": "les données sont manquantes colonne {{missing}}",
-            "nocols_plural": "les données sont manquantes colonnes {{missing}}"
+            "nocols": "Les données sont manquantes colonne {{missing}}",
+            "nocols_plural": "Les données sont manquantes colonnes {{missing}}"
         }
     }
 }
