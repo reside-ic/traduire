@@ -124,8 +124,6 @@ tr$t("nocols", list(missing = "A, B"), count = 2, language = "fr")
 
 ## Translating multiple keys in a block of text
 
-There are two ways of achieving this; one is native to `i18next` using its [nesting](https://www.i18next.com/translation-function/nesting) functionality, the other uses [`glue`](https://cran.r-project.org/package=glue) and a custom transformer.
-
 The motivating use case we had was translating a json file for use in an [upstream web application](http://github.com/mrc-ide/hint), so the text to translate might contain data like:
 
 ```
@@ -169,7 +167,7 @@ translations <- '{
 }'
 ```
 
-We construct a translator object  with these translations:
+We construct a translator object with these translations:
 
 ```{r}
 tr <- traduire::i18n(translations)
@@ -186,15 +184,6 @@ or, into French:
 ```{r}
 writeLines(tr$replace(string, language = "fr"))
 ```
-
-This functionality can also be achieved using i18next's ["nesting"](https://www.i18next.com/translation-function/nesting) functionality, with a slight change in the format of the input string, using `$t(...)` instead of `t_(...)`:
-
-```{r}
-string2 <- gsub("t_(", "$t(", string, fixed = TRUE)
-writeLines(tr$t(string2, language = "fr"))
-```
-
-The two methods are very similar - `replace` is possibly more flexible with inputs as it allows strings and character vectors, the native `i18next` method allows the `$t(...)` strings to contain additional options to be passed directly to translator (but the behaviour of the native method depends on the way that the translator has been configured and ity can be disabled with some options).
 
 ## Use within a package
 
