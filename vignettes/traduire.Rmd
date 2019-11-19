@@ -92,7 +92,7 @@ tr$t("interpolate", list(what = "i18next", how = "facile"),
 
 The example here is derived from a [web API](https://github.com/mrc-ide/hintr) that we developed the package to support.  We wanted to, as a service, validate incoming data and return information back to user about what to fix; if the data is missing one or more columns we will report back the columns that they are missing.  This requires different translations for the singular case ("Data missing column X") and plural ("Data missing **columns** X, Y").
 
-The translaion file looks like:
+The translation file looks like:
 
 ```{r, results = "asis", echo = FALSE}
 path_validation <- system.file("examples/validation.json",

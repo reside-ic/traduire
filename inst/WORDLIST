@@ -4,5 +4,6 @@ codecov
 etc
 io
 json
+knitr
 postserialize
 preroute
