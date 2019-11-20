@@ -3,22 +3,14 @@
         "translation": {
             "hello": "hello world",
             "query": "how are you?",
-            "interpolate": "{{what}} is {{how}}",
-            "pluralex1": "nose",
-            "pluralex1_plural": "noses",
-            "pluralex2": "sheep",
-            "pluralex2_plural": "sheep"
+            "interpolate": "{{what}} is {{how}}"
         }
     },
     "fr": {
         "translation": {
             "hello": "bonjour le monde",
             "query": "ça va ?",
-            "interpolate": "{{what}} est {{how}}",
-            "pluralex1": "nez",
-            "pluralex1_plural": "nez",
-            "pluralex2": "mouton",
-            "pluralex2_plural": "moutons"
+            "interpolate": "{{what}} est {{how}}"
         }
     }
 }

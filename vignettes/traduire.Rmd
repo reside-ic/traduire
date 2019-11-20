@@ -14,6 +14,38 @@ knitr::opts_chunk$set(
 lang_output <- function(language, text) {
   writeLines(c(paste0("```", language),  text, "```"))
 }
+tree <- function(path, header = path) {
+  paste1 <- function(a, b) {
+    paste(rep_len(a, length(b)), b)
+  }
+  indent <- function(x, files) {
+    paste0(if (files) "| " else "  ", x)
+  }
+  is_directory <- function(x) {
+    unname(file.info(x)[, "isdir"])
+  }
+  sort_files <- function(x) {
+    i <- grepl("^[A-Z]", x)
+    c(x[i], x[!i])
+  }
+  prefix_file <- "|--="
+  prefix_dir  <- "|-+="
+  files <- sort_files(dir(path))
+  files_full <- file.path(path, files)
+  isdir <- is_directory(files_full)
+  ret <- as.list(c(paste1(prefix_dir, files[isdir]),
+                   paste1(prefix_file, files[!isdir])))
+  files_full <- c(files_full[isdir], files_full[!isdir])
+  isdir <- c(isdir[isdir], isdir[!isdir])
+  n <- length(ret)
+  if (n > 0) {
+    ret[[n]] <- sub("|", "\\", ret[[n]], fixed = TRUE)
+    tmp <- lapply(which(isdir), function(i)
+      c(ret[[i]], indent(tree(files_full[[i]], NULL), !all(isdir))))
+    ret[isdir] <- tmp
+  }
+  c(header, unlist(ret))
+}
 ```
 
 The `traduire` R package provides a wrapper around the [`i18next` JavaScript library](https://i18next.com).  It presents an alternative interface to R's built-in internationalisation functions, with a focus on the ability to change the target language within a session.  Currently the package presents only a stripped down interface to the underlying library, though this may expand in future.
@@ -29,29 +61,20 @@ lang_output("json", readLines(path))
 We can create a translator, setting the default language to English (en) as:
 
 ```{r}
-translator <- traduire::i18n(path, "en")
-translator
+tr <- traduire::i18n(path, "en")
+tr
 ```
 
 With this object we can perform translations with the `t` method by passing in a key from within our translations:
 
 ```{r}
-translator$t("hello")
+tr$t("hello")
 ```
 
 Specify the `language` argument to change language:
 
 ```{r}
-translator$t("hello", language = "fr")
-```
-
-## Pluralisation
-
-Pluralisation of results is supported using keys that include `_plural` suffix (see the [`i18next` documentation](https://www.i18next.com/translation-function/plurals)) and by passing a `count` argument in to the translation:
-
-```{r}
-translator$t("pluralex1", count = 1, language = "en")
-translator$t("pluralex1", count = 2, language = "en")
+tr$t("hello", language = "fr")
 ```
 
 ## Interpolation
@@ -59,10 +82,107 @@ translator$t("pluralex1", count = 2, language = "en")
 String interpolation is done using a syntax very similar to [`glue`](https://cran.r-project.org/package=glue) (see the [`i18next` documentation](https://www.i18next.com/translation-function/interpolation))
 
 ```{r}
-translator$t("interpolate", list(what = "i18next", how = "easy"),
-             language = "en")
-translator$t("interpolate", list(what = "i18next", how = "facile"),
-             language = "fr")
+tr$t("interpolate", list(what = "i18next", how = "easy"),
+     language = "en")
+tr$t("interpolate", list(what = "i18next", how = "facile"),
+     language = "fr")
+```
+
+## Pluralisation
+
+The example here is derived from a [web API](https://github.com/mrc-ide/hintr) that we developed the package to support.  We wanted to, as a service, validate incoming data and return information back to user about what to fix; if the data is missing one or more columns we will report back the columns that they are missing.  This requires different translations for the singular case ("Data missing column X") and plural ("Data missing **columns** X, Y").
+
+The translation file looks like:
+
+```{r, results = "asis", echo = FALSE}
+path_validation <- system.file("examples/validation.json",
+                               package = "traduire", mustWork = TRUE)
+lang_output("json", readLines(path))
+```
+
+where the `_plural` suffix is important for `i18next` for determining the string to return for a singular or plural case, and the `count` element determines if the string is singular or plural.
+
+Then we can use this as:
+
+```{r}
+tr <- traduire::i18n(path_validation)
+```
+
+Pluralisation of results is supported using keys that include `_plural` suffix (see the [`i18next` documentation](https://www.i18next.com/translation-function/plurals)) and by passing a `count` argument in to the translation:
+
+```{r}
+tr$t("nocols", list(missing = "A"), count = 1)
+tr$t("nocols", list(missing = "A, B"), count = 2)
+```
+
+or, changing the language:
+
+```{r}
+tr$t("nocols", list(missing = "A"), count = 1, language = "fr")
+tr$t("nocols", list(missing = "A, B"), count = 2, language = "fr")
+```
+
+## Translating multiple keys in a block of text
+
+The motivating use case we had was translating a json file for use in an [upstream web application](http://github.com/mrc-ide/hint), so the text to translate might contain data like:
+
+```
+{
+  "id": "area_scope",
+  "label": "element label",
+  "type": "multiselect",
+  "description": "element description"
+}
+```
+
+where the json contains a mix of elements to be internationalised (such as the values of `label` and `description`) and elements to be left as-is (such as the values of `id` and `type`).  The snippet above is a simplified version of the [full data](https://github.com/mrc-ide/naomi/blob/178fc4a955dd37e5bc39783afa68cc02e818ce51/inst/metadata/general_run_options.json) where the values to translate might occur at any depth within the json.
+
+To support this, the `i18n` object has a `replace` method, which performs string replacement of text wrapped in `t_(...)`.  So we rewrite our json:
+
+```{r}
+string <- '{
+  "id": "area_scope",
+  "label": "t_(element_label)",
+  "type": "multiselect",
+  "description": "t_(element_description)"
+}'
+```
+
+and we provide a set of translations:
+
+```{r}
+translations <- '{
+    "en": {
+        "translation": {
+            "element_label": "Country",
+            "element_description": "Select your countries"
+        }
+    },
+    "fr": {
+        "translation": {
+            "element_label": "Payes",
+            "element_description": "Sélectionnez vos payes"
+        }
+    }
+}'
+```
+
+We construct a translator object with these translations:
+
+```{r}
+tr <- traduire::i18n(translations)
+```
+
+We can then use the `replace` method to translate all strings (wrapped here in `writeLines` to make it easier to read with all json quotes:
+
+```{r}
+writeLines(tr$replace(string))
+```
+
+or, into French:
+
+```{r}
+writeLines(tr$replace(string, language = "fr"))
 ```
 
 ## Use within a package
@@ -86,10 +206,18 @@ traduire::translator_register(resources)
 
 where `resources` is passed to `traduire::i18n`.
 
-Below is the code in use in an example package, which can say rough translations of "hello world" in a number of languages:
+Here we show a complete example package that implements "hello-world-as-a-service" - i.e., a small web service that will reply with a version of "Hello world!" translated into the client's choice.
+
+The full package is included as an example within `traduire` at `system.file("hello", package = "traduire")` and is
 
 ```{r, results = "asis", echo = FALSE}
 path_hello <- system.file("hello", package = "traduire", mustWork = TRUE)
+writeLines(tree(system.file("hello", package = "traduire"), "hello"))
+```
+
+Below is the code in `hello.R`, which can say rough translations of "hello world" in a number of languages:
+
+```{r, results = "asis", echo = FALSE}
 content <- readLines(file.path(path_hello, "R", "hello.R"))
 lang_output("r", content[!grepl("^#", content)])
 ```

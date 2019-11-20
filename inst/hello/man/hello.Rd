@@ -2,13 +2,32 @@
 % Please edit documentation in R/hello.R
 \name{hello}
 \alias{hello}
-\title{Say hello with a cow}
+\alias{world}
+\alias{monde}
+\title{Say hello with a cow (or other animal)}
 \usage{
 hello(...)
+
+world(language = "en", ...)
+
+monde(...)
 }
 \arguments{
 \item{...}{Arguments passed to \code{cowsay::say}}
+
+\item{language}{Language to translate into}
 }
 \description{
-Say Hello with a cow
+Say Hello with a cow, possiblty internationalised.
+}
+\details{
+\itemize{
+\item{hello always says hello, always with a cow}
+
+\item{world says "Hello world!" in a number of languages, using an
+explicit trasnslation argument, and always uses a cow}
+
+\item{monde says "Hello world!" in a number of languages, using an
+implicit trasnslation argument, and can use many animals}
+}
 }

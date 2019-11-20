@@ -22,16 +22,20 @@ test_that("interpolation", {
 
 
 test_that("plurals", {
-  obj <- i18n(traduire_file("examples/simple.json"))
-  expect_equal(obj$t("pluralex1", count = 1), "nose")
-  expect_equal(obj$t("pluralex1", count = 2), "noses")
-  expect_equal(obj$t("pluralex2", count = 1), "sheep")
-  expect_equal(obj$t("pluralex2", count = 2), "sheep")
+  obj <- i18n(traduire_file("examples/validation.json"))
+  expect_equal(
+    obj$t("nocols", list(missing = "A"), count = 1),
+    "Data missing column A")
+  expect_equal(
+    obj$t("nocols", list(missing = "A, B"), count = 2),
+    "Data missing columns A, B")
 
-  expect_equal(obj$t("pluralex1", count = 1, language = "fr"), "nez")
-  expect_equal(obj$t("pluralex1", count = 2, language = "fr"), "nez")
-  expect_equal(obj$t("pluralex2", count = 1, language = "fr"), "mouton")
-  expect_equal(obj$t("pluralex2", count = 2, language = "fr"), "moutons")
+  expect_equal(
+    obj$t("nocols", list(missing = "A"), count = 1, language = "fr"),
+    "Les données sont manquantes colonne A")
+  expect_equal(
+    obj$t("nocols", list(missing = "A, B"), count = 2, language = "fr"),
+    "Les données sont manquantes colonnes A, B")
 })
 
 
