@@ -212,7 +212,7 @@ The full package is included as an example within `traduire` at `system.file("he
 
 ```{r, results = "asis", echo = FALSE}
 path_hello <- system.file("hello", package = "traduire", mustWork = TRUE)
-writeLines(tree(system.file("hello", package = "traduire"), "hello"))
+writeLines(tree(path_hello, "hello"))
 ```
 
 Below is the code in `hello.R`, which can say rough translations of "hello world" in a number of languages:
@@ -312,19 +312,44 @@ lang_output("json", readLines(path))
 
 When constructing the translator object we can provide a default namespace (it defaults to `translation`):
 
-```
+```{r}
 tr <- traduire::i18n(path, default_namespace = "common")
 ```
 
 Keys that are provided without an explicit namespace, will be looked up in the default namespace:
 
-```
+```{r}
 tr$t("hello")
 ```
 
 or provide a namespace when looking up keys:
 
-```
+```{r}
 tr$t("common:hello", language = "fr")
 tr$t("login:username", language = "fr")
+```
+
+So far, this brings relatively little advantage as our file, while structured, is still going to end up really large as all the files end up in it.  So we might want to break it up like so:
+
+```{r, results = "asis", echo = FALSE}
+path <- system.file("examples/structured", package = "traduire",
+                    mustWork = TRUE)
+writeLines(tree(path, "structured"))
+```
+
+where each file is orgnanised like:
+
+```{r, results = "asis", echo = FALSE}
+lang_output("json", readLines(file.path(path, "en-login.json")))
+```
+
+to allow this, we need to load the files one by one into the translation object, rather than as a single resource bundle.  To do this, we can use the `add_resource_bundle` method:
+
+```{r}
+obj <- i18n(NULL)
+obj$add_resource_bundle("en", "common", file.path(path, "en-common.json"))
+obj$add_resource_bundle("en", "login", file.path(path, "en-login.json"))
+obj$add_resource_bundle("fr", "common", file.path(path, "fr-common.json"))
+obj$add_resource_bundle("fr", "login", file.path(path, "fr-login.json"))
+obj$t("login:password", language = "fr")
 ```

@@ -16,6 +16,9 @@ read_file <- function(path) {
 ## Same logic as jsonvalidate, possibly overkill here. Perhaps we
 ## always want a path to the input?
 read_input <- function(x, name = deparse(substitute(x))) {
+  if (is.null(x)) {
+    return(V8::JS("{}"))
+  }
   if (read_input_is_filename(x)) {
     if (!file.exists(x)) {
       stop(sprintf("'%s' looks like a filename but does not exist", name),

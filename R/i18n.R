@@ -78,6 +78,18 @@ R6_i18n <- R6::R6Class(
       prev <- self$default_namespace()
       private$context$call("i18next.setDefaultNamespace", namespace)
       invisible(function() self$set_default_namespace(prev))
+    },
+
+    has_resource_bundle = function(language, namespace) {
+      private$context$call("i18next.hasResourceBundle", language, namespace)
+    },
+
+    add_resource_bundle = function(language, namespace, bundle,
+                                   deep = FALSE, overwrite = FALSE) {
+      bundle_js <- read_input(bundle)
+      private$context$call("i18next.addResourceBundle",
+                           language, namespace, bundle_js, deep, overwrite)
+      invisible(self)
     }
   )
 )
