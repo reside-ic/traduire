@@ -1,0 +1,20 @@
+{
+    "en": {
+        "common": {
+            "hello": "hello world"
+        },
+        "login": {
+            "username": "Username",
+            "password": "Password"
+        }
+    },
+    "fr": {
+        "common": {
+            "hello": "salut le monde"
+        },
+        "login": {
+            "username": "Nom d'utilisateur",
+            "password": "Mot de passe"
+        }
+    }
+}
