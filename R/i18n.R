@@ -68,6 +68,16 @@ R6_i18n <- R6::R6Class(
 
     languages = function() {
       private$context$call("languages")
+    },
+
+    default_namespace = function() {
+      private$context$call("default_namespace")
+    },
+
+    set_default_namespace = function(namespace) {
+      prev <- self$default_namespace()
+      private$context$call("i18next.setDefaultNamespace", namespace)
+      invisible(function() self$set_default_namespace(prev))
     }
   )
 )

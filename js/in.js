@@ -37,3 +37,7 @@ global.language = function() {
 global.languages = function() {
     return i18next.languages;
 }
+
+global.default_namespace = function() {
+    return i18next.options.defaultNS;
+};

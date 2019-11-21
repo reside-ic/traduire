@@ -40,6 +40,10 @@ global.languages = function() {
     return i18next.languages;
 }
 
+global.default_namespace = function() {
+    return i18next.options.defaultNS;
+};
+
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"i18next":25,"i18next-sprintf-postprocessor":24,"promise":26}],2:[function(require,module,exports){
 function _arrayWithHoles(arr) {
