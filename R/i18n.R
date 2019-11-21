@@ -1,16 +1,23 @@
 ##' Create a new translator object
 ##' @title Create translator object
+##'
 ##' @param translations Path to a json file containing translations
+##'
 ##' @param language The default language for the translation
+##'
+##' @param default_namespace The default namespace to use.  If not
+##'   given, then \code{i18next} assumes the namespace
+##'   \code{translation}
+##'
 ##' @export
 ##' @examples
 ##' path <- system.file("examples/simple.json", package = "traduire")
 ##' obj <- traduire::i18n(path)
 ##' obj$t("hello", language = "fr")
-i18n <- function(translations, language = NULL) {
+i18n <- function(translations, language = NULL, default_namespace = NULL) {
   ## TODO: better defaults here, but there's lots to consider with
   ## fallbacks still
-  R6_i18n$new(translations, language %||% "en")
+  R6_i18n$new(translations, language %||% "en", default_namespace)
 }
 
 
@@ -23,11 +30,11 @@ R6_i18n <- R6::R6Class(
   ),
 
   public = list(
-    initialize = function(translations, language) {
+    initialize = function(translations, language, default_namespace) {
       translations_js <- read_input(translations)
       private$context <- V8::v8()
       private$context$source(traduire_file("js/bundle.js"))
-      private$context$call("init", translations_js, language)
+      private$context$call("init", translations_js, language, default_namespace)
     },
 
     t = function(string, data = NULL, language = NULL, count = NULL,

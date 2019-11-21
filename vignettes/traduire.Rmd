@@ -289,3 +289,42 @@ $ curl -H "Accept-Language: ko" http://localhost:8888/hello/cat
       jgs  //_// ___/
                \_)
 ```
+
+## Namespaces, and the structure of translation files
+
+This section outlines how to write the translation (json) files, alongside a discussion of using namespaces.  Consider again the first example:
+
+```{r, results = "asis", echo = FALSE}
+path <- system.file("examples/simple.json", package = "traduire",
+                    mustWork = TRUE)
+lang_output("json", readLines(path))
+```
+
+In this format, the top level keys (`en`, `fr`) represent _languages_ and the next level key (`translation`) which appears redundant represents a [_namespace_](https://www.i18next.com/principles/namespaces).  A translation set can have multiple namespaces, which can help with organising a large set of strings, and can be used to split the file up over smaller files that might be easier to work with (see below).
+
+Below, we have file with two namespaces, `common` and `login`.  These might represent strings used throughout the application and in a login component, for example.
+
+```{r, results = "asis", echo = FALSE}
+path <- system.file("examples/namespaces.json", package = "traduire",
+                    mustWork = TRUE)
+lang_output("json", readLines(path))
+```
+
+When constructing the translator object we can provide a default namespace (it defaults to `translation`):
+
+```
+tr <- traduire::i18n(path, default_namespace = "common")
+```
+
+Keys that are provided without an explicit namespace, will be looked up in the default namespace:
+
+```
+tr$t("hello")
+```
+
+or provide a namespace when looking up keys:
+
+```
+tr$t("common:hello", language = "fr")
+tr$t("login:username", language = "fr")
+```

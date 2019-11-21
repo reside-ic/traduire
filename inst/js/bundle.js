@@ -9,12 +9,15 @@ global.Promise = require("promise");
 global.i18next = require("i18next");
 global.i18next_sprintf = require("i18next-sprintf-postprocessor");
 
-global.init = function(resources, lng) {
+global.init = function(resources, lng, defaultNS) {
     var options = {
         "lng": lng,
         "resources": resources,
         "initImmediate": true
     };
+    if (defaultNS) {
+        options.defaultNS = defaultNS;
+    }
     global.i18next
         .use(i18next_sprintf)
         .init(options);

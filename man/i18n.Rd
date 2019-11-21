@@ -4,12 +4,16 @@
 \alias{i18n}
 \title{Create translator object}
 \usage{
-i18n(translations, language = NULL)
+i18n(translations, language = NULL, default_namespace = NULL)
 }
 \arguments{
 \item{translations}{Path to a json file containing translations}
 
 \item{language}{The default language for the translation}
+
+\item{default_namespace}{The default namespace to use.  If not
+given, then \code{i18next} assumes the namespace
+\code{translation}}
 }
 \description{
 Create a new translator object
