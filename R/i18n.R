@@ -27,17 +27,26 @@
 ##'   translation resources.  Only works if \code{translations} is
 ##'   \code{NULL} at present.
 ##'
+##' @param namespaces A vector of namespaces to load. Namespaces not
+##'   listed here may not be loaded as expected (use \code{debug =
+##'   TRUE} to work out what is going on).  The default (\code{NULL})
+##'   will use i18next's logic, which is to use \code{translation} as
+##'   the only loaded namespace.  This creates some issues if
+##'   \code{default_namespace} is set here, as the default namespace
+##'   will not be loaded.  A future version of this package will
+##'   probably do better with the logic here.
+##'
 ##' @export
 ##' @examples
 ##' path <- system.file("examples/simple.json", package = "traduire")
 ##' obj <- traduire::i18n(path)
 ##' obj$t("hello", language = "fr")
 i18n <- function(resources, language = NULL, default_namespace = NULL,
-                 debug = FALSE, resource_pattern = NULL) {
-  ## TODO: better defaults here, but there's lots to consider with
-  ## fallbacks still
+                 debug = FALSE, resource_pattern = NULL, namespaces = NULL) {
+  ## TODO: better defaults for language, but there's lots to consider
+  ## with fallbacks still
   R6_i18n$new(resources, language %||% "en", default_namespace,
-              debug, resource_pattern)
+              debug, resource_pattern, namespaces)
 }
 
 
@@ -52,12 +61,13 @@ R6_i18n <- R6::R6Class(
 
   public = list(
     initialize = function(resources, language, default_namespace,
-                          debug, resource_pattern) {
+                          debug, resource_pattern, namespaces) {
       resources_js <- read_input(resources)
       private$context <- V8::v8()
       private$context$source(traduire_file("js/bundle.js"))
       private$context$call("init", resources_js, language,
-                           default_namespace, debug, resource_pattern)
+                           default_namespace, debug, resource_pattern,
+                           namespaces)
     },
 
     t = function(string, data = NULL, language = NULL, count = NULL,

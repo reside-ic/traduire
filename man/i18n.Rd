@@ -9,7 +9,8 @@ i18n(
   language = NULL,
   default_namespace = NULL,
   debug = FALSE,
-  resource_pattern = NULL
+  resource_pattern = NULL,
+  namespaces = NULL
 )
 }
 \arguments{
@@ -31,6 +32,15 @@ be turned on.  This will result in lots of output via
 \item{resource_pattern}{A pattern to use for on-demand loading of
 translation resources.  Only works if \code{translations} is
 \code{NULL} at present.}
+
+\item{namespaces}{A vector of namespaces to load. Namespaces not
+listed here may not be loaded as expected (use \code{debug =
+TRUE} to work out what is going on).  The default (\code{NULL})
+will use i18next's logic, which is to use \code{translation} as
+the only loaded namespace.  This creates some issues if
+\code{default_namespace} is set here, as the default namespace
+will not be loaded.  A future version of this package will
+probably do better with the logic here.}
 }
 \description{
 Create a new translator object

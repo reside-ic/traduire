@@ -10,17 +10,19 @@ global.Promise = require("promise");
 
 global.i18next = require("i18next");
 
-global.init = function(resources, lng, defaultNS, debug, resourcePattern) {
+global.init = function(resources, lng, defaultNS, debug, resourcePattern,
+                       namespaces) {
     var options = {
         "lng": lng,
-        // it's important that this comes through as null, not as {},
-        // if resources are not available or load won't be
+        // it's important that 'resources' comes through as null, not
+        // as {}, if resources are not available or load won't be
         // triggered...that probably needs dealing with somewhere - I
         // think that the option partialBundledLanguages is important
         // here?
         "resources": JSON.parse(resources),
         "debug": debug,
         "initImmediate": true,
+        "ns": namespaces,
         "backend": {
             "resourcePattern": resourcePattern
         }
