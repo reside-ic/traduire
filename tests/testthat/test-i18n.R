@@ -161,12 +161,14 @@ test_that("load resource bundles", {
                           traduire_file("examples/structured/en-login.json"))
   obj$add_resource_bundle("fr", "common",
                           traduire_file("examples/structured/fr-common.json"))
+
   expect_true(obj$has_resource_bundle("en", "common"))
   expect_true(obj$has_resource_bundle("en", "login"))
   expect_true(obj$has_resource_bundle("fr", "common"))
   expect_false(obj$has_resource_bundle("fr", "login"))
+
   expect_equal(obj$t("hello"), "hello world")
   expect_equal(obj$t("hello", language = "fr"), "salut le monde")
   expect_equal(obj$t("login:username"), "Username")
-  expect_equal(obj$t("login:username", "fr"), "Username")
+  expect_equal(obj$t("login:username", language = "fr"), "username")
 })
