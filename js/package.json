@@ -17,10 +17,10 @@
     "url": "https://github.com/reside-ic/i18next/issues"
   },
   "homepage": "https://github.com/reside-ic/i18next#readme",
-    "dependencies": {
-      "browserify": "^16.5.0",
-      "i18next": "^19.0.0",
-      "i18next-sprintf-postprocessor": "^0.2.2",
-      "promise": "^8.0.0"
+  "dependencies": {
+    "browserify": "^16.5.0",
+    "i18next": "^19.0.0",
+    "i18next-sprintf-postprocessor": "^0.2.2",
+    "promise": "^8.0.0"
   }
 }

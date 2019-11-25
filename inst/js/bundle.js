@@ -1,5 +1,9 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 (function (global){
+global.setTimeout = function(callback, time) {
+    callback();
+}
+
 // We don't end up with Promise in V8 unless quite recent (and not on
 // the version as installed on Ubuntu 18.04 without using a ppa) so we
 // need to pull in an ES6 Promise implementation. This is liable to be
@@ -7,19 +11,27 @@
 global.Promise = require("promise");
 
 global.i18next = require("i18next");
-global.i18next_sprintf = require("i18next-sprintf-postprocessor");
 
-global.init = function(resources, lng, defaultNS) {
+global.init = function(resources, lng, defaultNS, debug, resourcePattern) {
     var options = {
         "lng": lng,
-        "resources": resources,
-        "initImmediate": true
+        // it's important that this comes through as null, not as {},
+        // if resources are not available or load won't be
+        // triggered...that probably needs dealing with somewhere - I
+        // think that the option partialBundledLanguages is important
+        // here?
+        "resources": JSON.parse(resources),
+        "debug": debug,
+        "initImmediate": true,
+        "backend": {
+            "resourcePattern": resourcePattern
+        }
     };
     if (defaultNS) {
         options.defaultNS = defaultNS;
     }
     global.i18next
-        .use(i18next_sprintf)
+        .use(traduireLoader())
         .init(options);
     return true;
 }
@@ -44,8 +56,36 @@ global.default_namespace = function() {
     return i18next.options.defaultNS;
 };
 
+global.traduireLoader = function() {
+    return {
+        type: 'backend',
+        init: function(services, backendOptions, i18nextOptions) {
+            this.resourcePattern = backendOptions.resourcePattern;
+        },
+
+        read: function(language, namespace, callback) {
+            var args = [this.resourcePattern, language, namespace];
+            var data = console.r.call("traduire:::i18n_backend_read", args);
+            callback(null, JSON.parse(data));
+        },
+
+        // optional
+        readMulti: function(languages, namespaces, callback) {
+        },
+
+        // only used in backends acting as cache layer
+        save: function(language, namespace, data) {
+            // store the translations
+        },
+
+        create: function(languages, namespace, key, fallbackValue) {
+            // save the missing translation
+        }
+    }
+};
+
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"i18next":25,"i18next-sprintf-postprocessor":24,"promise":26}],2:[function(require,module,exports){
+},{"i18next":22,"promise":23}],2:[function(require,module,exports){
 function _arrayWithHoles(arr) {
   if (Array.isArray(arr)) return arr;
 }
@@ -580,250 +620,6 @@ rawAsap.makeRequestCallFromTimer = makeRequestCallFromTimer;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],22:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
-
-var _sprintf = require('./sprintf');
-
-exports.default = {
-  name: 'sprintf',
-  type: 'postProcessor',
-
-  process: function process(value, key, options) {
-    if (!options.sprintf) return value;
-
-    if (Object.prototype.toString.apply(options.sprintf) === '[object Array]') {
-      return (0, _sprintf.vsprintf)(value, options.sprintf);
-    } else if (_typeof(options.sprintf) === 'object') {
-      return (0, _sprintf.sprintf)(value, options.sprintf);
-    }
-
-    return value;
-  },
-  overloadTranslationOptionHandler: function overloadTranslationOptionHandler(args) {
-    var values = [];
-
-    for (var i = 1; i < args.length; i++) {
-      values.push(args[i]);
-    }
-
-    return {
-      postProcess: 'sprintf',
-      sprintf: values
-    };
-  }
-};
-},{"./sprintf":23}],23:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.sprintf = sprintf;
-exports.vsprintf = vsprintf;
-var re = {
-    not_string: /[^s]/,
-    number: /[diefg]/,
-    json: /[j]/,
-    not_json: /[^j]/,
-    text: /^[^\x25]+/,
-    modulo: /^\x25{2}/,
-    placeholder: /^\x25(?:([1-9]\d*)\$|\(([^\)]+)\))?(\+)?(0|'[^$])?(-)?(\d+)?(?:\.(\d+))?([b-gijosuxX])/,
-    key: /^([a-z_][a-z_\d]*)/i,
-    key_access: /^\.([a-z_][a-z_\d]*)/i,
-    index_access: /^\[(\d+)\]/,
-    sign: /^[\+\-]/
-};
-
-function sprintf() {
-    var key = arguments[0],
-        cache = sprintf.cache;
-    if (!(cache[key] && cache.hasOwnProperty(key))) {
-        cache[key] = sprintf.parse(key);
-    }
-    return sprintf.format.call(null, cache[key], arguments);
-}
-
-sprintf.format = function (parse_tree, argv) {
-    var cursor = 1,
-        tree_length = parse_tree.length,
-        node_type = "",
-        arg,
-        output = [],
-        i,
-        k,
-        match,
-        pad,
-        pad_character,
-        pad_length,
-        is_positive = true,
-        sign = "";
-    for (i = 0; i < tree_length; i++) {
-        node_type = get_type(parse_tree[i]);
-        if (node_type === "string") {
-            output[output.length] = parse_tree[i];
-        } else if (node_type === "array") {
-            match = parse_tree[i]; // convenience purposes only
-            if (match[2]) {
-                // keyword argument
-                arg = argv[cursor];
-                for (k = 0; k < match[2].length; k++) {
-                    if (!arg.hasOwnProperty(match[2][k])) {
-                        throw new Error(sprintf("[sprintf] property '%s' does not exist", match[2][k]));
-                    }
-                    arg = arg[match[2][k]];
-                }
-            } else if (match[1]) {
-                // positional argument (explicit)
-                arg = argv[match[1]];
-            } else {
-                // positional argument (implicit)
-                arg = argv[cursor++];
-            }
-
-            if (get_type(arg) == "function") {
-                arg = arg();
-            }
-
-            if (re.not_string.test(match[8]) && re.not_json.test(match[8]) && get_type(arg) != "number" && isNaN(arg)) {
-                throw new TypeError(sprintf("[sprintf] expecting number but found %s", get_type(arg)));
-            }
-
-            if (re.number.test(match[8])) {
-                is_positive = arg >= 0;
-            }
-
-            switch (match[8]) {
-                case "b":
-                    arg = arg.toString(2);
-                    break;
-                case "c":
-                    arg = String.fromCharCode(arg);
-                    break;
-                case "d":
-                case "i":
-                    arg = parseInt(arg, 10);
-                    break;
-                case "j":
-                    arg = JSON.stringify(arg, null, match[6] ? parseInt(match[6]) : 0);
-                    break;
-                case "e":
-                    arg = match[7] ? arg.toExponential(match[7]) : arg.toExponential();
-                    break;
-                case "f":
-                    arg = match[7] ? parseFloat(arg).toFixed(match[7]) : parseFloat(arg);
-                    break;
-                case "g":
-                    arg = match[7] ? parseFloat(arg).toPrecision(match[7]) : parseFloat(arg);
-                    break;
-                case "o":
-                    arg = arg.toString(8);
-                    break;
-                case "s":
-                    arg = (arg = String(arg)) && match[7] ? arg.substring(0, match[7]) : arg;
-                    break;
-                case "u":
-                    arg = arg >>> 0;
-                    break;
-                case "x":
-                    arg = arg.toString(16);
-                    break;
-                case "X":
-                    arg = arg.toString(16).toUpperCase();
-                    break;
-            }
-            if (re.json.test(match[8])) {
-                output[output.length] = arg;
-            } else {
-                if (re.number.test(match[8]) && (!is_positive || match[3])) {
-                    sign = is_positive ? "+" : "-";
-                    arg = arg.toString().replace(re.sign, "");
-                } else {
-                    sign = "";
-                }
-                pad_character = match[4] ? match[4] === "0" ? "0" : match[4].charAt(1) : " ";
-                pad_length = match[6] - (sign + arg).length;
-                pad = match[6] ? pad_length > 0 ? str_repeat(pad_character, pad_length) : "" : "";
-                output[output.length] = match[5] ? sign + arg + pad : pad_character === "0" ? sign + pad + arg : pad + sign + arg;
-            }
-        }
-    }
-    return output.join("");
-};
-
-sprintf.cache = {};
-
-sprintf.parse = function (fmt) {
-    var _fmt = fmt,
-        match = [],
-        parse_tree = [],
-        arg_names = 0;
-    while (_fmt) {
-        if ((match = re.text.exec(_fmt)) !== null) {
-            parse_tree[parse_tree.length] = match[0];
-        } else if ((match = re.modulo.exec(_fmt)) !== null) {
-            parse_tree[parse_tree.length] = "%";
-        } else if ((match = re.placeholder.exec(_fmt)) !== null) {
-            if (match[2]) {
-                arg_names |= 1;
-                var field_list = [],
-                    replacement_field = match[2],
-                    field_match = [];
-                if ((field_match = re.key.exec(replacement_field)) !== null) {
-                    field_list[field_list.length] = field_match[1];
-                    while ((replacement_field = replacement_field.substring(field_match[0].length)) !== "") {
-                        if ((field_match = re.key_access.exec(replacement_field)) !== null) {
-                            field_list[field_list.length] = field_match[1];
-                        } else if ((field_match = re.index_access.exec(replacement_field)) !== null) {
-                            field_list[field_list.length] = field_match[1];
-                        } else {
-                            throw new SyntaxError("[sprintf] failed to parse named argument key");
-                        }
-                    }
-                } else {
-                    throw new SyntaxError("[sprintf] failed to parse named argument key");
-                }
-                match[2] = field_list;
-            } else {
-                arg_names |= 2;
-            }
-            if (arg_names === 3) {
-                throw new Error("[sprintf] mixing positional and named placeholders is not (yet) supported");
-            }
-            parse_tree[parse_tree.length] = match;
-        } else {
-            throw new SyntaxError("[sprintf] unexpected placeholder");
-        }
-        _fmt = _fmt.substring(match[0].length);
-    }
-    return parse_tree;
-};
-
-function vsprintf(fmt, argv, _argv) {
-    _argv = (argv || []).slice(0);
-    _argv.splice(0, 0, fmt);
-    return sprintf.apply(null, _argv);
-}
-
-/**
- * helpers
- */
-function get_type(variable) {
-    return Object.prototype.toString.call(variable).slice(8, -1).toLowerCase();
-}
-
-function str_repeat(input, multiplier) {
-    return Array(multiplier + 1).join(input);
-}
-},{}],24:[function(require,module,exports){
-module.exports = require('./dist/commonjs/index.js').default;
-
-},{"./dist/commonjs/index.js":22}],25:[function(require,module,exports){
 'use strict';
 
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
@@ -3096,12 +2892,12 @@ var i18next = new I18n();
 
 module.exports = i18next;
 
-},{"@babel/runtime/helpers/assertThisInitialized":4,"@babel/runtime/helpers/classCallCheck":5,"@babel/runtime/helpers/createClass":6,"@babel/runtime/helpers/getPrototypeOf":8,"@babel/runtime/helpers/inherits":9,"@babel/runtime/helpers/objectSpread":14,"@babel/runtime/helpers/possibleConstructorReturn":15,"@babel/runtime/helpers/slicedToArray":17,"@babel/runtime/helpers/toConsumableArray":18,"@babel/runtime/helpers/typeof":19}],26:[function(require,module,exports){
+},{"@babel/runtime/helpers/assertThisInitialized":4,"@babel/runtime/helpers/classCallCheck":5,"@babel/runtime/helpers/createClass":6,"@babel/runtime/helpers/getPrototypeOf":8,"@babel/runtime/helpers/inherits":9,"@babel/runtime/helpers/objectSpread":14,"@babel/runtime/helpers/possibleConstructorReturn":15,"@babel/runtime/helpers/slicedToArray":17,"@babel/runtime/helpers/toConsumableArray":18,"@babel/runtime/helpers/typeof":19}],23:[function(require,module,exports){
 'use strict';
 
 module.exports = require('./lib')
 
-},{"./lib":31}],27:[function(require,module,exports){
+},{"./lib":28}],24:[function(require,module,exports){
 'use strict';
 
 var asap = require('asap/raw');
@@ -3316,7 +3112,7 @@ function doResolve(fn, promise) {
   }
 }
 
-},{"asap/raw":21}],28:[function(require,module,exports){
+},{"asap/raw":21}],25:[function(require,module,exports){
 'use strict';
 
 var Promise = require('./core.js');
@@ -3331,7 +3127,7 @@ Promise.prototype.done = function (onFulfilled, onRejected) {
   });
 };
 
-},{"./core.js":27}],29:[function(require,module,exports){
+},{"./core.js":24}],26:[function(require,module,exports){
 'use strict';
 
 //This file contains the ES6 extensions to the core Promises/A+ API
@@ -3440,7 +3236,7 @@ Promise.prototype['catch'] = function (onRejected) {
   return this.then(null, onRejected);
 };
 
-},{"./core.js":27}],30:[function(require,module,exports){
+},{"./core.js":24}],27:[function(require,module,exports){
 'use strict';
 
 var Promise = require('./core.js');
@@ -3458,7 +3254,7 @@ Promise.prototype.finally = function (f) {
   });
 };
 
-},{"./core.js":27}],31:[function(require,module,exports){
+},{"./core.js":24}],28:[function(require,module,exports){
 'use strict';
 
 module.exports = require('./core.js');
@@ -3468,7 +3264,7 @@ require('./es6-extensions.js');
 require('./node-extensions.js');
 require('./synchronous.js');
 
-},{"./core.js":27,"./done.js":28,"./es6-extensions.js":29,"./finally.js":30,"./node-extensions.js":32,"./synchronous.js":33}],32:[function(require,module,exports){
+},{"./core.js":24,"./done.js":25,"./es6-extensions.js":26,"./finally.js":27,"./node-extensions.js":29,"./synchronous.js":30}],29:[function(require,module,exports){
 'use strict';
 
 // This file contains then/promise specific extensions that are only useful
@@ -3600,7 +3396,7 @@ Promise.prototype.nodeify = function (callback, ctx) {
   });
 };
 
-},{"./core.js":27,"asap":20}],33:[function(require,module,exports){
+},{"./core.js":24,"asap":20}],30:[function(require,module,exports){
 'use strict';
 
 var Promise = require('./core.js');
@@ -3664,4 +3460,4 @@ Promise.disableSynchronous = function() {
   Promise.prototype.getState = undefined;
 };
 
-},{"./core.js":27}]},{},[1]);
+},{"./core.js":24}]},{},[1]);

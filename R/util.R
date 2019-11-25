@@ -17,7 +17,9 @@ read_file <- function(path) {
 ## always want a path to the input?
 read_input <- function(x, name = deparse(substitute(x))) {
   if (is.null(x)) {
-    return(V8::JS("{}"))
+    ## This might need to be tuneable - for the initial load we need a
+    ## null at least.
+    return(jsonlite::unbox("null"))
   }
   if (read_input_is_filename(x)) {
     if (!file.exists(x)) {
@@ -26,7 +28,12 @@ read_input <- function(x, name = deparse(substitute(x))) {
     }
     x <- read_file(x)
   }
-  V8::JS(x)
+
+  tryCatch(
+    jsonlite::fromJSON(x),
+    error = function(e) stop("Failed to parse json input: ", e$message))
+
+  jsonlite::unbox(x)
 }
 
 

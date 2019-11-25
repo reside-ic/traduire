@@ -4,16 +4,33 @@
 \alias{i18n}
 \title{Create translator object}
 \usage{
-i18n(translations, language = NULL, default_namespace = NULL)
+i18n(
+  resources,
+  language = NULL,
+  default_namespace = NULL,
+  debug = FALSE,
+  resource_pattern = NULL
+)
 }
 \arguments{
-\item{translations}{Path to a json file containing translations}
+\item{resources}{Path to a json file containing translation
+resources. If given in this way, then on-demand translation
+loading (via \code{resource_pattern}) is disabled unless a
+currently unexposed i18next option is used.}
 
 \item{language}{The default language for the translation}
 
 \item{default_namespace}{The default namespace to use.  If not
 given, then \code{i18next} assumes the namespace
 \code{translation}}
+
+\item{debug}{Logical, indicating if i18next's debug output should
+be turned on.  This will result in lots of output via
+\code{message} about various i18next actions.}
+
+\item{resource_pattern}{A pattern to use for on-demand loading of
+translation resources.  Only works if \code{translations} is
+\code{NULL} at present.}
 }
 \description{
 Create a new translator object

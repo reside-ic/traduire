@@ -48,9 +48,9 @@
 ##' traduire::translator_register(path, name = "myexample")
 ##' traduire::t_("hello", language = "fr", name = "myexample")
 ##' traduire::translator_unregister("myexample")
-translator_register <- function(translations, language = NULL, name = NULL) {
+translator_register <- function(resources, language = NULL, name = NULL) {
   name <- name_from_context(name)
-  translators[[name]] <- i18n(translations, language)
+  translators[[name]] <- i18n(resources, language)
 }
 
 

@@ -1,7 +1,10 @@
 ##' Create a new translator object
 ##' @title Create translator object
 ##'
-##' @param translations Path to a json file containing translations
+##' @param resources Path to a json file containing translation
+##'   resources. If given in this way, then on-demand translation
+##'   loading (via \code{resource_pattern}) is disabled unless a
+##'   currently unexposed i18next option is used.
 ##'
 ##' @param language The default language for the translation
 ##'
@@ -9,15 +12,25 @@
 ##'   given, then \code{i18next} assumes the namespace
 ##'   \code{translation}
 ##'
+##' @param debug Logical, indicating if i18next's debug output should
+##'   be turned on.  This will result in lots of output via
+##'   \code{message} about various i18next actions.
+##'
+##' @param resource_pattern A pattern to use for on-demand loading of
+##'   translation resources.  Only works if \code{translations} is
+##'   \code{NULL} at present.
+##'
 ##' @export
 ##' @examples
 ##' path <- system.file("examples/simple.json", package = "traduire")
 ##' obj <- traduire::i18n(path)
 ##' obj$t("hello", language = "fr")
-i18n <- function(translations, language = NULL, default_namespace = NULL) {
+i18n <- function(resources, language = NULL, default_namespace = NULL,
+                 debug = FALSE, resource_pattern = NULL) {
   ## TODO: better defaults here, but there's lots to consider with
   ## fallbacks still
-  R6_i18n$new(translations, language %||% "en", default_namespace)
+  R6_i18n$new(resources, language %||% "en", default_namespace,
+              debug, resource_pattern)
 }
 
 
@@ -26,15 +39,18 @@ R6_i18n <- R6::R6Class(
 
   cloneable = FALSE,
   private = list(
-    context = NULL
+    context = NULL,
+    address = NULL
   ),
 
   public = list(
-    initialize = function(translations, language, default_namespace) {
-      translations_js <- read_input(translations)
+    initialize = function(resources, language, default_namespace,
+                          debug, resource_pattern) {
+      resources_js <- read_input(resources)
       private$context <- V8::v8()
       private$context$source(traduire_file("js/bundle.js"))
-      private$context$call("init", translations_js, language, default_namespace)
+      private$context$call("init", resources_js, language,
+                           default_namespace, debug, resource_pattern)
     },
 
     t = function(string, data = NULL, language = NULL, count = NULL,
@@ -90,6 +106,11 @@ R6_i18n <- R6::R6Class(
       private$context$call("i18next.addResourceBundle",
                            language, namespace, bundle_js, deep, overwrite)
       invisible(self)
+    },
+
+    load_namespaces = function(namespaces) {
+      private$context$call("i18next.loadNamespaces", namespaces)
+      invisible(self)
     }
   )
 )
@@ -128,4 +149,20 @@ i18n_replace1 <- function(text, t) {
   ## and it's not obviously documented what that class is actually
   ## *for*.
   unclass(res)
+}
+
+
+## The debug level here should be tuneable, and that will be easiest
+## to do once the logging backend is done.
+i18n_backend_read <- function(pattern, language, namespace) {
+  data <- list(language = language, namespace = namespace)
+  path <- glue::glue(pattern, .envir = data)
+  tryCatch(
+    read_input(path),
+    error = function(e) {
+      message(sprintf(
+        "Tried to load language:%s, namespace:%s but failed (%s)",
+        language, namespace, e$message))
+      return(jsonlite::unbox("null"))
+    })
 }
