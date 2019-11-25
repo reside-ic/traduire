@@ -2,7 +2,7 @@
     "en": {
         "translation": {
             "nocols": "Data missing column {{missing}}",
-            "nocols_plural": "Data missing columns {{missing}}",
+            "nocols_plural": "Data missing columns {{missing}}"
         }
     },
 
