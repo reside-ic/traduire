@@ -4,4 +4,4 @@
 ^\.travis\.yml$
 ^docs$
 ^js$
-^\.V8history$
+\.V8history$
