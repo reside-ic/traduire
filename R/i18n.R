@@ -190,9 +190,11 @@ i18n_backend_read <- function(pattern, language, namespace) {
   tryCatch(
     read_input(path),
     error = function(e) {
-      message(sprintf(
-        "Tried to load language:%s, namespace:%s but failed (%s)",
-        language, namespace, e$message))
+      if (language != "dev") {
+        message(sprintf(
+          "Tried to load language:%s, namespace:%s but failed (%s)",
+          language, namespace, e$message))
+      }
       return(jsonlite::unbox("null"))
     })
 }
