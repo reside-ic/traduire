@@ -1,4 +1,11 @@
 ##' Create a new translator object
+##'
+##' @section Warning:
+##'
+##' Note that the argument list here \emph{will} change.  The only
+##'   part of this that we consider stable is that the first argument
+##'   will represent a resource bundle.
+##'
 ##' @title Create translator object
 ##'
 ##' @param resources Path to a json file containing translation

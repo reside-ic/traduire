@@ -35,6 +35,14 @@ translation resources.  Only works if \code{translations} is
 \description{
 Create a new translator object
 }
+\section{Warning}{
+
+
+Note that the argument list here \emph{will} change.  The only
+  part of this that we consider stable is that the first argument
+  will represent a resource bundle.
+}
+
 \examples{
 path <- system.file("examples/simple.json", package = "traduire")
 obj <- traduire::i18n(path)
