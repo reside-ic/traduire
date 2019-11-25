@@ -111,6 +111,11 @@ R6_i18n <- R6::R6Class(
     load_namespaces = function(namespaces) {
       private$context$call("i18next.loadNamespaces", namespaces)
       invisible(self)
+    },
+
+    load_languages = function(languages) {
+      private$context$call("i18next.loadLanguages", languages)
+      invisible(self)
     }
   )
 )
