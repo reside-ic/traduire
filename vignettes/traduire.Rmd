@@ -353,3 +353,26 @@ obj$add_resource_bundle("fr", "common", file.path(path, "fr-common.json"))
 obj$add_resource_bundle("fr", "login", file.path(path, "fr-login.json"))
 obj$t("login:password", language = "fr")
 ```
+
+This is clearly going to be error prone to do with a large number of translation files, though a loop could help:
+
+```{r}
+obj <- traduire::i18n(NULL)
+for (language in c("en", "fr")) {
+  for (namespace in c("common", "login")) {
+    bundle <- file.path(path, sprintf("%s-%s.json", language, namespace))
+    obj$add_resource_bundle(language, namespace, bundle)
+  }
+}
+obj$t("login:password", language = "fr")
+```
+
+An alternative is to pass in the pattern used to locate these files, though this approach works best if you also declare your namespaces and languages up front.  The pattern uses glue's syntax, and the pattern must include placeholders `language` and `namespace` (and no others):
+
+```{r}
+pattern <- file.path(path, "{language}-{namespace}.json")
+obj <- traduire::i18n(NULL, resource_pattern = pattern,
+                      languages = c("en", "fr"),
+                      namespaces = c("common", "login"))
+obj$t("login:password", language = "fr")
+```
