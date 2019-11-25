@@ -10,7 +10,8 @@ i18n(
   default_namespace = NULL,
   debug = FALSE,
   resource_pattern = NULL,
-  namespaces = NULL
+  namespaces = NULL,
+  languages = NULL
 )
 }
 \arguments{
@@ -41,6 +42,11 @@ the only loaded namespace.  This creates some issues if
 \code{default_namespace} is set here, as the default namespace
 will not be loaded.  A future version of this package will
 probably do better with the logic here.}
+
+\item{languages}{A vector of languages to \emph{preload}. You can
+always add additional languages using the \code{load_language}
+method.  Note that the adding a language here does not (yet)
+mean that failure to load the language is an error.}
 }
 \description{
 Create a new translator object

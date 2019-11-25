@@ -36,17 +36,23 @@
 ##'   will not be loaded.  A future version of this package will
 ##'   probably do better with the logic here.
 ##'
+##' @param languages A vector of languages to \emph{preload}. You can
+##'   always add additional languages using the \code{load_language}
+##'   method.  Note that the adding a language here does not (yet)
+##'   mean that failure to load the language is an error.
+##'
 ##' @export
 ##' @examples
 ##' path <- system.file("examples/simple.json", package = "traduire")
 ##' obj <- traduire::i18n(path)
 ##' obj$t("hello", language = "fr")
 i18n <- function(resources, language = NULL, default_namespace = NULL,
-                 debug = FALSE, resource_pattern = NULL, namespaces = NULL) {
+                 debug = FALSE, resource_pattern = NULL, namespaces = NULL,
+                 languages = NULL) {
   ## TODO: better defaults for language, but there's lots to consider
   ## with fallbacks still
   R6_i18n$new(resources, language %||% "en", default_namespace,
-              debug, resource_pattern, namespaces)
+              debug, resource_pattern, namespaces, languages)
 }
 
 
@@ -61,13 +67,13 @@ R6_i18n <- R6::R6Class(
 
   public = list(
     initialize = function(resources, language, default_namespace,
-                          debug, resource_pattern, namespaces) {
+                          debug, resource_pattern, namespaces, languages) {
       resources_js <- read_input(resources)
       private$context <- V8::v8()
       private$context$source(traduire_file("js/bundle.js"))
       private$context$call("init", resources_js, language,
                            default_namespace, debug, resource_pattern,
-                           namespaces)
+                           namespaces, languages)
     },
 
     t = function(string, data = NULL, language = NULL, count = NULL,
