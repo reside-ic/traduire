@@ -57,6 +57,10 @@ global.default_namespace = function() {
     return i18next.options.defaultNS;
 };
 
+global.addResourceBundle = function(lng, ns, resources, deep, overwrite) {
+    i18next.addResourceBundle(lng, ns, JSON.parse(resources), deep, overwrite);
+}
+
 global.traduireLoader = function() {
     return {
         type: 'backend',

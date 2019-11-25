@@ -125,11 +125,11 @@ R6_i18n <- R6::R6Class(
       private$context$call("i18next.hasResourceBundle", language, namespace)
     },
 
-    add_resource_bundle = function(language, namespace, bundle,
+    add_resource_bundle = function(language, namespace, resources,
                                    deep = FALSE, overwrite = FALSE) {
-      bundle_js <- read_input(bundle)
-      private$context$call("i18next.addResourceBundle",
-                           language, namespace, bundle_js, deep, overwrite)
+      resources_js <- read_input(resources)
+      private$context$call("addResourceBundle",
+                           language, namespace, resources_js, deep, overwrite)
       invisible(self)
     },
 
