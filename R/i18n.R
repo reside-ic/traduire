@@ -47,8 +47,8 @@
 ##' obj <- traduire::i18n(path)
 ##' obj$t("hello", language = "fr")
 i18n <- function(resources, language = NULL, default_namespace = NULL,
-                 debug = FALSE, resource_pattern = NULL, namespaces = NULL,
-                 languages = NULL) {
+                 debug = FALSE, resource_pattern = NULL,
+                 namespaces = NULL, languages = NULL) {
   ## TODO: better defaults for language, but there's lots to consider
   ## with fallbacks still
   R6_i18n$new(resources, language %||% "en", default_namespace,
@@ -72,8 +72,11 @@ R6_i18n <- R6::R6Class(
       private$context <- V8::v8()
       private$context$source(traduire_file("js/bundle.js"))
       private$context$call("init", resources_js, language,
-                           default_namespace, debug, resource_pattern,
-                           namespaces, languages)
+                           safe_js_null(default_namespace),
+                           debug,
+                           safe_js_null(resource_pattern),
+                           namespaces %||% "translation",
+                           safe_js_null(languages))
     },
 
     t = function(string, data = NULL, language = NULL, count = NULL,

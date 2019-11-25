@@ -41,3 +41,11 @@ read_input_is_filename <- function(x) {
   RE_JSON <- "[{['\"]"
   !(length(x) != 1 || inherits(x, "AsIs") || grepl(RE_JSON, x))
 }
+
+
+safe_js_null <- function(x) {
+  if (is.null(x)) {
+    return(V8::JS("null"))
+  }
+  x
+}
