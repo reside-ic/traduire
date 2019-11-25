@@ -61,8 +61,7 @@ R6_i18n <- R6::R6Class(
 
   cloneable = FALSE,
   private = list(
-    context = NULL,
-    address = NULL
+    context = NULL
   ),
 
   public = list(
