@@ -346,7 +346,7 @@ lang_output("json", readLines(file.path(path, "en-login.json")))
 to allow this, we need to load the files one by one into the translation object, rather than as a single resource bundle.  To do this, we can use the `add_resource_bundle` method:
 
 ```{r}
-obj <- i18n(NULL)
+obj <- traduire::i18n(NULL)
 obj$add_resource_bundle("en", "common", file.path(path, "en-common.json"))
 obj$add_resource_bundle("en", "login", file.path(path, "en-login.json"))
 obj$add_resource_bundle("fr", "common", file.path(path, "fr-common.json"))
