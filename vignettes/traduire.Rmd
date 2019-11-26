@@ -97,7 +97,7 @@ The translation file looks like:
 ```{r, results = "asis", echo = FALSE}
 path_validation <- system.file("examples/validation.json",
                                package = "traduire", mustWork = TRUE)
-lang_output("json", readLines(path))
+lang_output("json", readLines(path_validation))
 ```
 
 where the `_plural` suffix is important for `i18next` for determining the string to return for a singular or plural case, and the `count` element determines if the string is singular or plural.
@@ -126,12 +126,12 @@ tr$t("nocols", list(missing = "A, B"), count = 2, language = "fr")
 
 The motivating use case we had was translating a json file for use in an [upstream web application](http://github.com/mrc-ide/hint), so the text to translate might contain data like:
 
-```
+```json
 {
   "id": "area_scope",
-  "label": "element label",
+  "label": "element_label",
   "type": "multiselect",
-  "description": "element description"
+  "description": "element_description"
 }
 ```
 
@@ -185,6 +185,8 @@ or, into French:
 writeLines(tr$replace(string, language = "fr"))
 ```
 
+Note that while the input text here is json, it could be anything at all, and will not be parsed as json.
+
 ## Use within a package
 
 We provide an optional workflow for using translations within a package, or some other piece of code where the translations will be fairly invasive to add, allowing you to write essentially:
@@ -212,7 +214,7 @@ The full package is included as an example within `traduire` at `system.file("he
 
 ```{r, results = "asis", echo = FALSE}
 path_hello <- system.file("hello", package = "traduire", mustWork = TRUE)
-writeLines(tree(path_hello, "hello"))
+lang_output("plain", tree(path_hello, "hello"))
 ```
 
 Below is the code in `hello.R`, which can say rough translations of "hello world" in a number of languages:
@@ -334,7 +336,7 @@ So far, this brings relatively little advantage as our file, while structured, i
 ```{r, results = "asis", echo = FALSE}
 path <- system.file("examples/structured", package = "traduire",
                     mustWork = TRUE)
-writeLines(tree(path, "structured"))
+lang_output("plain", tree(path, "structured"))
 ```
 
 where each file is orgnanised like:
