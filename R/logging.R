@@ -66,11 +66,11 @@
 ##'
 ##' # Then create a logger from this
 ##' path <- tempfile()
-##' traduire::traduire_logger(emit = file_appender(path))
+##' logger <- traduire::traduire_logger(emit = file_appender(path))
 ##'
 ##' # We can then pass that through to the constructor
 ##' resources <- system.file("examples/simple.json", package = "traduire")
-##' obj <- traduire::i18n(resources, logger = logger)
+##' obj <- traduire::i18n(resources, debug = TRUE, logger = logger)
 ##' obj$t("nonexistant")
 ##'
 ##' # Our missed key is present in the file
