@@ -22,7 +22,7 @@ api_set_language <- function(data, req, res) {
 ## And this wll be used to reset it to whatever was used at the start
 ## of the request.
 api_reset_language <- function(data, req, res, value) {
-  if (!is.null(data$reset)) {
+  if (!is.null(data$reset_language)) {
     data$reset_language()
   }
   value
