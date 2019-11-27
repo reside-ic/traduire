@@ -43,7 +43,7 @@
 ##'
 ##' @param logger An optional logger to use - if not given, a generic
 ##'   logger that prints to console using \code{\link{message}} will
-##'   be used.  PAss \code{FALSE} to prevent all logging output.  The
+##'   be used.  Pass \code{FALSE} to prevent all logging output.  The
 ##'   logger can be any function that accepts arguments \code{level}
 ##'   (the logging level - one of \code{info}, \code{warn} or
 ##'   \code{error}), \code{key} (a string, produced by \code{i18next})

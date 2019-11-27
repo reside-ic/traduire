@@ -339,7 +339,7 @@ path <- system.file("examples/structured", package = "traduire",
 lang_output("plain", tree(path, "structured"))
 ```
 
-where each file is orgnanised like:
+where each file is organised like:
 
 ```{r, results = "asis", echo = FALSE}
 lang_output("json", readLines(file.path(path, "en-login.json")))
@@ -420,7 +420,7 @@ formatter <- function(level, key, data) {
 }
 ```
 
-then we write an emmitter.  This will append the results to the file if the formatter marked the
+then we write an emitter.  This will append the results to the file if the formatter marked the
 
 ```{r}
 emitter <- function(dest) {
@@ -460,4 +460,4 @@ but it is logging translation misses:
 readLines(dest)
 ```
 
-We could swap out the emmitter to write directly to a database, or to print to screen as well.
+We could swap out the emitter to write directly to a database, or to print to screen as well.

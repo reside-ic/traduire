@@ -17,7 +17,7 @@ suitably transformed, but in any format.  This will be passed as
 suitable for the \code{data} element of the \code{emit}
 function.}
 
-\item{emit}{An emmitting function, used for its side effect of
+\item{emit}{An emitting function, used for its side effect of
 printing (or otherwise shipping) the log value.  You might use
 this to write to a file, log to a database, or log to the screen
 with different colours (perhaps using the \code{crayon} package,
@@ -35,17 +35,17 @@ it as a string suitable for display to screen, and then uses
 \code{message} to send it to the console.
 }
 \details{
-The \code{transform} stage will recieve data like \code{level =
+The \code{transform} stage will receive data like \code{level =
 "warn", key = "i18next::translator: missingKey", [...]} where the
 last value is an array of json values.  There is no reference as
 to what the keys or data might be, save for reading the
 \code{i18next} source code.  The default transformation attempts
-to unmarshal the json data in a sensible way, and will return
-either a named or an vector for the \code{data}.  We will try and
-improve this function, and hopefully this default \code{transform}
-stage will be generally useable.
+to load the returned the json data in a sensible way, and will
+return either a named or an vector for the \code{data}.  We will
+try and improve this function, and hopefully this default
+\code{transform} stage will be generally useable.
 
-The \code{format} function will recieve the same \code{level} and
+The \code{format} function will receive the same \code{level} and
 \code{key} values as \code{transform}, but whatever
 \code{transform} transforms the \code{data} into as its
 \code{data} argument, You can use transform to use alternative
