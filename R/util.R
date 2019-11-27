@@ -52,7 +52,7 @@ safe_js_null <- function(x) {
 
 
 env_to_name <- function(e) {
-  str <- capture.output(print(e))
+  str <- utils::capture.output(print(e))
   re <- "^<environment: 0x([[:xdigit:]]+)>$"
   stopifnot(is.environment(e), length(str) == 1, grepl(re, str))
   paste0("env", sub(re, "\\1", str))
