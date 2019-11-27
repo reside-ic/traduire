@@ -378,3 +378,86 @@ obj <- traduire::i18n(NULL, resource_pattern = pattern,
                       namespaces = c("common", "login"))
 obj$t("login:password", language = "fr")
 ```
+
+## Logging
+
+i18next provides logging at various levels of severity - informational messages are only enabled if `debug = TRUE` is passed to `traduire::i18n`.  This can be useful for learning about failed translations:
+
+```{r}
+path <- system.file("examples/simple.json", package = "traduire",
+                    mustWork = TRUE)
+tr <- traduire::i18n(path, "en", debug = TRUE)
+tr$t("nosuchkey")
+tr$t("nosuchkey", language = "fr")
+```
+
+The logging is customisable, so that you can control how the messages are formatted and where the information is logged to.
+
+For example, suppose we wanted to log all missed translations to a file.  We plan on working with this later programmatically so we want to create messages in the [`ndjson`](http://ndjson.org/) format, each of the form
+
+```json
+{"language": "en", "namespace": "translation", "key": "nosuchkey"}
+```
+
+First, we need a function like `writeLines` that will easily append to a file:
+
+```{r}
+append_lines <- function(text, file) {
+  con <- file(file, "a")
+  on.exit(close(con))
+  writeLines(text, con)
+}
+```
+
+Then we create a formatter.  Details are in the help for `traduire::traduire_logger`, but the function must take arguments `level`, `key` and `data` and may return any value.  Here we convert the processed cache miss data into a one-line json dictionary:
+
+```{r}
+formatter <- function(level, key, data) {
+  if (key == "i18next::translator: missingKey") {
+    list(collect = TRUE,
+         value = jsonlite::toJSON(data, pretty = FALSE, auto_unbox = TRUE))
+  }
+}
+```
+
+then we write an emmitter.  This will append the results to the file if the formatter marked the
+
+```{r}
+emitter <- function(dest) {
+  emit <- function(level, key, data) {
+    if (isTRUE(data$collect)) {
+      append_lines(data$value, dest)
+    }
+  }
+}
+```
+
+and use `traduire::traduire_logger` to put these together into a logger:
+
+```{r}
+dest <- tempfile()
+logger <- traduire::traduire_logger(format = formatter, emit = emitter(dest))
+```
+
+and pass that logger into `traduire::i18n`:
+
+```{r}
+path <- system.file("examples/simple.json", package = "traduire",
+                    mustWork = TRUE)
+tr <- traduire::i18n(path, "en", debug = TRUE, logger = logger)
+```
+
+The translator then runs silently
+
+```{r}
+tr$t("nosuchkey")
+tr$t("nosuchkey", language = "fr")
+```
+
+but it is logging translation misses:
+
+```{r}
+readLines(dest)
+```
+
+We could swap out the emmitter to write directly to a database, or to print to screen as well.
