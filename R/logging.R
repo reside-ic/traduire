@@ -138,7 +138,7 @@ traduire_logger_transform <- function(level, key, data) {
   if (key == "i18next: initialized") {
     data <- "<configuration options hidden>"
   } else if (key == "i18next::translator: missingKey") {
-    data <- from_json(data)
+    data <- as.list(from_json(data))
     names(data) <- c("language", "namespace", "key", "returning")
   } else {
     ## includes:
