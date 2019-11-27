@@ -35,7 +35,32 @@ it as a string suitable for display to screen, and then uses
 \code{message} to send it to the console.
 }
 \details{
+The \code{transform} stage will recieve data like \code{level =
+"warn", key = "i18next::translator: missingKey", [...]} where the
+last value is an array of json values.  There is no reference as
+to what the keys or data might be, save for reading the
+\code{i18next} source code.  The default transformation attempts
+to unmarshal the json data in a sensible way, and will return
+either a named or an vector for the \code{data}.  We will try and
+improve this function, and hopefully this default \code{transform}
+stage will be generally useable.
 
+The \code{format} function will recieve the same \code{level} and
+\code{key} values as \code{transform}, but whatever
+\code{transform} transforms the \code{data} into as its
+\code{data} argument, You can use transform to use alternative
+string interpolations that better suit your logging needs (e.g.,
+adding a timestamp, or other contextual information about the
+state of the application if you make that available through use of
+an appropriate closure.
+
+The \code{emit} function is the simplest and probably the most
+sensible to provide a custom value for. You can log to however
+many sources you want (e.g., both send to screen and to a
+database).  The return value is ignored.
+
+If you throw an error in any of these functions, it will not be
+caught.
 }
 \examples{
 # Create a closure that appends to a file

@@ -17,7 +17,7 @@
 ##' stage will be generally useable.
 ##'
 ##' The \code{format} function will recieve the same \code{level} and
-##' \code{key{} values as \code{transform}, but whatever
+##' \code{key} values as \code{transform}, but whatever
 ##' \code{transform} transforms the \code{data} into as its
 ##' \code{data} argument, You can use transform to use alternative
 ##' string interpolations that better suit your logging needs (e.g.,
@@ -108,16 +108,22 @@ loggers <- new.env(parent = emptyenv())
 
 
 logger_register <- function(private, logger) {
+  logger <- logger_validate(logger)
+  nm <- env_to_name(private)
+  loggers[[nm]] <- logger
+  reg.finalizer(private, function(e) rm(list = nm, envir = loggers))
+  nm
+}
+
+
+logger_validate <- function(logger) {
   if (is.null(logger)) {
     logger <- traduire_logger()
   } else if (identical(logger, FALSE)) {
     logger <- traduire_logger_silent()
   }
   stopifnot(is.function(logger))
-  nm <- env_to_name(private)
-  loggers[[nm]] <- logger
-  reg.finalizer(private, function(e) rm(list = nm, envir = loggers))
-  nm
+  logger
 }
 
 
@@ -134,7 +140,9 @@ traduire_logger_transform <- function(level, key, data) {
   } else if (key == "i18next::translator: missingKey") {
     data <- from_json(data)
     names(data) <- c("language", "namespace", "key", "returning")
-  } else if (key == "i18next: languageChanged") {
+  } else {
+    ## includes:
+    ##   i18next: languageChanged
     data <- from_json(data)
   }
   data
