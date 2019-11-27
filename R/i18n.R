@@ -41,6 +41,16 @@
 ##'   method.  Note that the adding a language here does not (yet)
 ##'   mean that failure to load the language is an error.
 ##'
+##' @param logger An optional logger to use - if not given, a generic
+##'   logger that prints to console using \code{\link{message}} will
+##'   be used.  PAss \code{FALSE} to prevent all logging output.  The
+##'   logger can be any function that accepts arguments \code{level}
+##'   (the logging level - one of \code{info}, \code{warn} or
+##'   \code{error}), \code{key} (a string, produced by \code{i18next})
+##'   and \code{data} (arbitrary data, as a string, representing a
+##'   JSON array).  Alternatively, see \code{\emph{traduire_logger}},
+##'   which provides an interface for tweaking the default logger.
+##'
 ##' @export
 ##' @examples
 ##' path <- system.file("examples/simple.json", package = "traduire")
@@ -48,11 +58,11 @@
 ##' obj$t("hello", language = "fr")
 i18n <- function(resources, language = NULL, default_namespace = NULL,
                  debug = FALSE, resource_pattern = NULL,
-                 namespaces = NULL, languages = NULL) {
+                 namespaces = NULL, languages = NULL, logger = NULL) {
   ## TODO: better defaults for language, but there's lots to consider
   ## with fallbacks still
   R6_i18n$new(resources, language %||% "en", default_namespace,
-              debug, resource_pattern, namespaces, languages)
+              debug, resource_pattern, namespaces, languages, logger)
 }
 
 
@@ -61,13 +71,16 @@ R6_i18n <- R6::R6Class(
 
   cloneable = FALSE,
   private = list(
-    context = NULL
+    context = NULL,
+    logger = NULL
   ),
 
   public = list(
     initialize = function(resources, language, default_namespace,
-                          debug, resource_pattern, namespaces, languages) {
+                          debug, resource_pattern, namespaces, languages,
+                          logger) {
       resources_js <- read_input(resources)
+      name_logger <- logger_register(private, logger)
       private$context <- V8::v8()
       private$context$source(traduire_file("js/bundle.js"))
       private$context$call("init", resources_js, language,
@@ -75,7 +88,8 @@ R6_i18n <- R6::R6Class(
                            debug,
                            safe_js_null(resource_pattern),
                            namespaces %||% "translation",
-                           safe_js_null(languages))
+                           safe_js_null(languages),
+                           name_logger)
     },
 
     t = function(string, data = NULL, language = NULL, count = NULL,

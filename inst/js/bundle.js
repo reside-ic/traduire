@@ -13,7 +13,7 @@ global.Promise = require("promise");
 global.i18next = require("i18next");
 
 global.init = function(resources, lng, defaultNS, debug, resourcePattern,
-                       namespaces, languages) {
+                       namespaces, languages, loggerName) {
     var options = {
         "lng": lng,
         // it's important that 'resources' comes through as null, not
@@ -35,6 +35,7 @@ global.init = function(resources, lng, defaultNS, debug, resourcePattern,
     }
     global.i18next
         .use(traduireLoader())
+        .use(traduireLogger(loggerName))
         .init(options);
     return true;
 }
@@ -90,6 +91,28 @@ global.traduireLoader = function() {
         }
     }
 };
+
+// For some reason the logger does not get an init method, so we have
+// to do the initialisation via an argument to the closure.
+global.traduireLogger = function(name) {
+    return {
+        type: "logger",
+        sendMessage: function(level, args) {
+            var data = JSON.stringify(args.slice(1));
+            var payload = [name, level, args[0], data];
+            console.r.call("traduire:::traduire_logger_call", payload);
+        },
+        log: function(args) {
+            this.sendMessage("info", args);
+        },
+        warn: function(args) {
+            this.sendMessage("warn", args);
+        },
+        error: function(args) {
+            this.sendMessage("error", args);
+        }
+    }
+}
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"i18next":22,"promise":23}],2:[function(require,module,exports){

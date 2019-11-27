@@ -11,7 +11,8 @@ i18n(
   debug = FALSE,
   resource_pattern = NULL,
   namespaces = NULL,
-  languages = NULL
+  languages = NULL,
+  logger = NULL
 )
 }
 \arguments{
@@ -47,6 +48,16 @@ probably do better with the logic here.}
 always add additional languages using the \code{load_language}
 method.  Note that the adding a language here does not (yet)
 mean that failure to load the language is an error.}
+
+\item{logger}{An optional logger to use - if not given, a generic
+logger that prints to console using \code{\link{message}} will
+be used.  PAss \code{FALSE} to prevent all logging output.  The
+logger can be any function that accepts arguments \code{level}
+(the logging level - one of \code{info}, \code{warn} or
+\code{error}), \code{key} (a string, produced by \code{i18next})
+and \code{data} (arbitrary data, as a string, representing a
+JSON array).  Alternatively, see \code{\emph{traduire_logger}},
+which provides an interface for tweaking the default logger.}
 }
 \description{
 Create a new translator object
