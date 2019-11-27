@@ -48,7 +48,7 @@
 ##'   (the logging level - one of \code{info}, \code{warn} or
 ##'   \code{error}), \code{key} (a string, produced by \code{i18next})
 ##'   and \code{data} (arbitrary data, as a string, representing a
-##'   JSON array).  Alternatively, see \code{\emph{traduire_logger}},
+##'   JSON array).  Alternatively, see \code{\link{traduire_logger}},
 ##'   which provides an interface for tweaking the default logger.
 ##'
 ##' @export
