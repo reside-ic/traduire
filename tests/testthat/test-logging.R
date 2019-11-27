@@ -54,7 +54,7 @@ test_that("default transform", {
   expect_equal(
     traduire_logger_transform("info", "i18next::translator: missingKey",
                               '["a", "b", "c", "d"]'),
-    c(language = "a", namespace = "b", key = "c", returning = "d"))
+    list(language = "a", namespace = "b", key = "c", returning = "d"))
   expect_equal(
     traduire_logger_transform("info", "i18next: languageChanged", '["en"]'),
     "en")
@@ -96,4 +96,27 @@ test_that("validate logger - disabled", {
 test_that("validate logger - custom", {
   logger <- function(level, key, data) message("the log")
   expect_identical(logger_validate(logger), logger)
+})
+
+
+test_that("integrate logging into object", {
+  file_appender <- function(path) {
+    function(level, key, data) {
+      con <- file(path, "a")
+      on.exit(close(con))
+      writeLines(data, con)
+    }
+  }
+
+  path <- tempfile()
+  logger <- traduire_logger(emit = file_appender(path))
+  resources <- traduire_file("examples/simple.json")
+  obj <- traduire::i18n(resources, debug = TRUE, logger = logger)
+  obj$t("nonexistant")
+  lines <- readLines(path)
+
+  expect_match(
+    lines[[length(lines)]],
+    "i18next::translator: missingKey - language: en, namespace: translation",
+    fixed = TRUE)
 })
