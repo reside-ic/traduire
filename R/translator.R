@@ -42,7 +42,13 @@
 ##'   break.  This may get tightened up at some point (RESIDE-79).
 ##'
 ##' @title Register a translator
-##' @inheritParams i18n
+##'
+##' @param ... For \code{translator_register}, arguments passed to
+##'   \code{\link{i18n}} to build the translator object.  All
+##'   arguments are accepted.  For \code{translator_translate} and
+##'   \code{t_}, arguments passed to the \code{$t} method of the
+##'   translator object, being \code{string}, \code{data},
+##'   \code{language} etc.
 ##'
 ##' @param name Optional name for the translator.  If omitted, this
 ##'   will be determined automatically if called from package code
@@ -55,9 +61,9 @@
 ##' traduire::t_("hello", language = "fr", name = "myexample")
 ##' "myexample" %in% traduire::translator_list()
 ##' traduire::translator_unregister("myexample")
-translator_register <- function(resources, language = NULL, name = NULL) {
+translator_register <- function(..., name = NULL) {
   name <- name_from_context(name)
-  translators[[name]] <- i18n(resources, language)
+  translators[[name]] <- i18n(...)
 }
 
 
@@ -69,10 +75,6 @@ translator_unregister <- function(name = NULL) {
 }
 
 
-##' @param ... Arguments passed to \code{\link{i18n}}'s \code{t}
-##'   method, being \code{string}, \code{data}, \code{language} etc.
-##'
-##' @inheritParams translator_register
 ##' @export
 ##' @rdname translator
 translator_translate <- function(..., name = NULL) {
