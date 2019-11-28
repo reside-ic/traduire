@@ -7,6 +7,7 @@
 \alias{t_}
 \alias{translator}
 \alias{translator_set_language}
+\alias{translator_list}
 \title{Register a translator}
 \usage{
 translator_register(resources, language = NULL, name = NULL)
@@ -20,6 +21,8 @@ t_(..., name = NULL)
 translator(name = NULL)
 
 translator_set_language(language, name = NULL)
+
+translator_list()
 }
 \arguments{
 \item{resources}{Path to a json file containing translation
@@ -76,9 +79,18 @@ Every package's translator object is isolated from every other
   automatically.
 }
 
+\section{Warning}{
+
+
+Do not use \code{translator_unregister} on someone elses's
+  translator, particularly not in package code, or things will
+  break.  This may get tightened up at some point (RESIDE-79).
+}
+
 \examples{
 path <- system.file("examples/simple.json", package = "traduire")
 traduire::translator_register(path, name = "myexample")
 traduire::t_("hello", language = "fr", name = "myexample")
+"myexample" \%in\% traduire::translator_list()
 traduire::translator_unregister("myexample")
 }

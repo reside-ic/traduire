@@ -35,6 +35,12 @@
 ##'   your package code, then the correct translator should be found
 ##'   automatically.
 ##'
+##' @section Warning:
+##'
+##' Do not use \code{translator_unregister} on someone elses's
+##'   translator, particularly not in package code, or things will
+##'   break.  This may get tightened up at some point (RESIDE-79).
+##'
 ##' @title Register a translator
 ##' @inheritParams i18n
 ##'
@@ -47,6 +53,7 @@
 ##' path <- system.file("examples/simple.json", package = "traduire")
 ##' traduire::translator_register(path, name = "myexample")
 ##' traduire::t_("hello", language = "fr", name = "myexample")
+##' "myexample" %in% traduire::translator_list()
 ##' traduire::translator_unregister("myexample")
 translator_register <- function(resources, language = NULL, name = NULL) {
   name <- name_from_context(name)
@@ -97,6 +104,13 @@ translator <- function(name = NULL) {
 ##' @rdname translator
 translator_set_language <- function(language, name = NULL) {
   translator(name)$set_language(language)
+}
+
+
+##' @rdname translator
+##' @export
+translator_list <- function() {
+  names(translators)
 }
 
 
