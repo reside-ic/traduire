@@ -4,16 +4,61 @@
 \alias{i18n}
 \title{Create translator object}
 \usage{
-i18n(translations, language = NULL)
+i18n(
+  resources,
+  language = NULL,
+  default_namespace = NULL,
+  debug = FALSE,
+  resource_pattern = NULL,
+  namespaces = NULL,
+  languages = NULL
+)
 }
 \arguments{
-\item{translations}{Path to a json file containing translations}
+\item{resources}{Path to a json file containing translation
+resources. If given in this way, then on-demand translation
+loading (via \code{resource_pattern}) is disabled unless a
+currently unexposed i18next option is used.}
 
 \item{language}{The default language for the translation}
+
+\item{default_namespace}{The default namespace to use.  If not
+given, then \code{i18next} assumes the namespace
+\code{translation}}
+
+\item{debug}{Logical, indicating if i18next's debug output should
+be turned on.  This will result in lots of output via
+\code{message} about various i18next actions.}
+
+\item{resource_pattern}{A pattern to use for on-demand loading of
+translation resources.  Only works if \code{translations} is
+\code{NULL} at present.}
+
+\item{namespaces}{A vector of namespaces to load. Namespaces not
+listed here may not be loaded as expected (use \code{debug =
+TRUE} to work out what is going on).  The default (\code{NULL})
+will use i18next's logic, which is to use \code{translation} as
+the only loaded namespace.  This creates some issues if
+\code{default_namespace} is set here, as the default namespace
+will not be loaded.  A future version of this package will
+probably do better with the logic here.}
+
+\item{languages}{A vector of languages to \emph{preload}. You can
+always add additional languages using the \code{load_language}
+method.  Note that the adding a language here does not (yet)
+mean that failure to load the language is an error.}
 }
 \description{
 Create a new translator object
 }
+\section{Warning}{
+
+
+Note that the argument list here \emph{will} change.  The only
+  part of this that we consider stable is that the first argument
+  will represent a resource bundle.
+}
+
 \examples{
 path <- system.file("examples/simple.json", package = "traduire")
 obj <- traduire::i18n(path)

@@ -97,7 +97,7 @@ The translation file looks like:
 ```{r, results = "asis", echo = FALSE}
 path_validation <- system.file("examples/validation.json",
                                package = "traduire", mustWork = TRUE)
-lang_output("json", readLines(path))
+lang_output("json", readLines(path_validation))
 ```
 
 where the `_plural` suffix is important for `i18next` for determining the string to return for a singular or plural case, and the `count` element determines if the string is singular or plural.
@@ -126,12 +126,12 @@ tr$t("nocols", list(missing = "A, B"), count = 2, language = "fr")
 
 The motivating use case we had was translating a json file for use in an [upstream web application](http://github.com/mrc-ide/hint), so the text to translate might contain data like:
 
-```
+```json
 {
   "id": "area_scope",
-  "label": "element label",
+  "label": "element_label",
   "type": "multiselect",
-  "description": "element description"
+  "description": "element_description"
 }
 ```
 
@@ -185,6 +185,8 @@ or, into French:
 writeLines(tr$replace(string, language = "fr"))
 ```
 
+Note that while the input text here is json, it could be anything at all, and will not be parsed as json.
+
 ## Use within a package
 
 We provide an optional workflow for using translations within a package, or some other piece of code where the translations will be fairly invasive to add, allowing you to write essentially:
@@ -212,7 +214,7 @@ The full package is included as an example within `traduire` at `system.file("he
 
 ```{r, results = "asis", echo = FALSE}
 path_hello <- system.file("hello", package = "traduire", mustWork = TRUE)
-writeLines(tree(system.file("hello", package = "traduire"), "hello"))
+lang_output("plain", tree(path_hello, "hello"))
 ```
 
 Below is the code in `hello.R`, which can say rough translations of "hello world" in a number of languages:
@@ -288,4 +290,91 @@ $ curl -H "Accept-Language: ko" http://localhost:8888/hello/cat
            \| | |_|/\
       jgs  //_// ___/
                \_)
+```
+
+## Namespaces, and the structure of translation files
+
+This section outlines how to write the translation (json) files, alongside a discussion of using namespaces.  Consider again the first example:
+
+```{r, results = "asis", echo = FALSE}
+path <- system.file("examples/simple.json", package = "traduire",
+                    mustWork = TRUE)
+lang_output("json", readLines(path))
+```
+
+In this format, the top level keys (`en`, `fr`) represent _languages_ and the next level key (`translation`) which appears redundant represents a [_namespace_](https://www.i18next.com/principles/namespaces).  A translation set can have multiple namespaces, which can help with organising a large set of strings, and can be used to split the file up over smaller files that might be easier to work with (see below).
+
+Below, we have file with two namespaces, `common` and `login`.  These might represent strings used throughout the application and in a login component, for example.
+
+```{r, results = "asis", echo = FALSE}
+path <- system.file("examples/namespaces.json", package = "traduire",
+                    mustWork = TRUE)
+lang_output("json", readLines(path))
+```
+
+When constructing the translator object we can provide a default namespace (it defaults to `translation`):
+
+```{r}
+tr <- traduire::i18n(path, default_namespace = "common")
+```
+
+Keys that are provided without an explicit namespace, will be looked up in the default namespace:
+
+```{r}
+tr$t("hello")
+```
+
+or provide a namespace when looking up keys:
+
+```{r}
+tr$t("common:hello", language = "fr")
+tr$t("login:username", language = "fr")
+```
+
+So far, this brings relatively little advantage as our file, while structured, is still going to end up really large as all the files end up in it.  So we might want to break it up like so:
+
+```{r, results = "asis", echo = FALSE}
+path <- system.file("examples/structured", package = "traduire",
+                    mustWork = TRUE)
+lang_output("plain", tree(path, "structured"))
+```
+
+where each file is orgnanised like:
+
+```{r, results = "asis", echo = FALSE}
+lang_output("json", readLines(file.path(path, "en-login.json")))
+```
+
+to allow this, we need to load the files one by one into the translation object, rather than as a single resource bundle.  To do this, we can use the `add_resource_bundle` method:
+
+```{r}
+obj <- traduire::i18n(NULL)
+obj$add_resource_bundle("en", "common", file.path(path, "en-common.json"))
+obj$add_resource_bundle("en", "login", file.path(path, "en-login.json"))
+obj$add_resource_bundle("fr", "common", file.path(path, "fr-common.json"))
+obj$add_resource_bundle("fr", "login", file.path(path, "fr-login.json"))
+obj$t("login:password", language = "fr")
+```
+
+This is clearly going to be error prone to do with a large number of translation files, though a loop could help:
+
+```{r}
+obj <- traduire::i18n(NULL)
+for (language in c("en", "fr")) {
+  for (namespace in c("common", "login")) {
+    bundle <- file.path(path, sprintf("%s-%s.json", language, namespace))
+    obj$add_resource_bundle(language, namespace, bundle)
+  }
+}
+obj$t("login:password", language = "fr")
+```
+
+An alternative is to pass in the pattern used to locate these files, though this approach works best if you also declare your namespaces and languages up front.  The pattern uses glue's syntax, and the pattern must include placeholders `language` and `namespace` (and no others):
+
+```{r}
+pattern <- file.path(path, "{language}-{namespace}.json")
+obj <- traduire::i18n(NULL, resource_pattern = pattern,
+                      languages = c("en", "fr"),
+                      namespaces = c("common", "login"))
+obj$t("login:password", language = "fr")
 ```

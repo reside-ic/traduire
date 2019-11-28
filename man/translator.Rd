@@ -9,7 +9,7 @@
 \alias{translator_set_language}
 \title{Register a translator}
 \usage{
-translator_register(translations, language = NULL, name = NULL)
+translator_register(resources, language = NULL, name = NULL)
 
 translator_unregister(name = NULL)
 
@@ -22,7 +22,10 @@ translator(name = NULL)
 translator_set_language(language, name = NULL)
 }
 \arguments{
-\item{translations}{Path to a json file containing translations}
+\item{resources}{Path to a json file containing translation
+resources. If given in this way, then on-demand translation
+loading (via \code{resource_pattern}) is disabled unless a
+currently unexposed i18next option is used.}
 
 \item{language}{Language to use, passed through to
 \code{\link{i18n}}'s \code{set_language} method}

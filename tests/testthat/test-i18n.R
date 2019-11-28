@@ -116,3 +116,59 @@ test_that("replace retains names on multiline strings", {
   expect_equal(obj$replace(x), y)
   expect_equal(obj$replace(unname(x)), unname(y))
 })
+
+
+test_that("can access keys in different namespaces", {
+  ## TODO: t("hello") is not great here if the default namespace is
+  ## not set.
+  obj <- i18n(traduire_file("examples/namespaces.json"),
+              default_namespace = "common")
+  expect_equal(obj$t("hello"), "hello world")
+  expect_equal(obj$t("common:hello"), "hello world")
+  expect_equal(obj$t("login:username"), "Username")
+})
+
+
+test_that("can set default namespace, and reset it later", {
+  obj <- i18n(traduire_file("examples/namespaces.json"),
+              default_namespace = "common")
+  expect_equal(obj$default_namespace(), "common")
+  res <- withVisible(
+    obj$set_default_namespace("login"))
+  expect_is(res$value, "function")
+  expect_false(res$visible)
+  expect_equal(obj$default_namespace(), "login")
+  res$value()
+  expect_equal(obj$default_namespace(), "common")
+})
+
+
+test_that("test resource bundles exist", {
+  obj <- i18n(traduire_file("examples/namespaces.json"),
+              default_namespace = "common")
+  expect_true(obj$has_resource_bundle("en", "login"))
+  expect_false(obj$has_resource_bundle("en", "logout"))
+  expect_false(obj$has_resource_bundle("gr", "login"))
+})
+
+
+test_that("load resource bundles", {
+  obj <- i18n(NULL, default_namespace = "common")
+  expect_false(obj$has_resource_bundle("en", "common"))
+  obj$add_resource_bundle("en", "common",
+                          traduire_file("examples/structured/en-common.json"))
+  obj$add_resource_bundle("en", "login",
+                          traduire_file("examples/structured/en-login.json"))
+  obj$add_resource_bundle("fr", "common",
+                          traduire_file("examples/structured/fr-common.json"))
+
+  expect_true(obj$has_resource_bundle("en", "common"))
+  expect_true(obj$has_resource_bundle("en", "login"))
+  expect_true(obj$has_resource_bundle("fr", "common"))
+  expect_false(obj$has_resource_bundle("fr", "login"))
+
+  expect_equal(obj$t("hello"), "hello world")
+  expect_equal(obj$t("hello", language = "fr"), "salut le monde")
+  expect_equal(obj$t("login:username"), "Username")
+  expect_equal(obj$t("login:username", language = "fr"), "username")
+})

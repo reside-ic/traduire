@@ -1,16 +1,58 @@
 ##' Create a new translator object
+##'
+##' @section Warning:
+##'
+##' Note that the argument list here \emph{will} change.  The only
+##'   part of this that we consider stable is that the first argument
+##'   will represent a resource bundle.
+##'
 ##' @title Create translator object
-##' @param translations Path to a json file containing translations
+##'
+##' @param resources Path to a json file containing translation
+##'   resources. If given in this way, then on-demand translation
+##'   loading (via \code{resource_pattern}) is disabled unless a
+##'   currently unexposed i18next option is used.
+##'
 ##' @param language The default language for the translation
+##'
+##' @param default_namespace The default namespace to use.  If not
+##'   given, then \code{i18next} assumes the namespace
+##'   \code{translation}
+##'
+##' @param debug Logical, indicating if i18next's debug output should
+##'   be turned on.  This will result in lots of output via
+##'   \code{message} about various i18next actions.
+##'
+##' @param resource_pattern A pattern to use for on-demand loading of
+##'   translation resources.  Only works if \code{translations} is
+##'   \code{NULL} at present.
+##'
+##' @param namespaces A vector of namespaces to load. Namespaces not
+##'   listed here may not be loaded as expected (use \code{debug =
+##'   TRUE} to work out what is going on).  The default (\code{NULL})
+##'   will use i18next's logic, which is to use \code{translation} as
+##'   the only loaded namespace.  This creates some issues if
+##'   \code{default_namespace} is set here, as the default namespace
+##'   will not be loaded.  A future version of this package will
+##'   probably do better with the logic here.
+##'
+##' @param languages A vector of languages to \emph{preload}. You can
+##'   always add additional languages using the \code{load_language}
+##'   method.  Note that the adding a language here does not (yet)
+##'   mean that failure to load the language is an error.
+##'
 ##' @export
 ##' @examples
 ##' path <- system.file("examples/simple.json", package = "traduire")
 ##' obj <- traduire::i18n(path)
 ##' obj$t("hello", language = "fr")
-i18n <- function(translations, language = NULL) {
-  ## TODO: better defaults here, but there's lots to consider with
-  ## fallbacks still
-  R6_i18n$new(translations, language %||% "en")
+i18n <- function(resources, language = NULL, default_namespace = NULL,
+                 debug = FALSE, resource_pattern = NULL,
+                 namespaces = NULL, languages = NULL) {
+  ## TODO: better defaults for language, but there's lots to consider
+  ## with fallbacks still
+  R6_i18n$new(resources, language %||% "en", default_namespace,
+              debug, resource_pattern, namespaces, languages)
 }
 
 
@@ -23,11 +65,17 @@ R6_i18n <- R6::R6Class(
   ),
 
   public = list(
-    initialize = function(translations, language) {
-      translations_js <- read_input(translations)
+    initialize = function(resources, language, default_namespace,
+                          debug, resource_pattern, namespaces, languages) {
+      resources_js <- read_input(resources)
       private$context <- V8::v8()
       private$context$source(traduire_file("js/bundle.js"))
-      private$context$call("init", translations_js, language)
+      private$context$call("init", resources_js, language,
+                           safe_js_null(default_namespace),
+                           debug,
+                           safe_js_null(resource_pattern),
+                           namespaces %||% "translation",
+                           safe_js_null(languages))
     },
 
     t = function(string, data = NULL, language = NULL, count = NULL,
@@ -61,6 +109,38 @@ R6_i18n <- R6::R6Class(
 
     languages = function() {
       private$context$call("languages")
+    },
+
+    default_namespace = function() {
+      private$context$call("default_namespace")
+    },
+
+    set_default_namespace = function(namespace) {
+      prev <- self$default_namespace()
+      private$context$call("i18next.setDefaultNamespace", namespace)
+      invisible(function() self$set_default_namespace(prev))
+    },
+
+    has_resource_bundle = function(language, namespace) {
+      private$context$call("i18next.hasResourceBundle", language, namespace)
+    },
+
+    add_resource_bundle = function(language, namespace, resources,
+                                   deep = FALSE, overwrite = FALSE) {
+      resources_js <- read_input(resources)
+      private$context$call("addResourceBundle",
+                           language, namespace, resources_js, deep, overwrite)
+      invisible(self)
+    },
+
+    load_namespaces = function(namespaces) {
+      private$context$call("i18next.loadNamespaces", namespaces)
+      invisible(self)
+    },
+
+    load_languages = function(languages) {
+      private$context$call("i18next.loadLanguages", languages)
+      invisible(self)
     }
   )
 )
@@ -99,4 +179,22 @@ i18n_replace1 <- function(text, t) {
   ## and it's not obviously documented what that class is actually
   ## *for*.
   unclass(res)
+}
+
+
+## The debug level here should be tuneable, and that will be easiest
+## to do once the logging backend is done.
+i18n_backend_read <- function(pattern, language, namespace) {
+  data <- list(language = language, namespace = namespace)
+  path <- glue::glue(pattern, .envir = data)
+  tryCatch(
+    read_input(path),
+    error = function(e) {
+      if (language != "dev") {
+        message(sprintf(
+          "Tried to load language:%s, namespace:%s but failed (%s)",
+          language, namespace, e$message))
+      }
+      return(jsonlite::unbox("null"))
+    })
 }
