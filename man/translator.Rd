@@ -7,9 +7,10 @@
 \alias{t_}
 \alias{translator}
 \alias{translator_set_language}
+\alias{translator_list}
 \title{Register a translator}
 \usage{
-translator_register(resources, language = NULL, name = NULL)
+translator_register(..., name = NULL)
 
 translator_unregister(name = NULL)
 
@@ -20,21 +21,22 @@ t_(..., name = NULL)
 translator(name = NULL)
 
 translator_set_language(language, name = NULL)
+
+translator_list()
 }
 \arguments{
-\item{resources}{Path to a json file containing translation
-resources. If given in this way, then on-demand translation
-loading (via \code{resource_pattern}) is disabled unless a
-currently unexposed i18next option is used.}
-
-\item{language}{Language to use, passed through to
-\code{\link{i18n}}'s \code{set_language} method}
+\item{...}{For \code{translator_register}, arguments passed to
+\code{\link{i18n}} to build the translator object.  All
+arguments are accepted.  For \code{translator_translate} and
+\code{t_}, arguments passed to the \code{$t} method of the
+translator object, being \code{string}, \code{data},
+\code{language} etc.}
 
 \item{name}{Optional name for the translator.  If omitted, this
 will be determined automatically if called from package code}
 
-\item{...}{Arguments passed to \code{\link{i18n}}'s \code{t}
-method, being \code{string}, \code{data}, \code{language} etc.}
+\item{language}{Language to use, passed through to
+\code{\link{i18n}}'s \code{set_language} method}
 }
 \description{
 Register a translator within the \code{traduire} package, and use
@@ -76,9 +78,18 @@ Every package's translator object is isolated from every other
   automatically.
 }
 
+\section{Warning}{
+
+
+Do not use \code{translator_unregister} on someone elses's
+  translator, particularly not in package code, or things will
+  break.  This may get tightened up at some point (RESIDE-79).
+}
+
 \examples{
 path <- system.file("examples/simple.json", package = "traduire")
 traduire::translator_register(path, name = "myexample")
 traduire::t_("hello", language = "fr", name = "myexample")
+"myexample" \%in\% traduire::translator_list()
 traduire::translator_unregister("myexample")
 }

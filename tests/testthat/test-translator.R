@@ -6,6 +6,7 @@ test_that("translator register, use, unregister", {
   res <- withVisible(translator_register(path, name = name))
   expect_false(res$visible)
   expect_is(res$value, "i18n")
+  expect_true(name %in% translator_list())
 
   expect_identical(translator(name), res$value)
   expect_equal(translator_translate("hello", language = "fr", name = name),
@@ -15,6 +16,7 @@ test_that("translator register, use, unregister", {
   expect_true(exists(name, translators))
   translator_unregister(name)
   expect_false(exists(name, translators))
+  expect_false(name %in% translator_list())
 })
 
 
