@@ -49,3 +49,31 @@ safe_js_null <- function(x) {
   }
   x
 }
+
+
+env_to_name <- function(e) {
+  str <- utils::capture.output(print(e))
+  re <- "^<environment: 0x([[:xdigit:]]+)>$"
+  stopifnot(is.environment(e), length(str) == 1, grepl(re, str))
+  paste0("env", sub(re, "\\1", str))
+}
+
+
+list_to_character <- function(x) {
+  vapply(x, identity, "", USE.NAMES = FALSE)
+}
+
+
+data_frame <- function(...) {
+  data.frame(..., stringsAsFactors = FALSE)
+}
+
+
+viapply <- function(X, FUN, ...) {
+  vapply(X, FUN, integer(1), ...)
+}
+
+
+vcapply <- function(X, FUN, ...) {
+  vapply(X, FUN, character(1), ...)
+}
