@@ -67,7 +67,7 @@ R6_file <- R6::R6Class(
     },
 
     strings = function() {
-      ret <- private$data[private$data$is_string, c("line", "text")]
+      ret <- private$data[private$data$is_string, c("line", "id", "text")]
       rownames(ret) <- NULL
       ret
     }
