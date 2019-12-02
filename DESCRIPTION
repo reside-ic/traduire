@@ -18,6 +18,7 @@ Encoding: UTF-8
 Imports:
     V8,
     R6,
+    crayon,
     glue
 Suggests:
     jsonlite,
