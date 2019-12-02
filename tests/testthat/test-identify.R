@@ -17,8 +17,12 @@ test_that("simple case", {
   cmp <- txt
   cmp[[2]] <- '  message({{"Adding a and b"}})'
   expect_equal(res, list(list(lines = 1:4, text = cmp)))
-})
 
+  highlight <- function(x) sprintf("{{%s}}", x)
+  s <- R6_file_cli$new(obj)$format(highlight = highlight)
+  expect_match(s, "^-: .+ \\(4 lines, 1 strings\\)")
+  expect_match(s, '2:   message({{"Adding a and b"}})', fixed = TRUE)
+})
 
 
 test_that("multiple strings on one line", {
