@@ -148,20 +148,20 @@ file_process <- function(text, parse_data, strings) {
   id <- as.list(rep(0, length(text)))
 
   ## TODO: multi-line strings
-  ## TODO: mutiple strings on a line
   stopifnot(all(parse_data$line1[strings] == parse_data$line2[strings]))
-  stopifnot(!any(duplicated(parse_data$line1[strings])))
 
-  for (i in strings) {
+  for (i in rev(strings)) {
     line1 <- parse_data$line1[[i]]
     line2 <- parse_data$line2[[i]]
     from <- parse_data$col1[[i]]
     to <- parse_data$col2[[i]]
-    x <- text[[line1]]
+    el <- text[[line1]]
+    x <- el[[1]]
     text[[line1]] <- c(substr(x, 1L, from - 1L),
                        parse_data$text[[i]],
-                       substr(x, to + 1L, nchar(x)))
-    id[[line1]] <- c(0, i, 0)
+                       substr(x, to + 1L, nchar(x)),
+                       el[-1])
+    id[[line1]] <- c(0, i, 0, id[[line1]][-1])
   }
 
   id <- unlist(id)

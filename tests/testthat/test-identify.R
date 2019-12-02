@@ -20,6 +20,25 @@ test_that("simple case", {
 })
 
 
+
+test_that("multiple strings on one line", {
+  txt <- c('for (i in 1:10) {',
+           '  message("a", "b", "c")',
+           '}')
+  path <- tempfile()
+  writeLines(txt, path)
+  obj <- R6_file$new(path)
+  expect_equal(obj$strings(), data_frame(line = 2,
+                                         text = c('"a"', '"b"', '"c"')))
+  expect_equal(
+    obj$render(function(x) sprintf("{{%s}}", x)),
+    list(list(lines = 1:3,
+              text = c('for (i in 1:10) {',
+                       '  message({{"a"}}, {{"b"}}, {{"c"}})',
+                       '}'))))
+})
+
+
 test_that("Can identify based on regular expressions", {
   txt <- c('f <- function() {',
     '  list(a = "short",',
@@ -46,7 +65,6 @@ test_that("Can identify based on regular expressions", {
     data_frame(line = 3,
                text = '"longer_but_no_spaces"'))
 })
-
 
 
 test_that("can ignore strings within some functions", {
