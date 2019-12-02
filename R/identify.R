@@ -8,8 +8,8 @@ R6_file <- R6::R6Class(
 
     text = NULL,
     parse_data = NULL,
+    parse_data_strings = NULL,
 
-    strings = NULL,
     data = NULL,
 
     reload = function() {
@@ -26,10 +26,10 @@ R6_file <- R6::R6Class(
     },
 
     refresh = function() {
-      private$strings <- file_identify(private$parse_data, private$ignore,
-                                       private$pattern)
+      private$parse_data_strings <-
+        file_identify(private$parse_data, private$ignore, private$pattern)
       private$data <- file_process(private$text, private$parse_data,
-                                   private$strings)
+                                   private$parse_data_strings)
     }
   ),
 
@@ -52,10 +52,9 @@ R6_file <- R6::R6Class(
     info = function() {
       list(path = private$path,
            n_lines = length(private$text),
-           n_strings = length(private$strings))
+           n_strings = length(private$parse_data_strings))
     },
 
-    ## This one is the full-on
     render = function(f, id = NULL, context = NULL) {
       d <- private$data
       if (!is.null(id)) {
@@ -65,6 +64,12 @@ R6_file <- R6::R6Class(
       ret <- vcapply(unname(split(d$text, d$line)), paste0, collapse = "")
       i <- viapply(unname(split(d$is_string, d$line)), sum) > 0
       split_context(ret, i, context)
+    },
+
+    strings = function() {
+      ret <- private$data[private$data$is_string, c("line", "text")]
+      rownames(ret) <- NULL
+      ret
     }
   ))
 
