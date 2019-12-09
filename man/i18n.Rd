@@ -11,7 +11,8 @@ i18n(
   debug = FALSE,
   resource_pattern = NULL,
   namespaces = NULL,
-  languages = NULL
+  languages = NULL,
+  fallback = NULL
 )
 }
 \arguments{
@@ -47,6 +48,8 @@ probably do better with the logic here.}
 always add additional languages using the \code{load_language}
 method.  Note that the adding a language here does not (yet)
 mean that failure to load the language is an error.}
+
+\item{fallback}{The fallback language to use}
 }
 \description{
 Create a new translator object

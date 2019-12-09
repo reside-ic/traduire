@@ -41,6 +41,8 @@
 ##'   method.  Note that the adding a language here does not (yet)
 ##'   mean that failure to load the language is an error.
 ##'
+##' @param fallback The fallback language to use
+##'
 ##' @export
 ##' @examples
 ##' path <- system.file("examples/simple.json", package = "traduire")
@@ -48,11 +50,12 @@
 ##' obj$t("hello", language = "fr")
 i18n <- function(resources, language = NULL, default_namespace = NULL,
                  debug = FALSE, resource_pattern = NULL,
-                 namespaces = NULL, languages = NULL) {
+                 namespaces = NULL, languages = NULL,
+                 fallback = NULL) {
   ## TODO: better defaults for language, but there's lots to consider
   ## with fallbacks still
   R6_i18n$new(resources, language %||% "en", default_namespace,
-              debug, resource_pattern, namespaces, languages)
+              debug, resource_pattern, namespaces, languages, fallback)
 }
 
 
@@ -66,7 +69,8 @@ R6_i18n <- R6::R6Class(
 
   public = list(
     initialize = function(resources, language, default_namespace,
-                          debug, resource_pattern, namespaces, languages) {
+                          debug, resource_pattern, namespaces, languages,
+                          fallback) {
       resources_js <- read_input(resources)
       private$context <- V8::v8()
       private$context$source(traduire_file("js/bundle.js"))
@@ -75,7 +79,8 @@ R6_i18n <- R6::R6Class(
                            debug,
                            safe_js_null(resource_pattern),
                            namespaces %||% "translation",
-                           safe_js_null(languages))
+                           safe_js_null(languages),
+                           safe_js_null(fallback))
     },
 
     t = function(string, data = NULL, language = NULL, count = NULL,
