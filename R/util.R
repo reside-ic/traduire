@@ -49,3 +49,8 @@ safe_js_null <- function(x) {
   }
   x
 }
+
+
+is_missing <- function(x) {
+  is.null(x) || (length(x) == 1L && is.na(x))
+}

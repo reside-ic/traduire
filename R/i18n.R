@@ -190,6 +190,9 @@ i18n_replace1 <- function(text, t) {
 ## The debug level here should be tuneable, and that will be easiest
 ## to do once the logging backend is done.
 i18n_backend_read <- function(pattern, language, namespace) {
+  if (is_missing(pattern)) {
+    return(jsonlite::unbox("null"))
+  }
   data <- list(language = language, namespace = namespace)
   path <- glue::glue(pattern, .envir = data)
   tryCatch(
