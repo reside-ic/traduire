@@ -14,13 +14,13 @@ translator_register(..., name = NULL)
 
 translator_unregister(name = NULL)
 
-translator_translate(..., name = NULL)
+translator_translate(..., name = NULL, package = NULL)
 
-t_(..., name = NULL)
+t_(..., name = NULL, package = NULL)
 
-translator(name = NULL)
+translator(name = NULL, package = NULL)
 
-translator_set_language(language, name = NULL)
+translator_set_language(language, name = NULL, package = NULL)
 
 translator_list()
 }
@@ -34,6 +34,12 @@ translator object, being \code{string}, \code{data},
 
 \item{name}{Optional name for the translator.  If omitted, this
 will be determined automatically if called from package code}
+
+\item{package}{Optional name for the package to find a translator
+in.  This cannot be provided for \code{translator_register} and
+\code{translator_unregister} as these should either be
+registered by \code{name} or the package will be determined
+automatically.}
 
 \item{language}{Language to use, passed through to
 \code{\link{i18n}}'s \code{set_language} method}

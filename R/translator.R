@@ -53,6 +53,12 @@
 ##' @param name Optional name for the translator.  If omitted, this
 ##'   will be determined automatically if called from package code
 ##'
+##' @param package Optional name for the package to find a translator
+##'   in.  This cannot be provided for \code{translator_register} and
+##'   \code{translator_unregister} as these should either be
+##'   registered by \code{name} or the package will be determined
+##'   automatically.
+##'
 ##' @export
 ##' @rdname translator
 ##' @examples
@@ -62,7 +68,7 @@
 ##' "myexample" %in% traduire::translator_list()
 ##' traduire::translator_unregister("myexample")
 translator_register <- function(..., name = NULL) {
-  name <- name_from_context(name)
+  name <- name_from_context(name, NULL, strict = TRUE)
   translators[[name]] <- i18n(...)
 }
 
@@ -70,14 +76,14 @@ translator_register <- function(..., name = NULL) {
 ##' @export
 ##' @rdname translator
 translator_unregister <- function(name = NULL) {
-  name <- name_from_context(name)
+  name <- name_from_context(name, NULL, strict = TRUE)
   rm(list = name, envir = translators)
 }
 
 
 ##' @export
 ##' @rdname translator
-translator_translate <- function(..., name = NULL) {
+translator_translate <- function(..., name = NULL, package = NULL) {
   translator(name)$t(...)
 }
 
@@ -89,7 +95,7 @@ t_ <- translator_translate
 
 ##' @export
 ##' @rdname translator
-translator <- function(name = NULL) {
+translator <- function(name = NULL, package = NULL) {
   name <- name_from_context(name)
   translator <- translators[[name]]
   if (is.null(translator)) {
@@ -104,8 +110,8 @@ translator <- function(name = NULL) {
 ##'
 ##' @export
 ##' @rdname translator
-translator_set_language <- function(language, name = NULL) {
-  translator(name)$set_language(language)
+translator_set_language <- function(language, name = NULL, package = NULL) {
+  translator(name, package)$set_language(language)
 }
 
 
@@ -116,20 +122,43 @@ translator_list <- function() {
 }
 
 
-name_from_context <- function(name = NULL) {
+name_from_context <- function(name = NULL, package = NULL, strict = FALSE) {
+  prefix <- "package:"
+  if (!is.null(package)) {
+    validate_package_name(package, strict)
+    name <- paste0(prefix, package)
+  } else if (!is.null(name) && starts_with(name, prefix)) {
+    stop(sprintf("Do not use '%s' prefix directly", prefix))
+  }
   if (is.null(name)) {
-    depth <- 1L
-    name <- utils::packageName(parent.frame(depth))
-    while (!is.null(name) && name == "traduire") {
-      depth <- depth + 1L
-      name <- utils::packageName(parent.frame(depth))
-    }
-    if (is.null(name) || !nzchar(name)) {
-      stop("Did not determine environment name")
-    }
-    name <- paste0("package:", name)
+    package <- package_from_context()
+    name <- paste0(prefix, package)
   }
   name
+}
+
+
+package_from_context <- function(depth = 1L) {
+  name <- utils::packageName(parent.frame(depth))
+  while (!is.null(name) && name == "traduire") {
+    depth <- depth + 1L
+    name <- utils::packageName(parent.frame(depth))
+  }
+  if (is.null(name) || !nzchar(name)) {
+    stop("Did not determine environment name")
+  }
+  name
+}
+
+
+validate_package_name <- function(given, strict) {
+  if (strict) {
+    called <- package_from_context()
+    if (called != given) {
+      stop(sprintf("Package mismatch - called with %s, called from %s",
+                   called, given))
+    }
+  }
 }
 
 
