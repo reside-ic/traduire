@@ -35,11 +35,25 @@
 ##'   your package code, then the correct translator should be found
 ##'   automatically.
 ##'
-##' @section Warning:
+##' If you need to get a translation for another package, you should
+##'   use \code{package} argument, for example:
 ##'
-##' Do not use \code{translator_unregister} on someone elses's
-##'   translator, particularly not in package code, or things will
-##'   break.  This may get tightened up at some point (RESIDE-79).
+##' \preformatted{
+##' traduire::t_("key", package = "other")
+##' }
+##'
+##' You can change the language in another package (e.g., using
+##'   \code{traduire::change_language("en", package = "other")}) but
+##'   should be careful to reset this using the returned reset
+##'   function.
+##'
+##' It is not possible to unregister a translator in another package,
+##'   or to overwrite one.
+##'
+##' Translators provided in other packages will be listed by
+##'   \code{traduire::translator_list} with the prefix \code{package:}
+##'   (e.g., \code{package:other}) however, you should not access them
+##'   directly using \code{name = "package:other"}.
 ##'
 ##' @title Register a translator
 ##'
