@@ -51,7 +51,7 @@ mean that failure to load the language is an error.}
 
 \item{fallback}{The fallback language to use.  The options here
 are to use a character string (a single fallback to use for all
-languages), a character vecto (a series of languages to use in
+languages), a character vector (a series of languages to use in
 turn, listed from first to try to last to try) or a named list
 of language-fallback mappings, e.g., \code{list("de-CH": c("fr",
 "it"), "es": "fr")}.}
