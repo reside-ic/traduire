@@ -35,11 +35,25 @@
 ##'   your package code, then the correct translator should be found
 ##'   automatically.
 ##'
-##' @section Warning:
+##' If you need to get a translation for another package, you should
+##'   use \code{package} argument, for example:
 ##'
-##' Do not use \code{translator_unregister} on someone elses's
-##'   translator, particularly not in package code, or things will
-##'   break.  This may get tightened up at some point (RESIDE-79).
+##' \preformatted{
+##' traduire::t_("key", package = "other")
+##' }
+##'
+##' You can change the language in another package (e.g., using
+##'   \code{traduire::change_language("en", package = "other")}) but
+##'   should be careful to reset this using the returned reset
+##'   function.
+##'
+##' It is not possible to unregister a translator in another package,
+##'   or to overwrite one.
+##'
+##' Translators provided in other packages will be listed by
+##'   \code{traduire::translator_list} with the prefix \code{package:}
+##'   (e.g., \code{package:other}) however, you should not access them
+##'   directly using \code{name = "package:other"}.
 ##'
 ##' @title Register a translator
 ##'
@@ -50,8 +64,18 @@
 ##'   translator object, being \code{string}, \code{data},
 ##'   \code{language} etc.
 ##'
-##' @param name Optional name for the translator.  If omitted, this
-##'   will be determined automatically if called from package code
+##' @param name Optional name for the translator.  This should be used
+##'   only when not using this interface from a package (e.g., from a
+##'   shiny application).  If using from a package you can omit both
+##'   \code{name} and \code{package}, and if interacting with
+##'   translations from another package you should use the
+##'   \code{package} argument (see below).
+##'
+##' @param package Optional name for the package to find a translator
+##'   in.  This cannot be provided for \code{translator_register} and
+##'   \code{translator_unregister} as these should either be
+##'   registered by \code{name} or the package will be determined
+##'   automatically.
 ##'
 ##' @export
 ##' @rdname translator
@@ -62,7 +86,7 @@
 ##' "myexample" %in% traduire::translator_list()
 ##' traduire::translator_unregister("myexample")
 translator_register <- function(..., name = NULL) {
-  name <- name_from_context(name)
+  name <- name_from_context(name, NULL, strict = TRUE)
   translators[[name]] <- i18n(...)
 }
 
@@ -70,14 +94,14 @@ translator_register <- function(..., name = NULL) {
 ##' @export
 ##' @rdname translator
 translator_unregister <- function(name = NULL) {
-  name <- name_from_context(name)
+  name <- name_from_context(name, NULL, strict = TRUE)
   rm(list = name, envir = translators)
 }
 
 
 ##' @export
 ##' @rdname translator
-translator_translate <- function(..., name = NULL) {
+translator_translate <- function(..., name = NULL, package = NULL) {
   translator(name)$t(...)
 }
 
@@ -89,7 +113,7 @@ t_ <- translator_translate
 
 ##' @export
 ##' @rdname translator
-translator <- function(name = NULL) {
+translator <- function(name = NULL, package = NULL) {
   name <- name_from_context(name)
   translator <- translators[[name]]
   if (is.null(translator)) {
@@ -104,8 +128,8 @@ translator <- function(name = NULL) {
 ##'
 ##' @export
 ##' @rdname translator
-translator_set_language <- function(language, name = NULL) {
-  translator(name)$set_language(language)
+translator_set_language <- function(language, name = NULL, package = NULL) {
+  translator(name, package)$set_language(language)
 }
 
 
@@ -116,20 +140,52 @@ translator_list <- function() {
 }
 
 
-name_from_context <- function(name = NULL) {
+## name will be provided only for non-package use (hence the
+## check/stop below)
+##
+## if used from a package, then package should be empty - that
+## argument should be used when refering to other packages.
+##
+## In order to prevent registration/unregistration of translators from
+## other packages, if  package *is* provided and strict  is TRUE, then
+## we verify that the correct name was given.
+name_from_context <- function(name = NULL, package = NULL, strict = FALSE) {
+  prefix <- "package:"
+  if (!is.null(package)) {
+    validate_package_name(package, strict)
+    name <- paste0(prefix, package)
+  } else if (!is.null(name) && starts_with(name, prefix)) {
+    stop(sprintf("Do not use '%s' prefix directly", prefix))
+  }
   if (is.null(name)) {
-    depth <- 1L
-    name <- utils::packageName(parent.frame(depth))
-    while (!is.null(name) && name == "traduire") {
-      depth <- depth + 1L
-      name <- utils::packageName(parent.frame(depth))
-    }
-    if (is.null(name) || !nzchar(name)) {
-      stop("Did not determine environment name")
-    }
-    name <- paste0("package:", name)
+    package <- package_from_context()
+    name <- paste0(prefix, package)
   }
   name
+}
+
+
+package_from_context <- function(depth = 1L) {
+  name <- utils::packageName(parent.frame(depth))
+  while (!is.null(name) && name == "traduire") {
+    depth <- depth + 1L
+    name <- utils::packageName(parent.frame(depth))
+  }
+  if (is.null(name) || !nzchar(name)) {
+    stop("Did not determine environment name")
+  }
+  name
+}
+
+
+validate_package_name <- function(given, strict) {
+  if (strict) {
+    called <- package_from_context()
+    if (called != given) {
+      stop(sprintf("Package mismatch - called with %s, called from %s",
+                   called, given))
+    }
+  }
 }
 
 

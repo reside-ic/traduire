@@ -49,3 +49,8 @@ safe_js_null <- function(x) {
   }
   x
 }
+
+
+starts_with <- function(string, prefix) {
+  substr(string, 1, nchar(prefix)) == prefix
+}
