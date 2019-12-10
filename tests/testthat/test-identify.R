@@ -20,7 +20,7 @@ test_that("simple case", {
 
   highlight <- function(x) sprintf("{{%s}}", x)
   s <- R6_file_cli$new(obj)$format(highlight = highlight)
-  expect_match(s, "^-: .+ \\(4 lines, 1 strings\\)")
+  expect_match(s, "^--: .+ \\(4 lines, 1 strings\\)")
   expect_match(s, '2:   message({{"Adding a and b"}})', fixed = TRUE)
 })
 
@@ -117,6 +117,6 @@ test_that("can format empty case", {
   path <- tempfile()
   writeLines(txt, path)
   obj <- R6_file$new(path)
-  expect_equal(R6_file_cli$new(obj)$format(),
-               "--: /tmp/Rtmpz3yfHY/file174d388a5218 (3 lines, 0 strings)\n")
+  expect_match(R6_file_cli$new(obj)$format(),
+               "--: .+ \\(3 lines, 0 strings\\)\n")
 })
