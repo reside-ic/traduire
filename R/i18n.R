@@ -80,7 +80,7 @@ R6_i18n <- R6::R6Class(
                            safe_js_null(resource_pattern),
                            namespaces %||% "translation",
                            safe_js_null(languages),
-                           safe_js_null(fallback),
+                           validate_fallback(fallback),
                            auto_unbox = FALSE)
     },
 
@@ -206,4 +206,52 @@ i18n_backend_read <- function(pattern, language, namespace) {
       }
       return(jsonlite::unbox("null"))
     })
+}
+
+
+## Quite a bit here - if these errors get through to the js, you get
+## inscruitable runtime error messages, so we're better off validating
+## in R.
+validate_fallback <- function(fallback) {
+  if (is.null(fallback)) {
+    return(V8::JS("null"))
+  }
+
+  check_fallback_entries <- function(x) {
+    any(is.na(x) | !nzchar(x))
+  }
+
+  if (is_named(fallback)) {
+    fallback <- as.list(fallback)
+  }
+  if (is.character(fallback)) {
+    if (check_fallback_entries(fallback)) {
+      stop("All fallback entries must be non-NA and non-empty")
+    }
+  } else if (is.list(fallback)) {
+    if (!is_named(fallback)) {
+      stop("If fallback is a list, it must be named")
+    }
+    if (any(duplicated(names(fallback)))) {
+      stop("Duplicated names in fallback")
+    }
+    if (!all(nzchar(names(fallback)))) {
+      stop("Zero-length names in fallback")
+    }
+    err <- !vlapply(fallback, is.character)
+    if (any(err)) {
+      stop(sprintf("All elements of fallback must be character (see %s)",
+                   paste(squote(names(fallback)[err]), collapse = ", ")))
+    }
+    err <- vlapply(fallback, check_fallback_entries)
+
+    if (any(err)) {
+      stop(sprintf(
+        "All elements of fallback must be non-NA and non-empty (see %s)",
+        paste(squote(names(fallback)[err]), collapse = ", ")))
+    }
+  } else {
+    stop("fallback must be a character vector or list of character vectors")
+  }
+  fallback
 }
