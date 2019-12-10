@@ -185,6 +185,8 @@ test_that("simple fallback", {
   expect_equal(obj$t("hello", language = "en"), "hello world")
   expect_equal(obj$t("hello", language = "fr"), "salut le monde")
   expect_equal(obj$t("hello", language = "ko"), "hello world")
+  ## Keep falling and we get the key
+  expect_equal(obj$t("missing"), "missing")
 })
 
 
