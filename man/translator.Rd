@@ -32,8 +32,12 @@ arguments are accepted.  For \code{translator_translate} and
 translator object, being \code{string}, \code{data},
 \code{language} etc.}
 
-\item{name}{Optional name for the translator.  If omitted, this
-will be determined automatically if called from package code}
+\item{name}{Optional name for the translator.  This should be used
+only when not using this interface from a package (e.g., from a
+shiny application).  If using from a package you can omit both
+\code{name} and \code{package}, and if interacting with
+translations from another package you should use the
+\code{package} argument (see below).}
 
 \item{package}{Optional name for the package to find a translator
 in.  This cannot be provided for \code{translator_register} and

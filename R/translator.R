@@ -64,8 +64,12 @@
 ##'   translator object, being \code{string}, \code{data},
 ##'   \code{language} etc.
 ##'
-##' @param name Optional name for the translator.  If omitted, this
-##'   will be determined automatically if called from package code
+##' @param name Optional name for the translator.  This should be used
+##'   only when not using this interface from a package (e.g., from a
+##'   shiny application).  If using from a package you can omit both
+##'   \code{name} and \code{package}, and if interacting with
+##'   translations from another package you should use the
+##'   \code{package} argument (see below).
 ##'
 ##' @param package Optional name for the package to find a translator
 ##'   in.  This cannot be provided for \code{translator_register} and
