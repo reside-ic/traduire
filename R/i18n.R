@@ -41,6 +41,13 @@
 ##'   method.  Note that the adding a language here does not (yet)
 ##'   mean that failure to load the language is an error.
 ##'
+##' @param fallback The fallback language to use.  The options here
+##'   are to use a character string (a single fallback to use for all
+##'   languages), a character vector (a series of languages to use in
+##'   turn, listed from first to try to last to try) or a named list
+##'   of language-fallback mappings, e.g., \code{list("de-CH": c("fr",
+##'   "it"), "es": "fr")}.
+##'
 ##' @export
 ##' @examples
 ##' path <- system.file("examples/simple.json", package = "traduire")
@@ -48,11 +55,12 @@
 ##' obj$t("hello", language = "fr")
 i18n <- function(resources, language = NULL, default_namespace = NULL,
                  debug = FALSE, resource_pattern = NULL,
-                 namespaces = NULL, languages = NULL) {
+                 namespaces = NULL, languages = NULL,
+                 fallback = "dev") {
   ## TODO: better defaults for language, but there's lots to consider
   ## with fallbacks still
   R6_i18n$new(resources, language %||% "en", default_namespace,
-              debug, resource_pattern, namespaces, languages)
+              debug, resource_pattern, namespaces, languages, fallback)
 }
 
 
@@ -66,16 +74,19 @@ R6_i18n <- R6::R6Class(
 
   public = list(
     initialize = function(resources, language, default_namespace,
-                          debug, resource_pattern, namespaces, languages) {
+                          debug, resource_pattern, namespaces, languages,
+                          fallback) {
       resources_js <- read_input(resources)
       private$context <- V8::v8()
       private$context$source(traduire_file("js/bundle.js"))
-      private$context$call("init", resources_js, language,
+      private$context$call("init", resources_js, scalar(language),
                            safe_js_null(default_namespace),
-                           debug,
+                           scalar(debug),
                            safe_js_null(resource_pattern),
                            namespaces %||% "translation",
-                           safe_js_null(languages))
+                           safe_js_null(languages),
+                           validate_fallback(fallback),
+                           auto_unbox = FALSE)
     },
 
     t = function(string, data = NULL, language = NULL, count = NULL,
@@ -185,6 +196,9 @@ i18n_replace1 <- function(text, t) {
 ## The debug level here should be tuneable, and that will be easiest
 ## to do once the logging backend is done.
 i18n_backend_read <- function(pattern, language, namespace) {
+  if (is_missing(pattern)) {
+    return(jsonlite::unbox("null"))
+  }
   data <- list(language = language, namespace = namespace)
   path <- glue::glue(pattern, .envir = data)
   tryCatch(
@@ -197,4 +211,52 @@ i18n_backend_read <- function(pattern, language, namespace) {
       }
       return(jsonlite::unbox("null"))
     })
+}
+
+
+## Quite a bit here - if these errors get through to the js, you get
+## inscruitable runtime error messages, so we're better off validating
+## in R.
+validate_fallback <- function(fallback) {
+  if (is.null(fallback)) {
+    return(V8::JS("null"))
+  }
+
+  check_fallback_entries <- function(x) {
+    any(is.na(x) | !nzchar(x))
+  }
+
+  if (is_named(fallback)) {
+    fallback <- as.list(fallback)
+  }
+  if (is.character(fallback)) {
+    if (check_fallback_entries(fallback)) {
+      stop("All fallback entries must be non-NA and non-empty")
+    }
+  } else if (is.list(fallback)) {
+    if (!is_named(fallback)) {
+      stop("If fallback is a list, it must be named")
+    }
+    if (any(duplicated(names(fallback)))) {
+      stop("Duplicated names in fallback")
+    }
+    if (!all(nzchar(names(fallback)))) {
+      stop("Zero-length names in fallback")
+    }
+    err <- !vlapply(fallback, is.character)
+    if (any(err)) {
+      stop(sprintf("All elements of fallback must be character (see %s)",
+                   paste(squote(names(fallback)[err]), collapse = ", ")))
+    }
+    err <- vlapply(fallback, check_fallback_entries)
+
+    if (any(err)) {
+      stop(sprintf(
+        "All elements of fallback must be non-NA and non-empty (see %s)",
+        paste(squote(names(fallback)[err]), collapse = ", ")))
+    }
+  } else {
+    stop("fallback must be a character vector or list of character vectors")
+  }
+  fallback
 }

@@ -172,3 +172,56 @@ test_that("load resource bundles", {
   expect_equal(obj$t("login:username"), "Username")
   expect_equal(obj$t("login:username", language = "fr"), "username")
 })
+
+
+test_that("simple fallback", {
+  obj <- i18n(NULL, default_namespace = "common", fallback = "en")
+  obj$add_resource_bundle("en", "common",
+                          traduire_file("examples/structured/en-common.json"))
+  obj$add_resource_bundle("en", "login",
+                          traduire_file("examples/structured/en-login.json"))
+  obj$add_resource_bundle("fr", "common",
+                          traduire_file("examples/structured/fr-common.json"))
+  expect_equal(obj$t("hello", language = "en"), "hello world")
+  expect_equal(obj$t("hello", language = "fr"), "salut le monde")
+  expect_equal(obj$t("hello", language = "ko"), "hello world")
+  ## Keep falling and we get the key
+  expect_equal(obj$t("missing"), "missing")
+})
+
+
+test_that("vector fallback", {
+  obj <- i18n(NULL, default_namespace = "common", fallback = c("fr", "en"))
+  obj$add_resource_bundle("en", "common",
+                          traduire_file("examples/structured/en-common.json"))
+  obj$add_resource_bundle("en", "login",
+                          traduire_file("examples/structured/en-login.json"))
+  obj$add_resource_bundle("fr", "common",
+                          traduire_file("examples/structured/fr-common.json"))
+
+  expect_equal(obj$t("hello", language = "en"), "hello world")
+  expect_equal(obj$t("hello", language = "fr"), "salut le monde")
+  expect_equal(obj$t("hello", language = "ko"), "salut le monde")
+  expect_equal(obj$t("hello", language = "cimode"), "hello")
+
+  expect_equal(obj$t("login:username", language = "en"), "Username")
+  expect_equal(obj$t("login:username", language = "fr"), "Username")
+  expect_equal(obj$t("login:username", language = "ko"), "Username")
+  expect_equal(obj$t("login:username", language = "cimode"), "username")
+})
+
+
+## This one is pretty contrived but it works:
+test_that("structured fallback", {
+  fallback <- list(en = "fr", fr = "en")
+  obj <- i18n(NULL, default_namespace = "common", fallback = fallback)
+  obj$add_resource_bundle("en", "login",
+                          traduire_file("examples/structured/en-login.json"))
+  obj$add_resource_bundle("fr", "common",
+                          traduire_file("examples/structured/fr-common.json"))
+
+  expect_equal(obj$t("hello", language = "en"), "salut le monde")
+  expect_equal(obj$t("login:username", language = "en"), "Username")
+  expect_equal(obj$t("hello", language = "fr"), "salut le monde")
+  expect_equal(obj$t("login:username", language = "fr"), "Username")
+})

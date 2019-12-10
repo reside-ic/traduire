@@ -13,7 +13,7 @@ global.Promise = require("promise");
 global.i18next = require("i18next");
 
 global.init = function(resources, lng, defaultNS, debug, resourcePattern,
-                       namespaces, languages) {
+                       namespaces, languages, fallback) {
     var options = {
         "lng": lng,
         // it's important that 'resources' comes through as null, not
@@ -26,6 +26,7 @@ global.init = function(resources, lng, defaultNS, debug, resourcePattern,
         "initImmediate": true,
         "ns": namespaces,
         "preload": languages,
+        "fallbackLng": fallback,
         "backend": {
             "resourcePattern": resourcePattern
         }

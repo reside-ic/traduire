@@ -51,6 +51,31 @@ safe_js_null <- function(x) {
 }
 
 
+is_missing <- function(x) {
+  is.null(x) || (length(x) == 1L && is.na(x))
+}
+
+
+scalar <- function(x) {
+  jsonlite::unbox(x)
+}
+
+
+squote <- function(x) {
+  sprintf("'%s'", x)
+}
+
+
+is_named <- function(x) {
+  !is.null(names(x))
+}
+
+
+vlapply <- function(X, FUN, ...) {
+  vapply(X, FUN, logical(1), ...)
+}
+
+
 starts_with <- function(string, prefix) {
   substr(string, 1, nchar(prefix)) == prefix
 }
