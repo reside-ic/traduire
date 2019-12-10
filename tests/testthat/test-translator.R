@@ -1,5 +1,6 @@
 context("translator")
 
+
 test_that("translator register, use, unregister", {
   path <- traduire_file("examples/simple.json")
   name <- rand_str()
@@ -36,23 +37,54 @@ test_that("error if translator not found", {
 })
 
 
-test_that("name from context", {
+test_that("package from context", {
   skip_if_not_installed("mockery")
   mock_package_name <- mockery::mock("traduire", "traduire", "foo")
   mockery::stub(
-    name_from_context,
+    package_from_context,
     "utils::packageName",
     mock_package_name)
-  expect_equal(name_from_context(), "package:foo")
+  expect_equal(package_from_context(), "foo")
 })
 
 
-test_that("name from context", {
+test_that("package from context", {
   skip_if_not_installed("mockery")
   mock_package_name <- mockery::mock("traduire", "traduire", "")
   mockery::stub(
-    name_from_context,
+    package_from_context,
     "utils::packageName",
     mock_package_name)
-  expect_error(name_from_context(), "Did not determine environment name")
+  expect_error(package_from_context(), "Did not determine environment name")
+})
+
+
+test_that("validate_package_name requires correct package in strict mode", {
+  mock_package_from_context <- mockery::mock("bar", cycle = TRUE)
+  mockery::stub(
+    validate_package_name,
+    "package_from_context",
+    mock_package_from_context)
+  expect_error(
+    validate_package_name("foo", TRUE),
+    "Package mismatch - called with bar, called from foo")
+  expect_silent(validate_package_name("foo", FALSE))
+})
+
+
+test_that("name_from_context rejects a package: prefix", {
+  expect_error(name_from_context(name = "package:whatever"),
+               "Do not use 'package:' prefix directly")
+})
+
+
+test_that("name_from_context finds name in package", {
+  mock_package_from_context <- mockery::mock("pkg", cycle = TRUE)
+  mockery::stub(
+    name_from_context,
+    "package_from_context",
+    mock_package_from_context)
+  expect_equal(name_from_context("given", NULL, FALSE), "given")
+  expect_equal(name_from_context(NULL, NULL, FALSE), "package:pkg")
+  expect_equal(name_from_context(NULL, "pkg", FALSE), "package:pkg")
 })

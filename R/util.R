@@ -74,3 +74,8 @@ is_named <- function(x) {
 vlapply <- function(X, FUN, ...) {
   vapply(X, FUN, logical(1), ...)
 }
+
+
+starts_with <- function(string, prefix) {
+  substr(string, 1, nchar(prefix)) == prefix
+}

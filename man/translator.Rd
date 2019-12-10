@@ -14,13 +14,13 @@ translator_register(..., name = NULL)
 
 translator_unregister(name = NULL)
 
-translator_translate(..., name = NULL)
+translator_translate(..., name = NULL, package = NULL)
 
-t_(..., name = NULL)
+t_(..., name = NULL, package = NULL)
 
-translator(name = NULL)
+translator(name = NULL, package = NULL)
 
-translator_set_language(language, name = NULL)
+translator_set_language(language, name = NULL, package = NULL)
 
 translator_list()
 }
@@ -32,8 +32,18 @@ arguments are accepted.  For \code{translator_translate} and
 translator object, being \code{string}, \code{data},
 \code{language} etc.}
 
-\item{name}{Optional name for the translator.  If omitted, this
-will be determined automatically if called from package code}
+\item{name}{Optional name for the translator.  This should be used
+only when not using this interface from a package (e.g., from a
+shiny application).  If using from a package you can omit both
+\code{name} and \code{package}, and if interacting with
+translations from another package you should use the
+\code{package} argument (see below).}
+
+\item{package}{Optional name for the package to find a translator
+in.  This cannot be provided for \code{translator_register} and
+\code{translator_unregister} as these should either be
+registered by \code{name} or the package will be determined
+automatically.}
 
 \item{language}{Language to use, passed through to
 \code{\link{i18n}}'s \code{set_language} method}
@@ -76,14 +86,26 @@ Every package's translator object is isolated from every other
   package, and if the \code{traduire} functions are called from
   your package code, then the correct translator should be found
   automatically.
+
+If you need to get a translation for another package, you should
+  use \code{package} argument, for example:
+
+\preformatted{
+traduire::t_("key", package = "other")
 }
 
-\section{Warning}{
+You can change the language in another package (e.g., using
+  \code{traduire::change_language("en", package = "other")}) but
+  should be careful to reset this using the returned reset
+  function.
 
+It is not possible to unregister a translator in another package,
+  or to overwrite one.
 
-Do not use \code{translator_unregister} on someone elses's
-  translator, particularly not in package code, or things will
-  break.  This may get tightened up at some point (RESIDE-79).
+Translators provided in other packages will be listed by
+  \code{traduire::translator_list} with the prefix \code{package:}
+  (e.g., \code{package:other}) however, you should not access them
+  directly using \code{name = "package:other"}.
 }
 
 \examples{
