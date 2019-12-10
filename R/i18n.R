@@ -51,7 +51,7 @@
 i18n <- function(resources, language = NULL, default_namespace = NULL,
                  debug = FALSE, resource_pattern = NULL,
                  namespaces = NULL, languages = NULL,
-                 fallback = NULL) {
+                 fallback = "dev") {
   ## TODO: better defaults for language, but there's lots to consider
   ## with fallbacks still
   R6_i18n$new(resources, language %||% "en", default_namespace,
@@ -74,13 +74,14 @@ R6_i18n <- R6::R6Class(
       resources_js <- read_input(resources)
       private$context <- V8::v8()
       private$context$source(traduire_file("js/bundle.js"))
-      private$context$call("init", resources_js, language,
+      private$context$call("init", resources_js, scalar(language),
                            safe_js_null(default_namespace),
-                           debug,
+                           scalar(debug),
                            safe_js_null(resource_pattern),
                            namespaces %||% "translation",
                            safe_js_null(languages),
-                           safe_js_null(fallback))
+                           safe_js_null(fallback),
+                           auto_unbox = FALSE)
     },
 
     t = function(string, data = NULL, language = NULL, count = NULL,

@@ -12,7 +12,7 @@ i18n(
   resource_pattern = NULL,
   namespaces = NULL,
   languages = NULL,
-  fallback = NULL
+  fallback = "dev"
 )
 }
 \arguments{

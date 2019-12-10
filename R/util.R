@@ -54,3 +54,8 @@ safe_js_null <- function(x) {
 is_missing <- function(x) {
   is.null(x) || (length(x) == 1L && is.na(x))
 }
+
+
+scalar <- function(x) {
+  jsonlite::unbox(x)
+}
