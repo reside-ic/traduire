@@ -85,7 +85,10 @@ R6_file_cli <- R6::R6Class(
     format = function(id = NULL, context = 3, highlight = crayon::inverse) {
       info <- self$file$info()
       dat <- self$file$render(highlight, id, context)
-      w <- ceiling(log10(max(dat[[length(dat)]]$lines) + 1))
+      w <- 2
+      if (length(dat) > 0) {
+        w <- max(w, ceiling(log10(max(dat[[length(dat)]]$lines) + 1)))
+      }
       f <- function(x) {
         paste(sprintf("%s: %s",
                       format(x$lines, width = w, justify = "right"), x$text),

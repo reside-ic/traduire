@@ -108,3 +108,15 @@ test_that("can ignore strings within some functions", {
                           id = integer(0),
                           text = character(0)))
 })
+
+
+test_that("can format empty case", {
+  txt <- c('f <- function(a, b) {',
+           '  a + b',
+           '}')
+  path <- tempfile()
+  writeLines(txt, path)
+  obj <- R6_file$new(path)
+  expect_equal(R6_file_cli$new(obj)$format(),
+               "--: /tmp/Rtmpz3yfHY/file174d388a5218 (3 lines, 0 strings)\n")
+})
