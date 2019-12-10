@@ -140,6 +140,15 @@ translator_list <- function() {
 }
 
 
+## name will be provided only for non-package use (hence the
+## check/stop below)
+##
+## if used from a package, then package should be empty - that
+## argument should be used when refering to other packages.
+##
+## In order to prevent registration/unregistration of translators from
+## other packages, if  package *is* provided and strict  is TRUE, then
+## we verify that the correct name was given.
 name_from_context <- function(name = NULL, package = NULL, strict = FALSE) {
   prefix <- "package:"
   if (!is.null(package)) {
