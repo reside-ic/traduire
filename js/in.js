@@ -11,7 +11,8 @@ global.Promise = require("promise");
 global.i18next = require("i18next");
 
 global.init = function(resources, lng, defaultNS, debug, resourcePattern,
-                       namespaces, languages, fallback) {
+                       namespaces, languages, fallback,
+                       interpolationEscapeValue) {
     var options = {
         "lng": lng,
         // it's important that 'resources' comes through as null, not
@@ -25,6 +26,9 @@ global.init = function(resources, lng, defaultNS, debug, resourcePattern,
         "ns": namespaces,
         "preload": languages,
         "fallbackLng": fallback,
+        "interpolation": {
+            "escapeValue": interpolationEscapeValue
+        },
         "backend": {
             "resourcePattern": resourcePattern
         }
