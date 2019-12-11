@@ -111,7 +111,7 @@ R6_i18n <- R6::R6Class(
 
     exists = function(string, data = NULL, language = NULL, count = NULL,
                       context = NULL) {
-      options <- i18n_options(data, language, count, context)
+      options <- i18n_options(data, language, count, context, FALSE)
       private$context$call("exists", string, options)
     },
 
