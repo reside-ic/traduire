@@ -12,7 +12,8 @@ i18n(
   resource_pattern = NULL,
   namespaces = NULL,
   languages = NULL,
-  fallback = "dev"
+  fallback = "dev",
+  escape = FALSE
 )
 }
 \arguments{
@@ -55,6 +56,11 @@ languages), a character vector (a series of languages to use in
 turn, listed from first to try to last to try) or a named list
 of language-fallback mappings, e.g., \code{list("de-CH": c("fr",
 "it"), "es": "fr")}.}
+
+\item{escape}{Logical, indicating if the translation output should
+be, by default, escaped (see the i18next interpolation
+documentation).  The i18next implementation is to prevent xss
+attacks, and so is disabled by default in traduire.}
 }
 \description{
 Create a new translator object

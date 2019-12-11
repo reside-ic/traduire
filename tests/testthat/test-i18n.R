@@ -225,3 +225,37 @@ test_that("structured fallback", {
   expect_equal(obj$t("hello", language = "fr"), "salut le monde")
   expect_equal(obj$t("login:username", language = "fr"), "Username")
 })
+
+
+test_that("escape interpolation", {
+  input_escaped <- "escaped/here"
+  input_unescaped <- "not/escaped/here"
+  value_escaped <- "i18next is escaped&#x2F;here"
+  value_unescaped <- "i18next is not/escaped/here"
+
+  obj <- i18n(traduire_file("examples/simple.json"), escape = FALSE)
+  expect_equal(
+    obj$t("interpolate", list(what = "i18next", how = input_unescaped)),
+    value_unescaped)
+  expect_equal(
+    obj$t("interpolate", list(what = "i18next", how = input_unescaped),
+          escape = FALSE),
+    value_unescaped)
+  expect_equal(
+    obj$t("interpolate", list(what = "i18next", how = input_escaped),
+          language = "en", escape = TRUE),
+    value_escaped)
+
+  obj <- i18n(traduire_file("examples/simple.json"), escape = TRUE)
+  expect_equal(
+    obj$t("interpolate", list(what = "i18next", how = input_escaped)),
+    value_escaped)
+  expect_equal(
+    obj$t("interpolate", list(what = "i18next", how = input_unescaped),
+          escape = FALSE),
+    value_unescaped)
+  expect_equal(
+    obj$t("interpolate", list(what = "i18next", how = input_escaped),
+          language = "en", escape = TRUE),
+    value_escaped)
+})

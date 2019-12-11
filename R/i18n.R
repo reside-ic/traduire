@@ -48,6 +48,11 @@
 ##'   of language-fallback mappings, e.g., \code{list("de-CH": c("fr",
 ##'   "it"), "es": "fr")}.
 ##'
+##' @param escape Logical, indicating if the translation output should
+##'   be, by default, escaped (see the i18next interpolation
+##'   documentation).  The i18next implementation is to prevent xss
+##'   attacks, and so is disabled by default in traduire.
+##'
 ##' @export
 ##' @examples
 ##' path <- system.file("examples/simple.json", package = "traduire")
@@ -56,11 +61,12 @@
 i18n <- function(resources, language = NULL, default_namespace = NULL,
                  debug = FALSE, resource_pattern = NULL,
                  namespaces = NULL, languages = NULL,
-                 fallback = "dev") {
+                 fallback = "dev", escape = FALSE) {
   ## TODO: better defaults for language, but there's lots to consider
   ## with fallbacks still
   R6_i18n$new(resources, language %||% "en", default_namespace,
-              debug, resource_pattern, namespaces, languages, fallback)
+              debug, resource_pattern, namespaces, languages, fallback,
+              escape)
 }
 
 
@@ -75,7 +81,7 @@ R6_i18n <- R6::R6Class(
   public = list(
     initialize = function(resources, language, default_namespace,
                           debug, resource_pattern, namespaces, languages,
-                          fallback) {
+                          fallback, escape) {
       resources_js <- read_input(resources)
       private$context <- V8::v8()
       private$context$source(traduire_file("js/bundle.js"))
@@ -86,12 +92,13 @@ R6_i18n <- R6::R6Class(
                            namespaces %||% "translation",
                            safe_js_null(languages),
                            validate_fallback(fallback),
+                           scalar(escape),
                            auto_unbox = FALSE)
     },
 
     t = function(string, data = NULL, language = NULL, count = NULL,
-                 context = NULL) {
-      options <- i18n_options(data, language, count, context)
+                 context = NULL, escape = NULL) {
+      options <- i18n_options(data, language, count, context, escape)
       private$context$call("t", string, options)
     },
 
@@ -160,7 +167,7 @@ R6_i18n <- R6::R6Class(
 ## NOTE: This silently overwrites any data stored in language, count,
 ## context if they are present in data and provided as an explicit
 ## argument.
-i18n_options <- function(data, language, count, context) {
+i18n_options <- function(data, language, count, context, escape) {
   data <- data %||% list()
   if (!is.null(language)) {
     data$lng <- language
@@ -173,6 +180,9 @@ i18n_options <- function(data, language, count, context) {
   }
   if (length(data) == 0) {
     data <- list()
+  }
+  if (!is.null(escape)) {
+    data$interpolation <- list(escapeValue = scalar(escape))
   }
   data
 }
