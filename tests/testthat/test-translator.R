@@ -94,7 +94,7 @@ test_that("translator get package", {
   id <- "package:impossible_package"
   path <- traduire_file("examples/simple.json")
   translators[[id]] <- i18n(path)
-  on.exit(rm(list = id, translators))
+  on.exit(rm(list = id, envir = translators))
 
   res <- translator(package = "impossible_package")
   expect_identical(res, translators[[id]])
