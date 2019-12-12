@@ -73,7 +73,7 @@ test_that("validate_package_name requires correct package in strict mode", {
 
 
 test_that("name_from_context rejects a package: prefix", {
-  expect_error(name_from_context(name = "package:whatever"),
+  expect_error(name_from_context("package:whatever", NULL, FALSE),
                "Do not use 'package:' prefix directly")
 })
 
