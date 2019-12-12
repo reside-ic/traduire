@@ -114,7 +114,7 @@ t_ <- translator_translate
 ##' @export
 ##' @rdname translator
 translator <- function(name = NULL, package = NULL) {
-  name <- name_from_context(name)
+  name <- name_from_context(name, package, FALSE)
   translator <- translators[[name]]
   if (is.null(translator)) {
     stop(sprintf("Did not find translator '%s'", name))
@@ -149,7 +149,7 @@ translator_list <- function() {
 ## In order to prevent registration/unregistration of translators from
 ## other packages, if  package *is* provided and strict  is TRUE, then
 ## we verify that the correct name was given.
-name_from_context <- function(name = NULL, package = NULL, strict = FALSE) {
+name_from_context <- function(name, package, strict) {
   prefix <- "package:"
   if (!is.null(package)) {
     validate_package_name(package, strict)
