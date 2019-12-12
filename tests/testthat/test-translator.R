@@ -88,3 +88,14 @@ test_that("name_from_context finds name in package", {
   expect_equal(name_from_context(NULL, NULL, FALSE), "package:pkg")
   expect_equal(name_from_context(NULL, "pkg", FALSE), "package:pkg")
 })
+
+
+test_that("translator get package", {
+  id <- "package:impossible_package"
+  path <- traduire_file("examples/simple.json")
+  translators[[id]] <- i18n(path)
+  on.exit(rm(list = id, translators))
+
+  res <- translator(package = "impossible_package")
+  expect_identical(res, translators[[id]])
+})

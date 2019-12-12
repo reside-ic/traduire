@@ -114,7 +114,7 @@ t_ <- translator_translate
 ##' @export
 ##' @rdname translator
 translator <- function(name = NULL, package = NULL) {
-  name <- name_from_context(name)
+  name <- name_from_context(name, package)
   translator <- translators[[name]]
   if (is.null(translator)) {
     stop(sprintf("Did not find translator '%s'", name))
