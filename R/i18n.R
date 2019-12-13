@@ -130,7 +130,7 @@ R6_i18n <- R6::R6Class(
     },
 
     default_namespace = function() {
-      private$context$call("default_namespace")
+      private$context$call("defaultNamespace")
     },
 
     set_default_namespace = function(namespace) {

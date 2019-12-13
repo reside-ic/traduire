@@ -58,7 +58,7 @@ global.languages = function() {
     return i18next.languages;
 }
 
-global.default_namespace = function() {
+global.defaultNamespace = function() {
     return i18next.options.defaultNS;
 };
 
