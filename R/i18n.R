@@ -151,6 +151,11 @@ R6_i18n <- R6::R6Class(
       invisible(self)
     },
 
+    get_resource = function(language, namespace, key, sep = ".") {
+      options <- list(keySeparator = scalar(sep))
+      private$context$call("getResource", language, namespace, key, options)
+    },
+
     load_namespaces = function(namespaces) {
       private$context$call("i18next.loadNamespaces", namespaces)
       invisible(self)

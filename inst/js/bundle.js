@@ -68,6 +68,10 @@ global.addResourceBundle = function(lng, ns, resources, deep, overwrite) {
     i18next.addResourceBundle(lng, ns, JSON.parse(resources), deep, overwrite);
 }
 
+global.getResource = function(lng, ns, key, options) {
+    return i18next.getResource(lng, ns, key, options);
+}
+
 global.traduireLoader = function() {
     return {
         type: 'backend',
