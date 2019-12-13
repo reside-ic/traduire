@@ -79,3 +79,16 @@ vlapply <- function(X, FUN, ...) {
 starts_with <- function(string, prefix) {
   substr(string, 1, nchar(prefix)) == prefix
 }
+
+
+glue_extract <- function(text, prefix, suffix) {
+  found <- character()
+  extractor <- function(text, envir) {
+    found <<- c(found, trimws(text))
+    text
+  }
+  glue::glue(text,
+             .transformer = extractor,
+             .open = prefix, .close = suffix)
+  found
+}

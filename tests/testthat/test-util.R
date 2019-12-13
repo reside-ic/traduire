@@ -19,3 +19,13 @@ test_that("read_input passes json through", {
   dat <- '{"a" : "b"}'
   expect_equal(read_input(dat), jsonlite::unbox(dat))
 })
+
+
+test_that("glue_extract", {
+  expect_equal(glue_extract("a", "{", "}"), character())
+  expect_equal(glue_extract("my {glue} message", "{", "}"), "glue")
+  expect_equal(glue_extract("{my} {glue} {message}", "{", "}"),
+               c("my", "glue", "message"))
+  expect_equal(glue_extract("{my} {{glue}} {message}", "{{", "}}"),
+               "glue")
+})
