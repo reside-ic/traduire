@@ -96,6 +96,10 @@ R6_i18n <- R6::R6Class(
                            auto_unbox = FALSE)
     },
 
+    options = function() {
+      private$context$call("options")
+    },
+
     t = function(string, data = NULL, language = NULL, count = NULL,
                  context = NULL, escape = NULL) {
       options <- i18n_options(data, language, count, context, escape)

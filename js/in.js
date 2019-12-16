@@ -42,6 +42,10 @@ global.init = function(resources, lng, defaultNS, debug, resourcePattern,
     return true;
 }
 
+global.options = function() {
+    return i18next.options;
+}
+
 global.t = function(x, options) {
     return i18next.t(x, options);
 }
