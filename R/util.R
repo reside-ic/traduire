@@ -92,3 +92,26 @@ glue_extract <- function(text, prefix, suffix) {
              .open = prefix, .close = suffix)
   found
 }
+
+
+expand_paths <- function(paths) {
+  stopifnot(all(file.exists(paths)))
+  i <- file.exists(paths) & file.info(paths, extra_cols = FALSE)$isdir
+  if (any(i)) {
+    paths <- as.list(paths)
+    paths[i] <- dir(paths[i], pattern = "\\.[Rr]$", full.names = TRUE)
+    paths <- unlist(paths, FALSE, TRUE)
+  }
+  paths
+}
+
+
+set_names <- function(x, nms) {
+  names(x) <- nms
+  x
+}
+
+
+strip_quotes <- function(x) {
+  gsub("(^[\"']|[\"']$)", "", x)
+}
