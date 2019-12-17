@@ -46,10 +46,10 @@ lint_get_usage1 <- function(i, data) {
   res <- parse_data_match_call(i, data, function(key, data, ...) {})
   ## TODO: if this is a symbol, then we could try and look it up, or
   ## flag it as unknowable.
-  stopifnot(data$token[res$key[[1]]] == "STR_CONST")
+  stopifnot(data$token[res$key$value[[1]]] == "STR_CONST")
   key <- list(namespace = NULL,
-              key = strip_quotes(data$text[res$key[[1]]]),
-              index = res$key[[1]])
+              key = strip_quotes(data$text[res$key$value[[1]]]),
+              index = res$key$value[[1]])
   if (grepl(":", key$key, fixed = TRUE)) {
     key_split <- strsplit(key$key, ":", fixed = TRUE)[[1]]
     if (length(key_split) == 2) {
@@ -58,18 +58,15 @@ lint_get_usage1 <- function(i, data) {
     }
   }
 
-  ## Then the interpolation data, if present.  Getting this
-  ## out-of-line is more important, but harder to get right.
+  ## Then the interpolation data, if present.  Getting this from a
+  ## symbol (i.e., when not inline) is more important because it won't
+  ## always be convenient to write it that way.
   if (is.null(res$data)) {
     interpolation <- NULL
   } else {
-    browser()
-    ## TODO: what about the definition of data if it's not inline?  We can
-    ## look up the definition in a fairly stupid way and hope for the
-    ## best?
-    ##
-    ## TODO: identifying the location of the invalid data name
-    interpolation <- names(match.call(function(...) {}, res$data)[-1])
+    stopifnot(data$token[res$data$value[[2]]] == "SYMBOL_FUNCTION_CALL")
+    interpolation <- list(data = parse_data_match_call(
+      res$data$value[[2]], data, function(...) {}))
   }
 
   list(index = index,
@@ -79,9 +76,16 @@ lint_get_usage1 <- function(i, data) {
 
 
 lint_compare_usage <- function(usage, obj, common) {
-  usage$usage <- lapply(usage$usage, lint_compare_usage1_key,
+  usage$usage <- lapply(usage$usage, lint_compare_usage1,
                         usage$data, obj, common)
   usage
+}
+
+
+lint_compare_usage1 <- function(x, data, obj, common) {
+  x <- lint_compare_usage1_key(x, data, obj, common)
+  x <- lint_compare_usage1_interpolation(x, data, obj, common)
+  x
 }
 
 
@@ -94,50 +98,26 @@ lint_compare_usage1_key <- function(x, data, obj, common) {
 }
 
 
-## TODO: if count is present, ask about plurals - they don't need to
-## be present, but if they are then we must check the data.
-lint_compare_usage1 <- function(x, data, obj, common) {
-  browser()
-  ## start with the key:
-
-  namespace <- x$key$namespace %||% common$default_namespace
-  value <- obj$get_resource(common$language, namespace, x$key$key)
-  exists <- !is.null(value)
-
-
-
-  if (x$exists) {
-    fields <- glue_extract(x$value, common$prefix, common$suffix)
-    i <- starts_with(fields, common$escape)
-    if (any(i)) {
-      fields[i] <- substr(fields[i], nchar(common$escape) + 1L, nchar(fields))
-    }
-    data <- x$data %||% character(0)
-    x$missing <- setdiff(fields, data)
-    x$unused <- setdiff(data, c(fields, c("count", "context")))
-  } else {
-    x$missing <- character(0)
-    x$unused <- character(0)
+lint_compare_usage1_interpolation <- function(x, data, obj, common) {
+  if (!x$key$exists) {
+    return(x)
   }
 
-  error <- function(message, ...) {
-    list(success = FALSE, message = sprintf(message, ...))
-  }
-  if (!x$exists) {
-    x$status <- sprintf("Key '%s:%s' not found", x$namespace, x$key)
-    x$success <- FALSE
-  } else if (length(x$missing) > 0L) {
-    x$status <- sprintf("Missing data keys: %s",
-                        paste(squote(x$missing), collapse = ", "))
-    x$success <- FALSE
-  } else if (length(x$unused) > 0L) {
-    x$status <- sprintf("Unused data keys: %s",
-                        paste(squote(x$unused), collapse = ", "))
-    x$success <- FALSE
-  } else {
-    x$success <- TRUE
+  fields <- glue_extract(x$key$value, common$prefix, common$suffix)
+  i <- starts_with(fields, common$escape)
+  if (any(i)) {
+    fields[i] <- substr(fields[i], nchar(common$escape) + 1L, nchar(fields))
   }
 
+  ## TODO: we might want to treat the case of no interpolation data
+  ## specially?
+  given <- names(x$interpolation$data) %||% character(0)
+
+  x$interpolation$missing <- setdiff(fields, given)
+  x$interpolation$unused <- setdiff(given, c(fields, c("count", "context")))
+  x$interpolation$valid <-
+    length(x$interpolation$missing) == 0 &&
+    length(x$interpolation$unused) == 0
   x
 }
 
@@ -195,10 +175,10 @@ parse_data_match_call <- function(i, data, definition) {
   for (k in seq_along(args)) {
     sub <- d[d$arg == k, ]
     if (identical(sub$token[1:2], c("SYMBOL_SUB", "EQ_SUB"))) {
-      args[[k]] <- sub$index[-(1:2)]
+      args[[k]] <- list(name = sub$index[[1]], value = sub$index[-(1:2)])
       nms[[k]] <- sub$text[[1L]]
     } else {
-      args[[k]] <- sub$index
+      args[[k]] <- list(name = NULL, value = sub$index)
     }
   }
 
