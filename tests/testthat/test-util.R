@@ -21,27 +21,6 @@ test_that("read_input passes json through", {
 })
 
 
-test_that("glue_extract", {
-  expect_equal(
-    glue_extract("a", "{", "}"),
-    data_frame(text = character(), from = numeric(), to = numeric()))
-
-  expect_equal(
-    glue_extract("my {glue} message", "{", "}"),
-    data_frame(text = "glue", from = 4, to = 9))
-
-  expect_equal(
-    glue_extract("{my} {glue} {message}", "{", "}"),
-    data_frame(text = c("my", "glue", "message"),
-               from = c(1, 6, 13),
-               to = c(4, 11, 21)))
-
-  expect_equal(
-    glue_extract("{my} {{glue}} {message}", "{{", "}}"),
-    data_frame(text = "glue", from = 6, to = 13))
-})
-
-
 test_that("expand_paths expands paths", {
   expect_setequal(
     expand_paths(traduire_file("hello/R")),
