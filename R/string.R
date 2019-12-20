@@ -93,7 +93,7 @@ markup_render <- function(tags, spans, text, filter = TRUE, group = NULL,
 
   stopifnot(all(tag %in% names(tags)))
 
-  for (i in order(line, -col)) {
+  for (i in order(line, -col, open)) {
     x <- text[[line[[i]]]]
     at <- col[[i]] + (if (open[[i]]) 0L else 1L)
     add <- tags[[tag[[i]]]](open[[i]], msg[[i]])
