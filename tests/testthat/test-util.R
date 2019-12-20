@@ -41,5 +41,5 @@ test_that("browse_html", {
   expect_true(file.exists(res$value))
   expect_equal(readLines(res$value), code)
   mockery::expect_called(mock_browser, 1)
-  mockery::expect_call(mock_browser, 1, utils::browseURL(tmp))
+  mockery::expect_call(mock_browser, 1, utils::browseURL(file))
 })
