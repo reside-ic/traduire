@@ -40,3 +40,27 @@ test_that("glue_extract", {
     glue_extract("{my} {{glue}} {message}", "{{", "}}"),
     data_frame(text = "glue", from = 6, to = 13))
 })
+
+
+test_that("expand_paths expands paths", {
+  expect_setequal(
+    expand_paths(traduire_file("hello/R")),
+    c(traduire_file("hello/R/api.R"),
+      traduire_file("hello/R/hello.R")))
+})
+
+
+test_that("browse_html", {
+  code <- "hello world"
+  mock_browser <- mockery::mock()
+  mockery::stub(
+    browse_html,
+    "utils::browseURL",
+    mock_browser)
+  res <- withVisible(browse_html(code))
+  expect_false(res$visible)
+  expect_true(file.exists(res$value))
+  expect_equal(readLines(res$value), code)
+  mockery::expect_called(mock_browser, 1)
+  mockery::expect_call(mock_browser, 1, utils::browseURL(tmp))
+})
