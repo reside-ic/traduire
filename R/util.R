@@ -81,19 +81,6 @@ starts_with <- function(string, prefix) {
 }
 
 
-glue_extract <- function(text, prefix, suffix) {
-  found <- character()
-  extractor <- function(text, envir) {
-    found <<- c(found, trimws(text))
-    text
-  }
-  glue::glue(text,
-             .transformer = extractor,
-             .open = prefix, .close = suffix)
-  found
-}
-
-
 expand_paths <- function(paths) {
   stopifnot(all(file.exists(paths)))
   i <- file.exists(paths) & file.info(paths, extra_cols = FALSE)$isdir
