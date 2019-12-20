@@ -115,3 +115,33 @@ set_names <- function(x, nms) {
 strip_quotes <- function(x) {
   gsub("(^[\"']|[\"']$)", "", x)
 }
+
+
+data_frame <- function(...) {
+  data.frame(..., stringsAsFactors = FALSE)
+}
+
+
+vcapply <- function(X, FUN, ...) {
+  vapply(X, FUN, character(1), ...)
+}
+
+
+viapply <- function(X, FUN, ...) {
+  vapply(X, FUN, integer(1), ...)
+}
+
+
+vlapply <- function(X, FUN, ...) {
+  vapply(X, FUN, logical(1), ...)
+}
+
+
+vnapply <- function(X, FUN, ...) {
+  vapply(X, FUN, numeric(1), ...)
+}
+
+
+read_file <- function(path) {
+  paste(readLines(path), collapse = "\n")
+}
