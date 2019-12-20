@@ -99,7 +99,7 @@ expand_paths <- function(paths) {
   i <- file.exists(paths) & file.info(paths, extra_cols = FALSE)$isdir
   if (any(i)) {
     paths <- as.list(paths)
-    paths[i] <- dir(paths[i], pattern = "\\.[Rr]$", full.names = TRUE)
+    paths[i] <- lapply(paths[i], dir, pattern = "\\.[Rr]$", full.names = TRUE)
     paths <- unlist(paths, FALSE, TRUE)
   }
   paths
