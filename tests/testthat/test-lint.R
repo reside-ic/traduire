@@ -20,14 +20,14 @@ test_that("existing and missing key", {
   expect_equal(res[[1]]$usage[[1]]$key$value, "hello world")
   expect_equal(res[[1]]$usage[[1]]$key$namespace_computed, "translation")
   expect_true(res[[1]]$usage[[1]]$key$exists)
-  expect_null(res[[1]]$usage[[1]]$interpolation)
+  expect_true(res[[1]]$usage[[1]]$interpolation$valid)
 
   expect_null(res[[1]]$usage[[2]]$key$namespace)
   expect_equal(res[[1]]$usage[[2]]$key$key, "missing")
   expect_null(res[[1]]$usage[[2]]$key$value)
   expect_equal(res[[1]]$usage[[2]]$key$namespace_computed, "translation")
   expect_false(res[[1]]$usage[[2]]$key$exists)
-  expect_null(res[[1]]$usage[[2]]$interpolation)
+  expect_true(res[[1]]$usage[[1]]$interpolation$valid)
 })
 
 
@@ -82,7 +82,11 @@ test_that("parse data match call", {
   data <- parse_data(parse(text = "f('a', b = 2, 'c')", keep.source = TRUE))
   i <- which(data$text == "f")[[1]]
   expect_equal(parse_data_match_call(i, data, function(a, b, c) {}),
-               list(a = 5:6, b = 10:11, c = 13:14))
+               list(a = list(name = NULL, value = 5:6),
+                    b = list(name = 8, value = 10:11),
+                    c = list(name = NULL, value = 13:14)))
   expect_equal(parse_data_match_call(i, data, function(x, y, b) {}),
-               list(x = 5:6, y = 13:14, b = 10:11))
+               list(x = list(name = NULL, value = 5:6),
+                    y = list(name = NULL, value = 13:14),
+                    b = list(name = 8, value = 10:11)))
 })
