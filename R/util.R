@@ -129,11 +129,6 @@ vnapply <- function(X, FUN, ...) {
 }
 
 
-read_file <- function(path) {
-  paste(readLines(path), collapse = "\n")
-}
-
-
 browse_html <- function(html, ..., file = tempfile(fileext = ".html")) {
   writeLines(html, file)
   utils::browseURL(file, ...)
