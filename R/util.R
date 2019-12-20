@@ -135,7 +135,7 @@ read_file <- function(path) {
 
 
 browse_html <- function(html) {
-  tmp <- tempfile()
+  tmp <- tempfile(fileext = ".html")
   writeLines(html, tmp)
   browseURL(tmp)
   invisible(tmp)
