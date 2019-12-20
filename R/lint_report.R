@@ -33,3 +33,19 @@ lint_translations_html_report_file <- function(x) {
   content <- sprintf(fmt, x$path, paste(code, collapse = "\n"))
   list(tab = tab, content = content)
 }
+
+
+html_span <- function(class) {
+  force(class)
+  function(open, msg) {
+    if (open) {
+      if (is.na(msg)) {
+        sprintf('<span class="%s">', class)
+      } else {
+        sprintf('<span class="%s" data-tooltip="%s">', class, msg)
+      }
+    } else {
+      "</span>"
+    }
+  }
+}

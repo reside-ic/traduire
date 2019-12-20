@@ -144,22 +144,6 @@ html_escape <- function(text, line, col, open) {
 }
 
 
-html_span <- function(class) {
-  force(class)
-  function(open, msg) {
-    if (open) {
-      if (is.na(msg)) {
-        sprintf('<span class="%s">', class)
-      } else {
-        sprintf('<span class="%s" data-tooltip="%s">', class, msg)
-      }
-    } else {
-      "</span>"
-    }
-  }
-}
-
-
 crayon_span <- function(style) {
   stopifnot(inherits(style, "crayon"))
   ansi_open <- stats::start(style)
