@@ -140,3 +140,41 @@ browse_html <- function(html) {
   browseURL(tmp)
   invisible(tmp)
 }
+
+
+parse_data <- function(exprs) {
+  data <- utils::getParseData(exprs)
+  data$depth <- cumsum((data$token == "'('") - (data$token == "')'"))
+  data$index <- seq_len(nrow(data))
+  data
+}
+
+
+parse_data_match_call <- function(i, data, definition) {
+  stopifnot(data$token[[i + 2L]] == "'('")
+
+  j <- which(data$index > i + 2L & data$depth == data$depth[[i]])[[1]]
+  d <- data[(i + 3L):(j - 1L), ]
+  comma <- d$token == "','" & d$depth == data$depth[[i]] + 1L
+  d$arg <- cumsum(comma) + 1L
+  d$arg[comma] <- 0L
+
+  ## Then for each argument group we're just looking to see if they
+  ## are *named* or not; that's just a presence of a SYMBOL_SUB,
+  ## EQ_SUB as the first two members.
+  args <- vector("list", max(d$arg))
+  nms <- character(length(args))
+
+  for (k in seq_along(args)) {
+    sub <- d[d$arg == k, ]
+    if (identical(sub$token[1:2], c("SYMBOL_SUB", "EQ_SUB"))) {
+      args[[k]] <- list(name = sub$index[[1]], value = sub$index[-(1:2)])
+      nms[[k]] <- sub$text[[1L]]
+    } else {
+      args[[k]] <- list(name = NULL, value = sub$index)
+    }
+  }
+
+  call <- as.call(c(list(quote(.)), set_names(args, nms)))
+  as.list(match.call(definition, call))[-1L]
+}
