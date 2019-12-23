@@ -73,6 +73,36 @@ test_that("read interpolation data", {
 })
 
 
+test_that("Detect namespaced keys", {
+  src <- c(
+    'a <- t_("hello")',
+    'b <- t_("common:hello")',
+    'c <- t_("username")',
+    'd <- t_("login:username")')
+  p <- tempfile(fileext = ".R")
+  writeLines(src, p)
+  obj <- i18n(traduire_file("examples/namespaces.json"),
+              default_namespace = "common")
+  res <- lint_translations(p, obj)
+
+  expect_true(res[[1]]$usage[[1]]$key$exists)
+  expect_null(res[[1]]$usage[[1]]$key$namespace)
+  expect_equal(res[[1]]$usage[[1]]$key$namespace_computed, "common")
+
+  expect_true(res[[1]]$usage[[2]]$key$exists)
+  expect_equal(res[[1]]$usage[[2]]$key$namespace, "common")
+  expect_equal(res[[1]]$usage[[2]]$key$namespace_computed, "common")
+
+  expect_false(res[[1]]$usage[[3]]$key$exists)
+  expect_null(res[[1]]$usage[[3]]$key$namespace)
+  expect_equal(res[[1]]$usage[[3]]$key$namespace_computed, "common")
+
+  expect_true(res[[1]]$usage[[4]]$key$exists)
+  expect_equal(res[[1]]$usage[[4]]$key$namespace, "login")
+  expect_equal(res[[1]]$usage[[4]]$key$namespace_computed, "login")
+})
+
+
 test_that("detect escaped interpolation fields", {
   translations <- list(
     "en" = list(
