@@ -57,17 +57,20 @@ lint_get_usage_expr <- function(i, data) {
   index <- data$index[[i - 1L]]
 
   res <- parse_data_match_call(i, data, function(key, data, ...) {})
-  ## TODO: if this is a symbol, then we could try and look it up, or
-  ## flag it as unknowable.
-  stopifnot(data$token[res$key$value[[1]]] == "STR_CONST")
-  key <- list(namespace = NULL,
-              key = strip_quotes(data$text[res$key$value[[1]]]),
-              index = res$key$value[[1]])
-  if (grepl(":", key$key, fixed = TRUE)) {
-    key_split <- strsplit(key$key, ":", fixed = TRUE)[[1]]
-    if (length(key_split) == 2) {
-      key$namespace <- key_split[[1]]
-      key$key <- key_split[[2]]
+  key_index <- res$key$value[[1]]
+
+  ## The idea here is that strings are easy to resolve, symbols might
+  ## be possible, anything else (e.g., a function call) will not be.
+  ## So assume missing unless we're able to determine it:
+  key <- list(namespace = NULL, key = NA_character_, index = key_index)
+  if (data$token[key_index] == "STR_CONST") {
+    key$key <- strip_quotes(data$text[key_index])
+    if (grepl(":", key$key, fixed = TRUE)) {
+      key_split <- strsplit(key$key, ":", fixed = TRUE)[[1]]
+      if (length(key_split) == 2) {
+        key$namespace <- key_split[[1]]
+        key$key <- key_split[[2]]
+      }
     }
   }
 
@@ -113,15 +116,21 @@ lint_compare_usage_expr <- function(x, data, obj, common) {
 
 lint_compare_usage_expr_key <- function(x, data, obj, common) {
   namespace <- x$key$namespace %||% common$default_namespace
-  x$key$value <- obj$get_resource(common$language, namespace, x$key$key)
-  x$key$namespace_computed <- namespace
-  x$key$exists <- !is.null(x$key$value)
+  if (is.na(x$key$key)) {
+    x$key$value <- NA_character_
+    x$key$namespace_computed <- NA_character_
+    x$key$exists <- NA
+  } else {
+    x$key$value <- obj$get_resource(common$language, namespace, x$key$key)
+    x$key$namespace_computed <- namespace
+    x$key$exists <- !is.null(x$key$value)
+  }
   x
 }
 
 
 lint_compare_usage_expr_interpolation <- function(x, data, obj, common) {
-  if (!x$key$exists) {
+  if (!isTRUE(x$key$exists)) {
     return(x)
   }
 
@@ -150,7 +159,10 @@ lint_collect_errors_expr <- function(x, m) {
   m$start()
   m$add("EXPR", x$index)
 
-  if (!x$key$exists) {
+  if (is.na(x$key$exists)) {
+    msg <- "Translation key could not be determined without string"
+    m$add("UNKNOWN_KEY", x$key$index, msg)
+  } else if (!x$key$exists) {
     msg <- sprintf("Translation key '%s:%s' not found",
                    x$key$namespace_computed, x$key$key)
     m$add("MISSING_KEY", x$key$index, msg)

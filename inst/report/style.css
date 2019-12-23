@@ -68,6 +68,10 @@ span.valid {
     color: blue;
 }
 
+span.warning-unknown {
+    color: orange;
+}
+
 span.error-missing {
     color: red;
 }

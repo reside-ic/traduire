@@ -133,6 +133,29 @@ test_that("detect escaped interpolation fields", {
 })
 
 
+test_that("behaviour when symbol used for key", {
+  src <- c(
+    'k <- "hello"',
+    'a <- t_("hello")',
+    'b <- t_(k)')
+  p <- tempfile(fileext = ".R")
+  writeLines(src, p)
+  obj <- i18n(traduire_file("examples/simple.json"))
+  res <- lint_translations(p, obj)
+
+  expect_true(res[[1]]$usage[[1]]$key$exists)
+
+  expect_identical(res[[1]]$usage[[2]]$key$exists, NA)
+  expect_identical(res[[1]]$usage[[2]]$key$key, NA_character_)
+  expect_identical(res[[1]]$usage[[2]]$key$value, NA_character_)
+  expect_identical(res[[1]]$usage[[2]]$key$namespace_computed, NA_character_)
+
+  expect_equal(res[[1]]$info$spans[[7]]$tag, "UNKNOWN_KEY")
+  expect_equal(res[[1]]$info$spans[[7]]$msg,
+               "Translation key could not be determined without string")
+})
+
+
 test_that("parse data match call", {
   ## TODO: this is probably a bit implementation dependent. We should
   ## compute the positions of these characters rather than encoding
