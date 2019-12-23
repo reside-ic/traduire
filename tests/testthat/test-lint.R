@@ -150,3 +150,23 @@ test_that("parse data match call", {
                     y = list(name = NULL, value = 13:14),
                     b = list(name = 8, value = 10:11)))
 })
+
+
+test_that("directory wrangling", {
+  src1 <- c(
+    'a <- t_("hello")',
+    'b <- t_("missing")')
+  src2 <- c('message(a)')
+  p <- tempfile()
+  dir.create(file.path(p, "R"), FALSE, TRUE)
+  writeLines(src1, file.path(p, "R", "a.R"))
+  writeLines(src2, file.path(p, "R", "b.R"))
+
+  obj <- i18n(traduire_file("examples/simple.json"))
+  res <- lint_translations("R", obj, root = p)
+
+  expect_equal(res[[1]]$path, "R/a.R")
+  expect_equal(res[[2]]$path, "R/b.R")
+  expect_equal(length(res[[1]]$usage), 2)
+  expect_equal(length(res[[2]]$usage), 0)
+})
