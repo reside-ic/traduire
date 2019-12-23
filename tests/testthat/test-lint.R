@@ -73,6 +73,36 @@ test_that("read interpolation data", {
 })
 
 
+test_that("detect escaped interpolation fields", {
+  translations <- list(
+    "en" = list(
+      "translation" = list(
+        "escape" = "the {{code}}, escaped",
+        "noescape" = "the raw {{- code}} with no escape")))
+  json <- tempfile()
+  writeLines(
+    jsonlite::toJSON(translations, auto_unbox = TRUE),
+    json)
+  obj <- i18n(json, escape = TRUE)
+
+  src <- c(
+    'a <- t_("escape", list(code = "mycode"))',
+    'b <- t_("noescape", list(code = "mycode"))')
+  p <- tempfile(fileext = ".R")
+  writeLines(src, p)
+
+  ## TODO: we should expose the file-level linting more here to simplify this
+  res <- lint_translations(p, obj)
+  expect_equal(res[[1]]$usage[[1]]$interpolation$fields$text, "code")
+  expect_equal(res[[1]]$usage[[1]]$interpolation$fields$from, 5)
+  expect_equal(res[[1]]$usage[[1]]$interpolation$fields$to, 12)
+
+  expect_equal(res[[1]]$usage[[2]]$interpolation$fields$text, "code")
+  expect_equal(res[[1]]$usage[[2]]$interpolation$fields$from, 9)
+  expect_equal(res[[1]]$usage[[2]]$interpolation$fields$to, 18)
+})
+
+
 test_that("parse data match call", {
   ## TODO: this is probably a bit implementation dependent. We should
   ## compute the positions of these characters rather than encoding
