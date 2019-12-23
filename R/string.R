@@ -28,7 +28,6 @@ str_find <- function(sub, string, pos) {
 }
 
 
-
 str_insert <- function(str, at, value) {
   paste0(substr(str, 1L, at - 1L), value, substr(str, at, nchar(str)))
 }
@@ -141,14 +140,4 @@ html_escape <- function(text, line, col, open) {
   }
 
   list(text = text, col = col)
-}
-
-
-crayon_span <- function(style) {
-  stopifnot(inherits(style, "crayon"))
-  ansi_open <- stats::start(style)
-  ansi_close <- crayon::finish(style)
-  function(open, msg) {
-    if (open) ansi_open else ansi_close
-  }
 }
