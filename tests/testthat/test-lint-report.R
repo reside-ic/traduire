@@ -39,3 +39,17 @@ test_that("report for file", {
     spans[[2]],
     '<span class="line">b &lt;- <span class="expr">t_(<span class="error-missing" data-tooltip="Translation key \'translation:missing\' not found">"missing"</span>)</span></span>')
 })
+
+
+test_that("complete report", {
+  src <- c(
+    'a <- t_("hello")',
+    'b <- t_("missing")')
+  p <- tempfile()
+  dir.create(p)
+  writeLines(src, file.path(p, "a.R"))
+  obj <- i18n(traduire_file("examples/simple.json"))
+  x <- lint_translations("a.R", obj, root = p)
+  html <- lint_translations_html_report(x, "mytitle")
+  expect_match(html, "^<html")
+})
