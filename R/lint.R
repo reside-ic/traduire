@@ -3,15 +3,6 @@
 ## file is important so we'll explicitly have a level of grouping at
 ## file.  Within each file there are a set of expressions (calls to
 ## `t_` at this point)
-##
-## Incomplete list of limitations at the moment:
-##
-## TODO: Can't use when translation key is a symbol
-## TODO: Can't use when interpolation data is a symbol
-## TODO: After above, can't deal with setNames-style data creation
-## TODO: No equivalent for use within $replace contexts
-## TODO: Not searching for $t() usage
-## TODO: Not searching for untranslated strings
 lint_translations <- function(path, obj, language = NULL, root = NULL) {
   if (!is.null(root)) {
     owd <- setwd(root)
@@ -74,15 +65,18 @@ lint_get_usage_expr <- function(i, data) {
     }
   }
 
-  ## Then the interpolation data, if present.  Getting this from a
-  ## symbol (i.e., when not inline) is more important because it won't
-  ## always be convenient to write it that way.
   if (is.null(res$data)) {
-    interpolation <- list()
+    interpolation <- list(found = TRUE)
   } else {
-    stopifnot(data$token[res$data$value[[2]]] == "SYMBOL_FUNCTION_CALL")
-    interpolation <- list(data = parse_data_match_call(
-      res$data$value[[2]], data, function(...) {}))
+    data_index <- res$data$value[[2]]
+    if (data$token[[data_index]] == "SYMBOL_FUNCTION_CALL" &&
+        data$text[[data_index]] == "list") {
+      interpolation <- list(
+        data = parse_data_match_call(data_index, data, function(...) {}),
+        found = TRUE)
+    } else {
+      interpolation <- list(found = FALSE)
+    }
   }
 
   list(index = index,
@@ -142,15 +136,18 @@ lint_compare_usage_expr_interpolation <- function(x, data, obj, common) {
   }
 
   x$interpolation$fields <- fields
+  if (x$interpolation$found) {
+    given <- names(x$interpolation$data) %||% character(0)
+    needed <- fields$text
+    x$interpolation$missing <- setdiff(needed, given)
+    x$interpolation$unused <- setdiff(given, c(needed, c("count", "context")))
+    x$interpolation$valid <-
+      length(x$interpolation$missing) == 0 &&
+      length(x$interpolation$unused) == 0
+  } else {
+    x$interpolation$valid <- NA
+  }
 
-  given <- names(x$interpolation$data) %||% character(0)
-  needed <- fields$text
-  x$interpolation$missing <- setdiff(needed, given)
-  x$interpolation$unused <- setdiff(given, c(needed, c("count", "context")))
-
-  x$interpolation$valid <-
-    length(x$interpolation$missing) == 0 &&
-    length(x$interpolation$unused) == 0
   x
 }
 
@@ -166,7 +163,10 @@ lint_collect_errors_expr <- function(x, m) {
     msg <- sprintf("Translation key '%s:%s' not found",
                    x$key$namespace_computed, x$key$key)
     m$add("MISSING_KEY", x$key$index, msg)
-  } else if (!is.null(x$interpolation) && !x$interpolation$valid) {
+  } else if (is.na(x$interpolation$valid)) {
+    msg <- "Interpolation data could not be determined"
+    m$add("UNKNOWN_DATA", x$key$index, msg)
+  } else if (!x$interpolation$valid) {
     for (i in x$interpolation$unused) {
       m$add("INTERPOLATION_UNUSED", x$interpolation$data[[i]]$name,
             sprintf("Interpolation key '%s' unused", i))

@@ -156,6 +156,30 @@ test_that("behaviour when symbol used for key", {
 })
 
 
+test_that("behaviour when using symbol for interpolation data", {
+  src <- c(
+    'data <- list(what = "thing", how = "done")',
+    'a <- t_("interpolate", list(what = "thing", how = "done"))',
+    'b <- t_("interpolate", data)')
+  p <- tempfile(fileext = ".R")
+  writeLines(src, p)
+  obj <- i18n(traduire_file("examples/simple.json"))
+  res <- lint_translations(p, obj)
+
+  expect_true(res[[1]]$usage[[1]]$interpolation$valid)
+  expect_true(res[[1]]$usage[[1]]$interpolation$found)
+
+  expect_identical(res[[1]]$usage[[2]]$interpolation$valid, NA)
+  expect_false(res[[1]]$usage[[2]]$interpolation$found)
+  expect_identical(res[[1]]$usage[[2]]$interpolation$fields$text,
+                   c("what", "how"))
+
+  expect_equal(res[[1]]$info$spans[[7]]$tag, "UNKNOWN_DATA")
+  expect_equal(res[[1]]$info$spans[[7]]$msg,
+               "Interpolation data could not be determined")
+})
+
+
 test_that("parse data match call", {
   ## TODO: this is probably a bit implementation dependent. We should
   ## compute the positions of these characters rather than encoding

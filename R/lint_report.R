@@ -20,7 +20,8 @@ lint_translations_html_report_file <- function(x) {
   tags <- list(
     EXPR = html_span("expr"),
     VALID = html_span("valid"),
-    UNKNOWN_LEY = html_span("warning-unknown"),
+    UNKNOWN_KEY = html_span("warning-unknown-key"),
+    UNKNOWN_DATA = html_span("warning-unknown-data"),
     MISSING_KEY = html_span("error-missing"),
     INTERPOLATION_UNUSED = html_span("error-interpolation-unused"),
     INTERPOLATION_MISSING = html_span("error-interpolation-missing"))

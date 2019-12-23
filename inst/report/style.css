@@ -65,10 +65,14 @@ span.expr {
 }
 
 span.valid {
-    color: blue;
+    color: steelblue;
 }
 
-span.warning-unknown {
+span.warning-unknown-key {
+    color: orange;
+}
+
+span.warning-unknown-data {
     color: orange;
 }
 
