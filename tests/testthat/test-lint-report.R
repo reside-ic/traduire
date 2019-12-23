@@ -34,10 +34,10 @@ test_that("report for file", {
   spans <- strsplit(trimws(code), "\n", fixed = TRUE)[[1]]
   expect_equal(
     spans[[1]],
-    '<span class="line">a &lt;- <span class="valid"><span class="expr">t_("hello")</span></span></span>')
+    '<span class="line"></span>a &lt;- <span class="valid"><span class="expr">t_("hello")</span></span>')
   expect_equal(
     spans[[2]],
-    '<span class="line">b &lt;- <span class="expr">t_(<span class="error-missing" data-tooltip="Translation key \'translation:missing\' not found">"missing"</span>)</span></span>')
+    '<span class="line"></span>b &lt;- <span class="expr">t_(<span class="error-missing" data-tooltip="Translation key \'translation:missing\' not found">"missing"</span>)</span>')
 })
 
 

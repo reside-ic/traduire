@@ -26,9 +26,8 @@ lint_translations_html_report_file <- function(x) {
     INTERPOLATION_UNUSED = html_span("error-interpolation-unused"),
     INTERPOLATION_MISSING = html_span("error-interpolation-missing"))
   ans <- x$info$render(tags, escape = TRUE, filter = FALSE)
-  code <- sprintf('<span class="line">%s</span>', ans$text)
   fmt <- '<div id="%s" class="tabcontent">\n<pre>\n%s\n</pre>\n</div>'
-  code <- sprintf('<span class="line">%s</span>', ans$text)
+  code <- sprintf('<span class="line"></span>%s', ans$text)
   tab <- sprintf(
     '<button class="tablinks" onclick="openTab(event, \'%s\')">%s</button>',
     x$path, x$path)

@@ -56,6 +56,8 @@ span.line::before {
     padding: 0 .5em;
     margin-right: .5em;
     color: #888;
+    text-decoration: none;
+    font-weight: normal;
     text-align: right;
     -webkit-user-select: none;
 }
