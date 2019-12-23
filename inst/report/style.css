@@ -39,6 +39,7 @@ h1 {
 /* code highlighting */
 pre {
     overflow: hidden;
+    padding: 0.1em 0;
     counter-reset: line;
     color: #777;
 }
