@@ -68,6 +68,22 @@ Markup <- R6::R6Class(
 
     render = function(tags, filter = TRUE, group = NULL, escape = FALSE) {
       markup_render(tags, self$spans, self$text, filter, group, escape)
+    },
+
+    summary = function(tags) {
+      tags <- names(tags) # all we need are the names
+
+      spans <- matrix(self$spans, 2)
+      m <- matrix(FALSE, length(self$text), length(tags),
+                  dimnames = list(NULL, tags))
+      ## count <- as.list(table(factor(vcapply(spans[1, ], "[[", "tag"), tags)))
+      for (i in seq_len(ncol(spans))) {
+        from <- spans[[1, i]]
+        to <- spans[[2, i]]
+        m[from$line:to$line, from$tag] <- TRUE
+      }
+
+      m
     }
   ))
 
