@@ -17,15 +17,7 @@ lint_translations_html_report <- function(x, title) {
 
 
 lint_translations_html_report_file <- function(x) {
-  tags <- list(
-    EXPR = html_span("expr"),
-    VALID = html_span("valid"),
-    UNKNOWN_KEY = html_span("warning-unknown-key"),
-    UNKNOWN_DATA = html_span("warning-unknown-data"),
-    MISSING_KEY = html_span("error-missing"),
-    INTERPOLATION_UNUSED = html_span("error-interpolation-unused"),
-    INTERPOLATION_MISSING = html_span("error-interpolation-missing"))
-  ans <- x$info$render(tags, escape = TRUE, filter = FALSE)
+  ans <- x$info$render(lint_tags_html(), escape = TRUE, filter = FALSE)
   fmt <- '<div id="%s" class="tabcontent">\n<pre>\n%s\n</pre>\n</div>'
   code <- sprintf('<span class="line"></span>%s', ans$text)
   tab <- sprintf(
@@ -49,4 +41,16 @@ html_span <- function(class) {
       "</span>"
     }
   }
+}
+
+
+lint_tags_html <- function() {
+  lint_tags(list(
+    EXPR = html_span("expr"),
+    VALID = html_span("valid"),
+    UNKNOWN_KEY = html_span("warning-unknown-key"),
+    UNKNOWN_DATA = html_span("warning-unknown-data"),
+    MISSING_KEY = html_span("error-missing"),
+    INTERPOLATION_UNUSED = html_span("error-interpolation-unused"),
+    INTERPOLATION_MISSING = html_span("error-interpolation-missing")))
 }

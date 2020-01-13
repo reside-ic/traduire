@@ -180,3 +180,17 @@ lint_collect_errors_expr <- function(x, m) {
     m$add("VALID", x$index)
   }
 }
+
+
+lint_tags <- function(tags) {
+  if (!setequal(names(tags), lint_tags_names())) {
+    stop("Invalid tag names")
+  }
+  tags
+}
+
+
+lint_tags_names <- function() {
+  c("EXPR", "VALID", "UNKNOWN_KEY", "UNKNOWN_DATA", "MISSING_KEY",
+    "INTERPOLATION_UNUSED", "INTERPOLATION_MISSING")
+}

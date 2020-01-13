@@ -28,6 +28,15 @@ test_that("existing and missing key", {
   expect_equal(res[[1]]$usage[[2]]$key$namespace_computed, "translation")
   expect_false(res[[1]]$usage[[2]]$key$exists)
   expect_true(res[[1]]$usage[[1]]$interpolation$valid)
+
+  s <- res[[1]]$info$summary()
+  expect_is(s, "matrix")
+  expect_equal(nrow(s), 2)
+  expect_equal(ncol(s), length(lint_tags_names()))
+  expect_equal(s[, "EXPR"], c(TRUE, TRUE))
+  expect_equal(s[, "VALID"], c(TRUE, FALSE))
+  expect_equal(s[, "MISSING_KEY"], c(FALSE, TRUE))
+  expect_false(any(s[, !(colnames(s) %in% c("EXPR", "VALID", "MISSING_KEY"))]))
 })
 
 
@@ -216,4 +225,11 @@ test_that("directory wrangling", {
   expect_equal(res[[2]]$path, "R/b.R")
   expect_equal(length(res[[1]]$usage), 2)
   expect_equal(length(res[[2]]$usage), 0)
+})
+
+
+test_that("lint tags", {
+  expect_error(
+    lint_tags(list(EXPR = html_span("whatever"))),
+    "Invalid tag names")
 })

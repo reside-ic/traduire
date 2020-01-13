@@ -70,9 +70,8 @@ Markup <- R6::R6Class(
       markup_render(tags, self$spans, self$text, filter, group, escape)
     },
 
-    summary = function(tags) {
-      tags <- names(tags) # all we need are the names
-
+    summary = function() {
+      tags <- lint_tags_names()
       spans <- matrix(self$spans, 2)
       m <- matrix(FALSE, length(self$text), length(tags),
                   dimnames = list(NULL, tags))
