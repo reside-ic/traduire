@@ -132,7 +132,7 @@ lint_compare_usage_expr_interpolation <- function(x, data, obj, common) {
   i <- starts_with(fields$text, common$escape)
   if (any(i)) {
     fields$text[i] <- substr(fields$text[i], nchar(common$escape) + 1L,
-                             nchar(fields$text))
+                             nchar(fields$text[i]))
   }
 
   x$interpolation$fields <- fields
