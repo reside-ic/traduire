@@ -1,8 +1,36 @@
-## When linting translations, we're going to look into one or more
-## files - most likely it'll be more than one, and the name of the
-## file is important so we'll explicitly have a level of grouping at
-## file.  Within each file there are a set of expressions (calls to
-## `t_` at this point)
+##' Find likely translation errors using static source code analysis.
+##' We look into a series of R source files and identify all calls to
+##' \code{t_} and examine the key and interpolation data used within
+##' these calls.
+##'
+##' This will expand in future and is currently quite limited.
+##' Currently, only calls to \code{t_()} are inspected - not calls to
+##' \code{$t()} in a translator object, not calls to \code{$replace}
+##' etc.  The \code{package} and \code{name} arguments to \code{t_()}
+##' are also currently ignored, which will lead to spurious errors.  A
+##' version of this that automatically works for packages will also be
+##' written.  The key and interpolation data must (currently) be
+##' literals - you cannot save the key or data as a variable and pass
+##' that by variable name.
+##'
+##' @title Lint translations
+##'
+##' @param path Path to the translations to test.  This can be a
+##'   character vector of file names and directory names - directory
+##'   names are expanded (non-recursively) to find all \code{.R} files.
+##'
+##' @param obj A translator object.
+##'
+##' @param language Optional language to use as the language to lint.
+##'   Each language must be at present linted separately
+##'
+##' @param root A root directory, below which the files in \code{path}
+##'   will be treated relatively (e.g., pass a package's root
+##'   directory here, and then set \code{path = "R"}).  Using this
+##'   shortens the reported filenames considerably
+##'
+##' @return A \code{lint_translations} object.
+##' @export
 lint_translations <- function(path, obj, language = NULL, root = NULL) {
   if (!is.null(root)) {
     owd <- setwd(root)
