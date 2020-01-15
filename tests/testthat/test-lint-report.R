@@ -69,10 +69,9 @@ test_that("lint_translations_package", {
   root <- traduire_file("hello")
   obj <- i18n(file.path(root, "inst/traduire.json"), "en")
   mock_translator <- mockery::mock(obj)
-  mockery::stub(
-    lint_translations_package,
-    "translator",
-    mock_translator)
+  mock_load <- mockery::mock()
+  mockery::stub(lint_translations_package, "translator", mock_translator)
+  mockery::stub(lint_translations_package, "loadNamespace", mock_load)
   res <- lint_translations_package(root)
   cmp <- lint_translations("R", obj, root = root, title = "{hello}")
   expect_equal(
