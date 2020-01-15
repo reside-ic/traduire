@@ -9,6 +9,9 @@ lint_translations_report(x, file = tempfile())
 \arguments{
 \item{x}{A \code{lint_translations} object from
 \code{\link{lint_translations}}}
+
+\item{file}{File to save the report in (default is to use a
+temporary file).}
 }
 \value{
 This function is called for the side effect of viewing a

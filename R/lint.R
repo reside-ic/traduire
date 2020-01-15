@@ -66,6 +66,9 @@ lint_translations <- function(path, obj, language = NULL, root = NULL,
 ##' @param x A \code{lint_translations} object from
 ##'   \code{\link{lint_translations}}
 ##'
+##' @param file File to save the report in (default is to use a
+##'   temporary file).
+##'
 ##' @return This function is called for the side effect of viewing a
 ##'   report.  It will return (invisibly) the path to the produced
 ##'   report.
