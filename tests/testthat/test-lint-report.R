@@ -52,6 +52,15 @@ test_that("complete report", {
   x <- lint_translations("a.R", obj, root = p, title = "mytitle")
   html <- lint_translations_html_report(x)
   expect_match(html, "^<html")
+
+  mock_browser <- mockery::mock()
+  path <- withr::with_options(
+    list(browser = mock_browser),
+    lint_translations_report(x))
+  expect_true(file.exists(path))
+  mockery::expect_called(mock_browser, 1)
+  expect_equal(mockery::mock_args(mock_browser),
+               list(list(path)))
 })
 
 
