@@ -73,7 +73,7 @@ test_that("validate_package_name requires correct package in strict mode", {
 
 
 test_that("name_from_context rejects a package: prefix", {
-  expect_error(name_from_context(name = "package:whatever"),
+  expect_error(name_from_context("package:whatever", NULL, FALSE),
                "Do not use 'package:' prefix directly")
 })
 
@@ -87,4 +87,15 @@ test_that("name_from_context finds name in package", {
   expect_equal(name_from_context("given", NULL, FALSE), "given")
   expect_equal(name_from_context(NULL, NULL, FALSE), "package:pkg")
   expect_equal(name_from_context(NULL, "pkg", FALSE), "package:pkg")
+})
+
+
+test_that("translator get package", {
+  id <- "package:impossible_package"
+  path <- traduire_file("examples/simple.json")
+  translators[[id]] <- i18n(path)
+  on.exit(rm(list = id, envir = translators))
+
+  res <- translator(package = "impossible_package")
+  expect_identical(res, translators[[id]])
 })
