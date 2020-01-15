@@ -2,9 +2,12 @@
 % Please edit documentation in R/lint.R
 \name{lint_translations}
 \alias{lint_translations}
+\alias{lint_translations_package}
 \title{Lint translations}
 \usage{
 lint_translations(path, obj, language = NULL, root = NULL, title = NULL)
+
+lint_translations_package(root, language = NULL)
 }
 \arguments{
 \item{path}{Path to the translations to test.  This can be a
@@ -43,4 +46,11 @@ version of this that automatically works for packages will also be
 written.  The key and interpolation data must (currently) be
 literals - you cannot save the key or data as a variable and pass
 that by variable name.
+
+The function \code{lint_translations_package} is a wrapper around
+\code{lint_translations} to make working with a package a bit
+easier.  It's a bit flakey at the moment because the translator
+will be loaded from the currently installed package, but the usage
+will be checked in the source tree.  This will be addressed in a
+future version (see reside-90)
 }

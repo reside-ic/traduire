@@ -13,6 +13,13 @@
 ##' literals - you cannot save the key or data as a variable and pass
 ##' that by variable name.
 ##'
+##' The function \code{lint_translations_package} is a wrapper around
+##' \code{lint_translations} to make working with a package a bit
+##' easier.  It's a bit flakey at the moment because the translator
+##' will be loaded from the currently installed package, but the usage
+##' will be checked in the source tree.  This will be addressed in a
+##' future version (see reside-90)
+##'
 ##' @title Lint translations
 ##'
 ##' @param path Path to the translations to test.  This can be a
@@ -54,6 +61,25 @@ lint_translations <- function(path, obj, language = NULL, root = NULL,
   attr(results, "title") <- title %||% "Translation lint report"
   class(results) <- "lint_translations"
   results
+}
+
+
+##' @export
+##' @rdname lint_translations
+lint_translations_package <- function(root, language = NULL) {
+  desc <- file.path(root, "DESCRIPTION")
+  if (!file.exists(desc)) {
+    stop(sprintf("Did not find DESCRIPTION at '%s'", root))
+  }
+  package <- read.dcf(desc, "Package")[[1]]
+  if (is.na(package)) {
+    stop("Invalid DESCRIPTION - failed to read package name")
+  }
+  ## TODO: See reside-90
+  loadNamespace(package)
+  obj <- translator(package = package)
+  title <- sprintf("{%s}", package)
+  lint_translations("R", obj, language, root, title = title)
 }
 
 

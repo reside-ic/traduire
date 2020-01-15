@@ -53,3 +53,33 @@ test_that("complete report", {
   html <- lint_translations_html_report(x)
   expect_match(html, "^<html")
 })
+
+
+test_that("lint_translations_package", {
+  skip_if_not_installed("mockery")
+  root <- traduire_file("hello")
+  obj <- i18n(file.path(root, "inst/traduire.json"), "en")
+  mock_translator <- mockery::mock(obj)
+  mockery::stub(
+    lint_translations_package,
+    "translator",
+    mock_translator)
+  res <- lint_translations_package(root)
+  cmp <- lint_translations("R", obj, root = root, title = "{hello}")
+  expect_equal(
+    lint_translations_html_report(res),
+    lint_translations_html_report(cmp))
+})
+
+
+test_that("lint_translations_package corner cases", {
+  path <- tempfile()
+  expect_error(
+    lint_translations_package(path),
+    "Did not find DESCRIPTION at '.+'")
+  dir.create(path)
+  writeLines("Foo: bar", file.path(path, "DESCRIPTION"))
+  expect_error(
+    lint_translations_package(path),
+    "Invalid DESCRIPTION")
+})
