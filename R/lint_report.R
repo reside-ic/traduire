@@ -1,4 +1,4 @@
-lint_translations_html_report <- function(x, title) {
+lint_translations_html_report <- function(x) {
   stopifnot(inherits(x, "lint_translations"))
 
   style <- read_file(traduire_file("report/style.css"))
@@ -8,6 +8,8 @@ lint_translations_html_report <- function(x, title) {
   res <- lapply(x, lint_translations_html_report_file)
   tabs <- paste(vcapply(res, "[[", "tab"), collapse = "\n")
   content <- paste(vcapply(res, "[[", "content"), collapse = "\n\n")
+
+  title <- attr(x, "title")
 
   d <- list(title = title, style = style, script = script,
             tabs = tabs, content = content)

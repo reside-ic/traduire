@@ -4,7 +4,7 @@
 \alias{lint_translations}
 \title{Lint translations}
 \usage{
-lint_translations(path, obj, language = NULL, root = NULL)
+lint_translations(path, obj, language = NULL, root = NULL, title = NULL)
 }
 \arguments{
 \item{path}{Path to the translations to test.  This can be a
@@ -20,9 +20,12 @@ Each language must be at present linted separately}
 will be treated relatively (e.g., pass a package's root
 directory here, and then set \code{path = "R"}).  Using this
 shortens the reported filenames considerably}
+
+\item{title}{An optional title that will be used in reporting}
 }
 \value{
-A \code{lint_translations} object.
+A \code{lint_translations} object, which can be passed
+  through to \code{\link{lint_translations_report}}
 }
 \description{
 Find likely translation errors using static source code analysis.

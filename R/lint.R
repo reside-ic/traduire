@@ -29,9 +29,14 @@
 ##'   directory here, and then set \code{path = "R"}).  Using this
 ##'   shortens the reported filenames considerably
 ##'
-##' @return A \code{lint_translations} object.
+##' @param title An optional title that will be used in reporting
+##'
+##' @return A \code{lint_translations} object, which can be passed
+##'   through to \code{\link{lint_translations_report}}
+##'
 ##' @export
-lint_translations <- function(path, obj, language = NULL, root = NULL) {
+lint_translations <- function(path, obj, language = NULL, root = NULL,
+                              title = NULL) {
   if (!is.null(root)) {
     owd <- setwd(root)
     on.exit(setwd(owd))
@@ -46,8 +51,29 @@ lint_translations <- function(path, obj, language = NULL, root = NULL) {
   usage <- lapply(expand_paths(path), lint_get_usage_file)
   results <- lapply(usage, lint_compare_usage_file, obj, common)
 
+  attr(results, "title") <- title %||% "Translation lint report"
   class(results) <- "lint_translations"
   results
+}
+
+
+##' Report on translation linting.  At present this produces a
+##' single-page html report that can be opened in a web browser.
+##' Future versions will include reporting to the terminal.
+##'
+##' @title Show translation lint report
+##'
+##' @param x A \code{lint_translations} object from
+##'   \code{\link{lint_translations}}
+##'
+##' @return This function is called for the side effect of viewing a
+##'   report.  It will return (invisibly) the path to the produced
+##'   report.
+##'
+##' @export
+lint_translations_report <- function(x, file = tempfile()) {
+  html <- lint_translations_html_report(x)
+  browse_html(html, file = file)
 }
 
 
