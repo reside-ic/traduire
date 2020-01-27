@@ -36,6 +36,7 @@ test_that("str_insert", {
 
 
 test_that("html escape", {
+  ##         column
   ##         123356
   text <- c("a <- 1",
             "b = 2")
