@@ -75,7 +75,6 @@ Markup <- R6::R6Class(
       spans <- matrix(self$spans, 2)
       m <- matrix(FALSE, length(self$text), length(tags),
                   dimnames = list(NULL, tags))
-      ## count <- as.list(table(factor(vcapply(spans[1, ], "[[", "tag"), tags)))
       for (i in seq_len(ncol(spans))) {
         from <- spans[[1, i]]
         to <- spans[[2, i]]
@@ -123,7 +122,6 @@ markup_render <- function(tags, spans, text, filter = TRUE, group = NULL,
     messages$index <- messages$line - lines[[1]] + 1L
   } else {
     lines <- seq_along(text)
-    ## messages$index <- lines
   }
 
   list(lines = lines, text = text, messages = messages)
