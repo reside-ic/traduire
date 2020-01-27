@@ -144,6 +144,26 @@ parse_data <- function(exprs) {
 }
 
 
+## Like match.call, but for the result of the data.frame of parse data
+## returned by getParseData.
+##
+## The idea is to, for the call represented by the expression at
+## position 'i' in the parse data identify the locations of the
+## arguments corresponding to the *formal* arguments to the function.
+##
+## So given definition
+##
+##   function(a, b, c) {}
+##
+## and a data frame of parse data corresponding to the call
+##
+##   f(2, a = 1, 3)
+##
+## We this function will return a list with elements 'a', 'b', and
+## 'c', each element of which is a list with entries for the location
+## within the parse data for the argument name (if present, NULL if
+## not) and the expression correspinding to the value.  See the
+## example in test-util.R for details.
 parse_data_match_call <- function(i, data, definition) {
   stopifnot(data$token[[i + 2L]] == "'('")
 

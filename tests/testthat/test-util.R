@@ -43,3 +43,22 @@ test_that("browse_html", {
   mockery::expect_called(mock_browser, 1)
   mockery::expect_call(mock_browser, 1, utils::browseURL(file))
 })
+
+
+test_that("parse data match call", {
+  ## TODO: this is probably a bit implementation dependent. We should
+  ## compute the positions of these characters rather than encoding
+  ## them here.  Marked as skip_on_cran to indicate that it's too
+  ## implementation dependent.
+  skip_on_cran()
+  data <- parse_data(parse(text = "f('a', b = 2, 'c')", keep.source = TRUE))
+  i <- which(data$text == "f")[[1]]
+  expect_equal(parse_data_match_call(i, data, function(a, b, c) {}),
+               list(a = list(name = NULL, value = 5:6),
+                    b = list(name = 8, value = 10:11),
+                    c = list(name = NULL, value = 13:14)))
+  expect_equal(parse_data_match_call(i, data, function(x, y, b) {}),
+               list(x = list(name = NULL, value = 5:6),
+                    y = list(name = NULL, value = 13:14),
+                    b = list(name = 8, value = 10:11)))
+})
