@@ -9,13 +9,6 @@ function openTab(event, name) {
         tablinks[i].className = tablinks[i].className.replace(" active", "");
     }
 
-    // tabcontent.forEach((el) => {
-    //     el.style.display = "none";
-    // });
-    // tablinks.forEach((el) => {
-    //     el.className = el.className.replace(" active", "");
-    // });
-
     document.getElementById(name).style.display = "block";
     event.currentTarget.className += " active";
 }
