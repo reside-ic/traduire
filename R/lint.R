@@ -130,8 +130,8 @@ lint_get_usage_expr <- function(i, data) {
   ## structures here...
   index <- data$index[[i - 1L]]
 
-  res <- parse_data_match_call(i, data, function(key, data, ...) {})
-  key_index <- res$key$value[[1]]
+  args <- parse_data_match_call(i, data, function(key, data, ...) {})
+  key_index <- args$key$value[[1]]
 
   ## The idea here is that strings are easy to resolve, symbols might
   ## be possible, anything else (e.g., a function call) will not be.
@@ -148,10 +148,10 @@ lint_get_usage_expr <- function(i, data) {
     }
   }
 
-  if (is.null(res$data)) {
+  if (is.null(args$data)) {
     interpolation <- list(found = TRUE)
   } else {
-    data_index <- res$data$value[[2]]
+    data_index <- args$data$value[[2]]
     if (data$token[[data_index]] == "SYMBOL_FUNCTION_CALL" &&
         data$text[[data_index]] == "list") {
       interpolation <- list(
