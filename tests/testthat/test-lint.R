@@ -43,7 +43,8 @@ test_that("existing and missing key", {
 test_that("read interpolation data", {
   src <- c(
     'a <- t_("interpolate", list(what = "thing", how = "done"))',
-    'b <- t_("interpolate", list(what = "thing", err = "done"))')
+    'b <- t_("interpolate", list(what = "thing", err = "done"))',
+    'c <- t_("interpolate", list(err1 = "thing", err2 = "done"))')
   p <- tempfile(fileext = ".R")
   writeLines(src, p)
   obj <- i18n(traduire_file("examples/simple.json"))
@@ -54,7 +55,7 @@ test_that("read interpolation data", {
   expect_equal(res[[1]]$text, src)
   expect_is(res[[1]]$data, "data.frame")
   expect_is(res[[1]]$usage, "list")
-  expect_equal(length(res[[1]]$usage), 2)
+  expect_equal(length(res[[1]]$usage), 3)
 
   expect_null(res[[1]]$usage[[1]]$key$namespace)
   expect_equal(res[[1]]$usage[[1]]$key$key, "interpolate")
@@ -79,6 +80,28 @@ test_that("read interpolation data", {
   expect_equal(res[[1]]$usage[[2]]$interpolation$missing, "how")
   expect_equal(res[[1]]$usage[[2]]$interpolation$unused, "err")
   expect_false(res[[1]]$usage[[2]]$interpolation$valid)
+
+  expect_null(res[[1]]$usage[[3]]$key$namespace)
+  expect_equal(res[[1]]$usage[[3]]$key$key, "interpolate")
+  expect_equal(res[[1]]$usage[[3]]$key$value, "{{what}} is {{how}}")
+  expect_equal(res[[1]]$usage[[3]]$key$namespace_computed, "translation")
+  expect_true(res[[1]]$usage[[3]]$key$exists)
+  expect_equal(res[[1]]$usage[[3]]$interpolation$data,
+               list(err1 = list(name = 68L, value = 70:71),
+                    err2 = list(name = 73L, value = 75:76)))
+  expect_equal(res[[1]]$usage[[3]]$interpolation$missing, c("what", "how"))
+  expect_equal(res[[1]]$usage[[3]]$interpolation$unused, c("err1", "err2"))
+  expect_false(res[[1]]$usage[[3]]$interpolation$valid)
+
+  expect_equal(res[[1]]$info$spans[[9]]$tag, "INTERPOLATION_MISSING")
+  expect_equal(
+    res[[1]]$info$spans[[9]]$msg,
+    "Interpolation key 'how' missing")
+
+  expect_equal(res[[1]]$info$spans[[17]]$tag, "INTERPOLATION_MISSING")
+  expect_equal(
+    res[[1]]$info$spans[[17]]$msg,
+    "Interpolation keys 'what', 'how' missing")
 })
 
 

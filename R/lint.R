@@ -251,10 +251,12 @@ lint_collect_errors_expr <- function(x, m) {
       m$add("INTERPOLATION_UNUSED", x$interpolation$data[[i]]$name,
             sprintf("Interpolation key '%s' unused", i))
     }
-    ## TODO: these should be concatenated here I think
-    for (i in x$interpolation$missing) {
+    msg <- x$interpolation$missing
+    if (length(msg) > 0L) {
       m$add("INTERPOLATION_MISSING", x$key$index,
-            sprintf("Interpolation key '%s' missing", i))
+            sprintf("Interpolation %s %s missing",
+                    ngettext(length(msg), "key", "keys"),
+                    paste(squote(msg), collapse = ", ")))
     }
   } else {
     m$add("VALID", x$index)
