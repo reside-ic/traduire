@@ -93,14 +93,14 @@ lint_translations_package <- function(root, language = NULL) {
 ##'   \code{\link{lint_translations}}
 ##'
 ##' @param file File to save the report in (default is to use a
-##'   temporary file).
+##'   temporary file with a file extension of \code{.html}).
 ##'
 ##' @return This function is called for the side effect of viewing a
 ##'   report.  It will return (invisibly) the path to the produced
 ##'   report.
 ##'
 ##' @export
-lint_translations_report <- function(x, file = tempfile()) {
+lint_translations_report <- function(x, file = tempfile(fileext = ".html")) {
   html <- lint_translations_html_report(x)
   browse_html(html, file = file)
 }

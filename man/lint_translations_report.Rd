@@ -4,14 +4,14 @@
 \alias{lint_translations_report}
 \title{Show translation lint report}
 \usage{
-lint_translations_report(x, file = tempfile())
+lint_translations_report(x, file = tempfile(fileext = ".html"))
 }
 \arguments{
 \item{x}{A \code{lint_translations} object from
 \code{\link{lint_translations}}}
 
 \item{file}{File to save the report in (default is to use a
-temporary file).}
+temporary file with a file extension of \code{.html}).}
 }
 \value{
 This function is called for the side effect of viewing a

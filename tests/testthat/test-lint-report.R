@@ -57,6 +57,7 @@ test_that("complete report", {
   path <- with_options(
     list(browser = mock_browser),
     lint_translations_report(x))
+  expect_match(path, "\\.html$")
   expect_true(file.exists(path))
   mockery::expect_called(mock_browser, 1)
   expect_equal(mockery::mock_args(mock_browser),
