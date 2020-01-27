@@ -46,10 +46,10 @@ test_that("browse_html", {
 
 
 test_that("parse data match call", {
-  ## TODO: this is probably a bit implementation dependent. We should
-  ## compute the positions of these characters rather than encoding
-  ## them here.  Marked as skip_on_cran to indicate that it's too
-  ## implementation dependent.
+  ## TODO (reside-95): this is probably a bit implementation
+  ## dependent. We should compute the positions of these characters
+  ## rather than encoding them here.  Marked as skip_on_cran to
+  ## indicate that it's too implementation dependent.
   skip_on_cran()
   data <- parse_data(parse(text = "f('a', b = 2, 'c')", keep.source = TRUE))
   i <- which(data$text == "f")[[1]]

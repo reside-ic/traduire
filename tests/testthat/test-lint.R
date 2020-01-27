@@ -41,6 +41,7 @@ test_that("existing and missing key", {
 
 
 test_that("read interpolation data", {
+  ## TODO (reside-95): uses hard-coded parse indexes
   src <- c(
     'a <- t_("interpolate", list(what = "thing", how = "done"))',
     'b <- t_("interpolate", list(what = "thing", err = "done"))',
@@ -153,7 +154,8 @@ test_that("detect escaped interpolation fields", {
   p <- tempfile(fileext = ".R")
   writeLines(src, p)
 
-  ## TODO: we should expose the file-level linting more here to simplify this
+  ## TODO (reside-96): we should expose the file-level linting more
+  ## here to simplify this
   res <- lint_translations(p, obj)
   expect_equal(res[[1]]$usage[[1]]$interpolation$fields$text, "code")
   expect_equal(res[[1]]$usage[[1]]$interpolation$fields$from, 5)

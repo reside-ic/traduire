@@ -22,7 +22,8 @@ test_that("report for file", {
   x <- lint_translations("a.R", obj, root = p)
   res <- lint_translations_html_report_file(x[[1]])
 
-  ## TODO: this needs work to add an id in order that it is embeddable
+  ## TODO (reside-97): this needs work to add an id in order that it
+  ## is embeddable
   expect_setequal(names(res), c("tab", "content"))
   expect_equal(
     res$tab,
