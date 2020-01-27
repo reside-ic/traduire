@@ -172,9 +172,6 @@ lint_compare_usage_file <- function(usage, obj, common) {
   usage$usage <- lapply(usage$usage, lint_compare_usage_expr,
                         usage$data, obj, common)
 
-  ## TODO: it possibly makes more sense to do this in compare_usage_expr?
-  ##
-  ## TODO: at the *file* level we need to know how we're doing overall
   usage$info <- Markup$new(usage$text, usage$data)
   for (x in usage$usage) {
     lint_collect_errors_expr(x, usage$info)
