@@ -37,7 +37,7 @@ test_that("str_insert", {
 
 test_that("html escape", {
   ##         column
-  ##         123356
+  ##         123456
   text <- c("a <- 1",
             "b = 2")
   col <- c(1, 3, 6, 1, 3, 5)
@@ -50,6 +50,37 @@ test_that("html escape", {
   expect_equal(html_escape(text, line, col, rep(c(TRUE, FALSE), c(1, 5))),
                list(text = c("a &lt;- 1", "b = 2"),
                     col = c(1, 6, 9, 1, 3, 5)))
+})
+
+
+test_that("html escape with consecutive characters", {
+  ##       column
+  ##       123456
+  text <- "a && b"
+  col <- c(1, 3, 6)
+  line <- rep(1, 3)
+  open <- rep(TRUE, 3)
+
+  expect_equal(html_escape(text, line, col, open),
+               list(text = c("a &amp;&amp; b"),
+                    col = c(1, 3, 14)))
+})
+
+
+test_that("html escape for more than one escape on a line", {
+  ##         column
+  ##                  1         2
+  ##         12345678901234567890
+  text <- c("foo < 1 && bar > 2")
+  col <- c(1, 5, 7, 9, 12, 16, 18)
+  line <- rep(1, length(col))
+  open <- rep(TRUE, length(col))
+
+  expect_equal(html_escape(text, line, col, open),
+               ##                    1         2         3
+               ##           12345678901234567890123456789012
+               list(text = "foo &lt; 1 &amp;&amp; bar &gt; 2",
+                    col = c(1, 5, 10, 12, 23, 27, 32)))
 })
 
 

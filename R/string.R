@@ -149,7 +149,7 @@ html_escape <- function(text, line, col, open) {
   }
 
   for (i in seq_along(tr)) {
-    text <- sub(names(tr)[[i]], tr[[i]], text, fixed = TRUE)
+    text <- gsub(names(tr)[[i]], tr[[i]], text, fixed = TRUE)
   }
 
   list(text = text, col = col)
