@@ -79,3 +79,116 @@ vlapply <- function(X, FUN, ...) {
 starts_with <- function(string, prefix) {
   substr(string, 1, nchar(prefix)) == prefix
 }
+
+
+expand_paths <- function(paths) {
+  stopifnot(all(file.exists(paths)))
+  i <- file.exists(paths) & file.info(paths, extra_cols = FALSE)$isdir
+  if (any(i)) {
+    paths <- as.list(paths)
+    paths[i] <- lapply(paths[i], dir, pattern = "\\.[Rr]$", full.names = TRUE)
+    paths <- unlist(paths, FALSE, TRUE)
+  }
+  paths
+}
+
+
+set_names <- function(x, nms) {
+  names(x) <- nms
+  x
+}
+
+
+strip_quotes <- function(x) {
+  gsub("(^[\"']|[\"']$)", "", x)
+}
+
+
+data_frame <- function(...) {
+  data.frame(..., stringsAsFactors = FALSE)
+}
+
+
+vcapply <- function(X, FUN, ...) {
+  vapply(X, FUN, character(1), ...)
+}
+
+
+viapply <- function(X, FUN, ...) {
+  vapply(X, FUN, integer(1), ...)
+}
+
+
+vlapply <- function(X, FUN, ...) {
+  vapply(X, FUN, logical(1), ...)
+}
+
+
+vnapply <- function(X, FUN, ...) {
+  vapply(X, FUN, numeric(1), ...)
+}
+
+
+browse_html <- function(html, ..., file = tempfile(fileext = ".html")) {
+  writeLines(html, file)
+  utils::browseURL(file, ...)
+  invisible(file)
+}
+
+
+parse_data <- function(exprs) {
+  data <- utils::getParseData(exprs)
+  data$depth <- cumsum((data$token == "'('") - (data$token == "')'"))
+  data$index <- seq_len(nrow(data))
+  data
+}
+
+
+## Like match.call, but for the result of the data.frame of parse data
+## returned by getParseData.
+##
+## The idea is to, for the call represented by the expression at
+## position 'i' in the parse data identify the locations of the
+## arguments corresponding to the *formal* arguments to the function.
+##
+## So given definition
+##
+##   function(a, b, c) {}
+##
+## and a data frame of parse data corresponding to the call
+##
+##   f(2, a = 1, 3)
+##
+## We this function will return a list with elements 'a', 'b', and
+## 'c', each element of which is a list with entries for the location
+## within the parse data for the argument name (if present, NULL if
+## not) and the expression correspinding to the value.  See the
+## example in test-util.R for details.
+parse_data_match_call <- function(i, data, definition) {
+  stopifnot(data$token[[i + 2L]] == "'('")
+
+  j <- which(data$index > i + 2L & data$depth == data$depth[[i]])[[1]]
+  d <- data[(i + 3L):(j - 1L), ]
+  comma <- d$token == "','" & d$depth == data$depth[[i]] + 1L
+  d$arg <- cumsum(comma) + 1L
+  d$arg[comma] <- 0L
+
+  ## Then for each argument group we're just looking to see if they
+  ## are *named* or not; that's just a presence of a SYMBOL_SUB,
+  ## EQ_SUB as the first two members.
+  args <- vector("list", max(d$arg))
+  nms <- character(length(args))
+
+  for (k in seq_along(args)) {
+    sub <- d[d$arg == k, ]
+    if (identical(sub$token[1:2], c("SYMBOL_SUB", "EQ_SUB"))) {
+      args[[k]] <- list(name = sub$index[[1]], value = sub$index[-(1:2)])
+      nms[[k]] <- sub$text[[1L]]
+    } else {
+      args[[k]] <- list(name = NULL, value = sub$index)
+    }
+  }
+
+  call <- as.call(c(list(quote(.)), set_names(args, nms)))
+  as.list(match.call(definition, call))[-1L]
+}

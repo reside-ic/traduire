@@ -42,6 +42,10 @@ global.init = function(resources, lng, defaultNS, debug, resourcePattern,
     return true;
 }
 
+global.options = function() {
+    return i18next.options;
+}
+
 global.t = function(x, options) {
     return i18next.t(x, options);
 }
@@ -58,12 +62,16 @@ global.languages = function() {
     return i18next.languages;
 }
 
-global.default_namespace = function() {
+global.defaultNamespace = function() {
     return i18next.options.defaultNS;
 };
 
 global.addResourceBundle = function(lng, ns, resources, deep, overwrite) {
     i18next.addResourceBundle(lng, ns, JSON.parse(resources), deep, overwrite);
+}
+
+global.getResource = function(lng, ns, key, options) {
+    return i18next.getResource(lng, ns, key, options);
 }
 
 global.traduireLoader = function() {

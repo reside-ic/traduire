@@ -96,6 +96,10 @@ R6_i18n <- R6::R6Class(
                            auto_unbox = FALSE)
     },
 
+    options = function() {
+      private$context$call("options")
+    },
+
     t = function(string, data = NULL, language = NULL, count = NULL,
                  context = NULL, escape = NULL) {
       options <- i18n_options(data, language, count, context, escape)
@@ -130,7 +134,7 @@ R6_i18n <- R6::R6Class(
     },
 
     default_namespace = function() {
-      private$context$call("default_namespace")
+      private$context$call("defaultNamespace")
     },
 
     set_default_namespace = function(namespace) {
@@ -149,6 +153,11 @@ R6_i18n <- R6::R6Class(
       private$context$call("addResourceBundle",
                            language, namespace, resources_js, deep, overwrite)
       invisible(self)
+    },
+
+    get_resource = function(language, namespace, key, sep = ".") {
+      options <- list(keySeparator = scalar(sep))
+      private$context$call("getResource", language, namespace, key, options)
     },
 
     load_namespaces = function(namespaces) {
