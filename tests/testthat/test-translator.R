@@ -99,3 +99,11 @@ test_that("translator get package", {
   res <- translator(package = "impossible_package")
   expect_identical(res, translators[[id]])
 })
+
+test_that("translate from another package", {
+  ## Force .onload from hello to be called to reigster translators
+  hello::hello("test")
+  expect_equal(
+    translator_translate("hello", language = "fr", package = "hello"),
+    "Bonjour le Monde!")
+})

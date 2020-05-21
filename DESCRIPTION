@@ -20,6 +20,7 @@ Imports:
     R6,
     glue
 Suggests:
+    hello,
     jsonlite,
     knitr,
     mockery,

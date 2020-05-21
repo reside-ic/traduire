@@ -5,3 +5,4 @@ inst/doc
 vignettes/*.html
 vignettes/*.R
 .V8history
+.Rproj.user

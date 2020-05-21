@@ -102,7 +102,7 @@ translator_unregister <- function(name = NULL) {
 ##' @export
 ##' @rdname translator
 translator_translate <- function(..., name = NULL, package = NULL) {
-  translator(name)$t(...)
+  translator(name, package)$t(...)
 }
 
 
