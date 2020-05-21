@@ -101,9 +101,15 @@ test_that("translator get package", {
 })
 
 test_that("translate from another package", {
-  ## Force .onload from hello to be called to reigster translators
-  hello::hello("test")
-  expect_equal(
-    translator_translate("hello", language = "fr", package = "hello"),
-    "Bonjour le Monde!")
+  mock_translator <- mockery::mock(list(
+    t = function(...) {
+      "Bonjour le Monde!"
+    }
+  ))
+  with_mock("pkgapi::translator" = mock_translator, {
+    expect_equal(
+      translator_translate("hello", package = "package", name = "name"),
+      "Bonjour le Monde!")
+  })
+  mockery::expect_args(mock_translator, 1, "name", "package")
 })
