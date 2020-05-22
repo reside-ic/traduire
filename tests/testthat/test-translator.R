@@ -99,3 +99,17 @@ test_that("translator get package", {
   res <- translator(package = "impossible_package")
   expect_identical(res, translators[[id]])
 })
+
+test_that("translate from another package", {
+  mock_translator <- mockery::mock(list(
+    t = function(...) {
+      "Bonjour le Monde!"
+    }
+  ))
+  with_mock("traduire::translator" = mock_translator, {
+    expect_equal(
+      translator_translate("hello", package = "package", name = "name"),
+      "Bonjour le Monde!")
+  })
+  mockery::expect_args(mock_translator, 1, "name", "package")
+})

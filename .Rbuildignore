@@ -5,3 +5,5 @@
 ^docs$
 ^js$
 \.V8history$
+^.*\.Rproj$
+^\.Rproj\.user$
