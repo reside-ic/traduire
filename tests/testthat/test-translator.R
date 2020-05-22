@@ -106,7 +106,7 @@ test_that("translate from another package", {
       "Bonjour le Monde!"
     }
   ))
-  with_mock("pkgapi::translator" = mock_translator, {
+  with_mock("traduire::translator" = mock_translator, {
     expect_equal(
       translator_translate("hello", package = "package", name = "name"),
       "Bonjour le Monde!")
