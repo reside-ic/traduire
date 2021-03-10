@@ -9,7 +9,7 @@ traduire_file <- function(path) {
 
 
 read_file <- function(path) {
-  paste(readLines(path), collapse = "\n")
+  paste(readLines(path, encoding = "UTF-8"), collapse = "\n")
 }
 
 
