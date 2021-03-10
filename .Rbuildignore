@@ -7,3 +7,4 @@
 \.V8history$
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^\.github$
