@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Function reference • traduire</title>
+<title>Lint translations — lint_translations • traduire</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,11 @@
 
 
 
-<meta property="og:title" content="Function reference" />
+<meta property="og:title" content="Lint translations — lint_translations" />
+<meta property="og:description" content="Find likely translation errors using static source code analysis.
+We look into a series of R source files and identify all calls to
+t_ and examine the key and interpolation data used within
+these calls." />
 
 
 
@@ -58,7 +62,7 @@
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    <div class="container template-reference-index">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -108,60 +112,78 @@
       </header>
 
 <div class="row">
-  <div class="contents col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Reference</h1>
+    <h1>Lint translations</h1>
+    <small class="dont-index">Source: <a href='https://github.com/reside-ic/traduire/blob/master/R/lint.R'><code>R/lint.R</code></a></small>
+    <div class="hidden name"><code>lint_translations.Rd</code></div>
     </div>
 
-    <table class="ref-index">
+    <div class="ref-description">
+    <p>Find likely translation errors using static source code analysis.
+We look into a series of R source files and identify all calls to
+<code>t_</code> and examine the key and interpolation data used within
+these calls.</p>
+    </div>
 
-    <colgroup>
-      
-      <col class="alias" />
-      <col class="title" />
-    </colgroup>
+    <pre class="usage"><span class='fu'>lint_translations</span><span class='op'>(</span><span class='va'>path</span>, <span class='va'>obj</span>, language <span class='op'>=</span> <span class='cn'>NULL</span>, root <span class='op'>=</span> <span class='cn'>NULL</span>, title <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span>
 
-    <tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr>
-      
-      
-    </tbody><tbody>
-      
-      
-      <tr>
-        
-        <td>
-          <p><code><a href="i18n.html">i18n()</a></code> </p>
-        </td>
-        <td><p>Create translator object</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="lint_translations.html">lint_translations()</a></code> <code><a href="lint_translations.html">lint_translations_package()</a></code> </p>
-        </td>
-        <td><p>Lint translations</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="lint_translations_report.html">lint_translations_report()</a></code> </p>
-        </td>
-        <td><p>Show translation lint report</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="translator.html">translator_register()</a></code> <code><a href="translator.html">translator_unregister()</a></code> <code><a href="translator.html">translator_translate()</a></code> <code><a href="translator.html">t_()</a></code> <code><a href="translator.html">translator()</a></code> <code><a href="translator.html">translator_set_language()</a></code> <code><a href="translator.html">translator_list()</a></code> </p>
-        </td>
-        <td><p>Register a translator</p></td>
-      </tr>
-    </tbody>
+<span class='fu'>lint_translations_package</span><span class='op'>(</span><span class='va'>root</span>, language <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
+
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>path</th>
+      <td><p>Path to the translations to test.  This can be a
+character vector of file names and directory names - directory
+names are expanded (non-recursively) to find all <code>.R</code> files.</p></td>
+    </tr>
+    <tr>
+      <th>obj</th>
+      <td><p>A translator object.</p></td>
+    </tr>
+    <tr>
+      <th>language</th>
+      <td><p>Optional language to use as the language to lint.
+Each language must be at present linted separately</p></td>
+    </tr>
+    <tr>
+      <th>root</th>
+      <td><p>A root directory, below which the files in <code>path</code>
+will be treated relatively (e.g., pass a package's root
+directory here, and then set <code>path = "R"</code>).  Using this
+shortens the reported filenames considerably</p></td>
+    </tr>
+    <tr>
+      <th>title</th>
+      <td><p>An optional title that will be used in reporting</p></td>
+    </tr>
     </table>
-  </div>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>A <code>lint_translations</code> object, which can be passed
+  through to <code><a href='lint_translations_report.html'>lint_translations_report</a></code></p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>This will expand in future and is currently quite limited.
+Currently, only calls to <code><a href='translator_register.html'>t_()</a></code> are inspected - not calls to
+<code>$t()</code> in a translator object, not calls to <code>$replace</code>
+etc.  The <code>package</code> and <code>name</code> arguments to <code><a href='translator_register.html'>t_()</a></code>
+are also currently ignored, which will lead to spurious errors.  A
+version of this that automatically works for packages will also be
+written.  The key and interpolation data must (currently) be
+literals - you cannot save the key or data as a variable and pass
+that by variable name.</p>
+<p>The function <code>lint_translations_package</code> is a wrapper around
+<code>lint_translations</code> to make working with a package a bit
+easier.  It's a bit flakey at the moment because the translator
+will be loaded from the currently installed package, but the usage
+will be checked in the source tree.  This will be addressed in a
+future version (see reside-90)</p>
+
+  </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
       <h2 data-toc-skip>Contents</h2>
