@@ -14,7 +14,8 @@ test_that("html span", {
 test_that("report for file", {
   src <- c(
     'a <- t_("hello")',
-    'b <- t_("missing")')
+    'b <- t_("missing")',
+    'f("some string")')
   p <- tempfile()
   dir.create(p)
   writeLines(src, file.path(p, "a.R"))
@@ -35,10 +36,13 @@ test_that("report for file", {
   spans <- strsplit(trimws(code), "\n", fixed = TRUE)[[1]]
   expect_equal(
     spans[[1]],
-    '<span class="line"></span>a &lt;- <span class="valid"><span class="expr">t_("hello")</span></span>')
+    '<span class="line"></span>a &lt;- <span class="valid" data-tooltip="hello world"><span class="expr">t_("hello")</span></span>')
   expect_equal(
     spans[[2]],
     '<span class="line"></span>b &lt;- <span class="expr">t_(<span class="error-missing" data-tooltip="Translation key \'translation:missing\' not found">"missing"</span>)</span>')
+  expect_equal(
+    spans[[3]],
+    '<span class="line"></span>f(<span class="warning-bare-string"><span class="expr">"some string"</span></span>)')
 })
 
 

@@ -239,3 +239,24 @@ test_that("lint tags", {
     lint_tags(list(EXPR = html_span("whatever"))),
     "Invalid tag names")
 })
+
+
+test_that("Identify bare strings", {
+  code <- c(
+    'a <- t_("hello")', # this string is ok
+    'x <- "bad string"', # not ok, a bare string
+    'f <- function(x) {',
+    '  a(b(c("deeply bad string")))',
+    '}')
+  p <- tempfile()
+  writeLines(code, p)
+  on.exit(unlink(p))
+  res <- lint_translations(p, NULL)
+
+  expect_length(res[[1]]$usage, 1)
+  expect_equal(res[[1]]$usage[[1]]$key$key, "hello")
+
+  expect_length(res[[1]]$strings, 2)
+  expect_equal(res[[1]]$strings[[1]]$value, "bad string")
+  expect_equal(res[[1]]$strings[[2]]$value, "deeply bad string")
+})
