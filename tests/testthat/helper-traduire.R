@@ -8,3 +8,7 @@ with_options <- function(new, expr) {
   on.exit(options(old))
   force(expr)
 }
+
+expect_no_error <- function(object) {
+  expect_error(object, NA)
+}

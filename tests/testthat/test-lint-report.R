@@ -69,7 +69,7 @@ test_that("complete report", {
 test_that("lint_translations_package", {
   skip_if_not_installed("mockery")
   root <- traduire_file("hello")
-  obj <- i18n(file.path(root, "inst/traduire.json"), "en")
+  obj <- i18n(file.path(root, "inst/traduire.json"), language = "en")
   mock_translator <- mockery::mock(obj)
   mock_load <- mockery::mock()
   mockery::stub(lint_translations_package, "translator", mock_translator)

@@ -12,61 +12,18 @@
 ##'   resources. If given in this way, then on-demand translation
 ##'   loading (via \code{resource_pattern}) is disabled unless a
 ##'   currently unexposed i18next option is used.
-##'
-##' @param language The default language for the translation
-##'
-##' @param default_namespace The default namespace to use.  If not
-##'   given, then \code{i18next} assumes the namespace
-##'   \code{translation}
-##'
-##' @param debug Logical, indicating if i18next's debug output should
-##'   be turned on.  This will result in lots of output via
-##'   \code{message} about various i18next actions.
-##'
-##' @param resource_pattern A pattern to use for on-demand loading of
-##'   translation resources.  Only works if \code{translations} is
-##'   \code{NULL} at present.
-##'
-##' @param namespaces A vector of namespaces to load. Namespaces not
-##'   listed here may not be loaded as expected (use \code{debug =
-##'   TRUE} to work out what is going on).  The default (\code{NULL})
-##'   will use i18next's logic, which is to use \code{translation} as
-##'   the only loaded namespace.  This creates some issues if
-##'   \code{default_namespace} is set here, as the default namespace
-##'   will not be loaded.  A future version of this package will
-##'   probably do better with the logic here.
-##'
-##' @param languages A vector of languages to \emph{preload}. You can
-##'   always add additional languages using the \code{load_language}
-##'   method.  Note that the adding a language here does not (yet)
-##'   mean that failure to load the language is an error.
-##'
-##' @param fallback The fallback language to use.  The options here
-##'   are to use a character string (a single fallback to use for all
-##'   languages), a character vector (a series of languages to use in
-##'   turn, listed from first to try to last to try) or a named list
-##'   of language-fallback mappings, e.g., \code{list("de-CH": c("fr",
-##'   "it"), "es": "fr")}.
-##'
-##' @param escape Logical, indicating if the translation output should
-##'   be, by default, escaped (see the i18next interpolation
-##'   documentation).  The i18next implementation is to prevent xss
-##'   attacks, and so is disabled by default in traduire.
+##'   
+##' @param ... Named options passed to \code{\link{traduire_options}}
+##' @param options Options object passed to \code{\link{traduire_options}}
 ##'
 ##' @export
 ##' @examples
 ##' path <- system.file("examples/simple.json", package = "traduire")
 ##' obj <- traduire::i18n(path)
 ##' obj$t("hello", language = "fr")
-i18n <- function(resources, language = NULL, default_namespace = NULL,
-                 debug = FALSE, resource_pattern = NULL,
-                 namespaces = NULL, languages = NULL,
-                 fallback = "dev", escape = FALSE) {
-  ## TODO: better defaults for language, but there's lots to consider
-  ## with fallbacks still
-  R6_i18n$new(resources, language %||% "en", default_namespace,
-              debug, resource_pattern, namespaces, languages, fallback,
-              escape)
+i18n <- function(resources, ..., options = NULL) {
+  options <- traduire_options(..., options = options)
+  R6_i18n$new(resources, options)
 }
 
 
@@ -79,20 +36,19 @@ R6_i18n <- R6::R6Class(
   ),
 
   public = list(
-    initialize = function(resources, language, default_namespace,
-                          debug, resource_pattern, namespaces, languages,
-                          fallback, escape) {
+    initialize = function(resources, options) {
       resources_js <- read_input(resources)
       private$context <- V8::v8()
       private$context$source(traduire_file("js/bundle.js"))
-      private$context$call("init", resources_js, scalar(language),
-                           safe_js_null(default_namespace),
-                           scalar(debug),
-                           safe_js_null(resource_pattern),
-                           namespaces %||% "translation",
-                           safe_js_null(languages),
-                           validate_fallback(fallback),
-                           scalar(escape),
+      private$context$call("init", resources_js, 
+                           scalar(options[["language"]]),
+                           safe_js_null(options[["default_namespace"]]),
+                           scalar(options[["debug"]]),
+                           safe_js_null(options[["resource_pattern"]]),
+                           options[["namespaces"]],
+                           safe_js_null(options[["languages"]]),
+                           options[["fallback"]],
+                           scalar(options[["escape"]]),
                            auto_unbox = FALSE)
     },
 
@@ -236,7 +192,7 @@ i18n_backend_read <- function(pattern, language, namespace) {
 ## Quite a bit here - if these errors get through to the js, you get
 ## inscruitable runtime error messages, so we're better off validating
 ## in R.
-validate_fallback <- function(fallback) {
+validate_fallback <- function(fallback, name) {
   if (is.null(fallback)) {
     return(V8::JS("null"))
   }
