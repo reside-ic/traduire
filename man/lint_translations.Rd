@@ -14,7 +14,10 @@ lint_translations_package(root, language = NULL)
 character vector of file names and directory names - directory
 names are expanded (non-recursively) to find all \code{.R} files.}
 
-\item{obj}{A translator object.}
+\item{obj}{A translator object, or `NULL`. If `NULL`, then the
+report will indicate only strings that might be translated vs
+bare strings, rather than check the likely success of
+translation.}
 
 \item{language}{Optional language to use as the language to lint.
 Each language must be at present linted separately}

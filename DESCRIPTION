@@ -25,7 +25,7 @@ Suggests:
     mockery,
     rmarkdown,
     testthat
-RoxygenNote: 7.0.0
+RoxygenNote: 7.1.1
 VignetteBuilder: knitr
 Language: en-GB
 URL: https://github.com/reside-ic/traduire

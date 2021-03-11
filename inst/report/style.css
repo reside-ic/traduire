@@ -70,11 +70,19 @@ span.valid {
     color: steelblue;
 }
 
+span.possible {
+    color: steelblue;
+}
+
 span.warning-unknown-key {
     color: orange;
 }
 
 span.warning-unknown-data {
+    color: orange;
+}
+
+span.warning-bare-string {
     color: orange;
 }
 
