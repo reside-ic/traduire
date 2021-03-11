@@ -50,9 +50,11 @@ lint_tags_html <- function() {
   lint_tags(list(
     EXPR = html_span("expr"),
     VALID = html_span("valid"),
+    POSSIBLE = html_span("possible"),
     UNKNOWN_KEY = html_span("warning-unknown-key"),
     UNKNOWN_DATA = html_span("warning-unknown-data"),
     MISSING_KEY = html_span("error-missing"),
     INTERPOLATION_UNUSED = html_span("error-interpolation-unused"),
-    INTERPOLATION_MISSING = html_span("error-interpolation-missing")))
+    INTERPOLATION_MISSING = html_span("error-interpolation-missing"),
+    BARE_STRING = html_span("warning-bare-string")))
 }

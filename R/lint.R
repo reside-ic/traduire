@@ -26,7 +26,10 @@
 ##'   character vector of file names and directory names - directory
 ##'   names are expanded (non-recursively) to find all \code{.R} files.
 ##'
-##' @param obj A translator object.
+##' @param obj A translator object, or `NULL`. If `NULL`, then the
+##'   report will indicate only strings that might be translated vs
+##'   bare strings, rather than check the likely success of
+##'   translation.
 ##'
 ##' @param language Optional language to use as the language to lint.
 ##'   Each language must be at present linted separately
@@ -48,12 +51,22 @@ lint_translations <- function(path, obj, language = NULL, root = NULL,
     owd <- setwd(root)
     on.exit(setwd(owd))
   }
-  options <- obj$options()
-  common <- list(default_namespace = obj$default_namespace(),
-                 language = language %||% obj$language(),
-                 prefix = options$interpolation[["prefix"]] %||% "{{",
-                 suffix = options$interpolation[["suffix"]] %||% "}}",
-                 escape = options$interpolation[["escape"]] %||% "- ")
+  if (is.null(obj)) {
+    options <- NULL
+    ## these will never actually be used
+    default_namespace <- "translation"
+    default_language <- "en"
+  } else {
+    options <- obj$options()
+    default_namespace <- obj$default_namespace()
+    default_language <- obj$language()
+  }
+  common <- list(
+    default_namespace = default_namespace,
+    language = language %||% default_language,
+    prefix = options$interpolation[["prefix"]] %||% "{{",
+    suffix = options$interpolation[["suffix"]] %||% "}}",
+    escape = options$interpolation[["escape"]] %||% "- ")
 
   usage <- lapply(expand_paths(path), lint_get_usage_file)
   results <- lapply(usage, lint_compare_usage_file, obj, common)
@@ -114,7 +127,15 @@ lint_get_usage_file <- function(path) {
   data$index <- seq_len(nrow(data))
   idx <- data$token == "SYMBOL_FUNCTION_CALL" & data$text == "t_"
   usage <- lapply(which(idx), lint_get_usage_expr, data)
-  list(path = path, text = text, data = data, usage = usage)
+
+  ## We should look for bare strings here too, by excluding the ones
+  ## covered by the calls above.
+  idx_string <- setdiff(which(data$token == "STR_CONST"),
+                        viapply(usage, function(x) x$key$index))
+  strings <- Map(function(i, v) list(index = i, value = strip_quotes(v)),
+                 idx_string, data$text[idx_string])
+
+  list(path = path, text = text, data = data, usage = usage, strings = strings)
 }
 
 
@@ -169,12 +190,19 @@ lint_get_usage_expr <- function(i, data) {
 
 
 lint_compare_usage_file <- function(usage, obj, common) {
-  usage$usage <- lapply(usage$usage, lint_compare_usage_expr,
-                        usage$data, obj, common)
+  if (!is.null(obj)) {
+    usage$usage <- lapply(usage$usage, lint_compare_usage_expr,
+                          usage$data, obj, common)
+  }
 
   usage$info <- Markup$new(usage$text, usage$data)
+
   for (x in usage$usage) {
     lint_collect_errors_expr(x, usage$info)
+  }
+
+  for (x in usage$strings) {
+    lint_collect_bare_string(x, usage$info)
   }
 
   usage
@@ -236,7 +264,9 @@ lint_collect_errors_expr <- function(x, m) {
   m$start()
   m$add("EXPR", x$index)
 
-  if (is.na(x$key$exists)) {
+  if (is.null(x$key$exists)) {
+    m$add("POSSIBLE", x$index)
+  } else if (is.na(x$key$exists)) {
     msg <- "Translation key could not be determined without string"
     m$add("UNKNOWN_KEY", x$key$index, msg)
   } else if (!x$key$exists) {
@@ -259,8 +289,15 @@ lint_collect_errors_expr <- function(x, m) {
                     paste(squote(msg), collapse = ", ")))
     }
   } else {
-    m$add("VALID", x$index)
+    m$add("VALID", x$index, x$key$value)
   }
+}
+
+
+lint_collect_bare_string <- function(x, m) {
+  m$start()
+  m$add("EXPR", x$index)
+  m$add("BARE_STRING", x$index)
 }
 
 
@@ -274,5 +311,6 @@ lint_tags <- function(tags) {
 
 lint_tags_names <- function() {
   c("EXPR", "VALID", "UNKNOWN_KEY", "UNKNOWN_DATA", "MISSING_KEY",
-    "INTERPOLATION_UNUSED", "INTERPOLATION_MISSING")
+    "INTERPOLATION_UNUSED", "INTERPOLATION_MISSING", "BARE_STRING",
+    "POSSIBLE")
 }
