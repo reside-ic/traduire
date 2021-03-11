@@ -61,7 +61,7 @@ lang_output("json", readLines(path))
 We can create a translator, setting the default language to English (en) as:
 
 ```{r}
-tr <- traduire::i18n(path, "en")
+tr <- traduire::i18n(path, language = "en")
 tr
 ```
 
