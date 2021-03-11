@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Create translator object — i18n • traduire</title>
+<title>Create a set of options for traduire — traduire_options • traduire</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,10 @@
 
 
 
-<meta property="og:title" content="Create translator object — i18n" />
-<meta property="og:description" content="Create a new translator object" />
+<meta property="og:title" content="Create a set of options for traduire — traduire_options" />
+<meta property="og:description" content="Takes a named set of options and optionally an already created 
+options object. If both are set, named options will overwrite 
+any options in the object." />
 
 
 
@@ -111,51 +113,76 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Create translator object</h1>
-    <small class="dont-index">Source: <a href='https://github.com/reside-ic/traduire/blob/master/R/i18n.R'><code>R/i18n.R</code></a></small>
-    <div class="hidden name"><code>i18n.Rd</code></div>
+    <h1>Create a set of options for traduire</h1>
+    <small class="dont-index">Source: <a href='https://github.com/reside-ic/traduire/blob/master/R/options.R'><code>R/options.R</code></a></small>
+    <div class="hidden name"><code>traduire_options.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Create a new translator object</p>
+    <p>Takes a named set of options and optionally an already created 
+options object. If both are set, named options will overwrite 
+any options in the object.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>i18n</span><span class='op'>(</span><span class='va'>resources</span>, <span class='va'>...</span>, options <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>traduire_options</span><span class='op'>(</span><span class='va'>...</span>, options <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>resources</th>
-      <td><p>Path to a json file containing translation
-resources. If given in this way, then on-demand translation
-loading (via <code>resource_pattern</code>) is disabled unless a
-currently unexposed i18next option is used.</p></td>
-    </tr>
-    <tr>
       <th>...</th>
-      <td><p>Named options passed to <code><a href='traduire_options.html'>traduire_options</a></code></p></td>
+      <td><p>Named options</p>
+<p>language The default language for the translation</p>
+<p>default_namespace The default namespace to use.  If not
+  given, then <code>i18next</code> assumes the namespace
+  <code>translation</code></p>
+<p>debug Logical, indicating if i18next's debug output should
+  be turned on.  This will result in lots of output via
+  <code>message</code> about various i18next actions.</p>
+<p>resource_pattern A pattern to use for on-demand loading of
+  translation resources.  Only works if <code>translations</code> is
+  <code>NULL</code> at present.</p>
+<p>namespaces A vector of namespaces to load. Namespaces not
+  listed here may not be loaded as expected (use <code>debug =
+  TRUE</code> to work out what is going on).  The default (<code>NULL</code>)
+  will use i18next's logic, which is to use <code>translation</code> as
+  the only loaded namespace.  This creates some issues if
+  <code>default_namespace</code> is set here, as the default namespace
+  will not be loaded.  A future version of this package will
+  probably do better with the logic here.</p>
+<p>languages A vector of languages to <em>preload</em>. You can
+  always add additional languages using the <code>load_language</code>
+  method.  Note that the adding a language here does not (yet)
+  mean that failure to load the language is an error.</p>
+<p>fallback The fallback language to use.  The options here
+  are to use a character string (a single fallback to use for all
+  languages), a character vector (a series of languages to use in
+  turn, listed from first to try to last to try) or a named list
+  of language-fallback mappings, e.g., <code><a href='https://rdrr.io/r/base/list.html'>list("de-CH": c("fr",
+  "it"), "es": "fr")</a></code>.</p>
+<p>escape Logical, indicating if the translation output should
+  be, by default, escaped (see the i18next interpolation
+  documentation).  The i18next implementation is to prevent xss
+  attacks, and so is disabled by default in traduire.</p></td>
     </tr>
     <tr>
       <th>options</th>
-      <td><p>Options object passed to <code><a href='traduire_options.html'>traduire_options</a></code></p></td>
+      <td><p>traduire_options object</p></td>
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="warning"><a class="anchor" href="#warning"></a>Warning</h2>
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    
+    <p>A 'traduire_options' object</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-
-<p>Note that the argument list here <em>will</em> change.  The only
-  part of this that we consider stable is that the first argument
-  will represent a resource bundle.</p>
+    <p>These options are passed to i18next.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='va'>path</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"examples/simple.json"</span>, package <span class='op'>=</span> <span class='st'>"traduire"</span><span class='op'>)</span>
-<span class='va'>obj</span> <span class='op'>&lt;-</span> <span class='fu'>traduire</span><span class='fu'>::</span><span class='fu'>i18n</span><span class='op'>(</span><span class='va'>path</span><span class='op'>)</span>
-<span class='va'>obj</span><span class='op'>$</span><span class='fu'>t</span><span class='op'>(</span><span class='st'>"hello"</span>, language <span class='op'>=</span> <span class='st'>"fr"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] "bonjour le monde"</div></pre>
+    <pre class="examples"><div class='input'><span class='va'>opts</span> <span class='op'>&lt;-</span> <span class='fu'>traduire</span><span class='fu'>::</span><span class='fu'>traduire_options</span><span class='op'>(</span><span class='op'>)</span>
+<span class='va'>opts</span> <span class='op'>&lt;-</span> <span class='fu'>traduire</span><span class='fu'>::</span><span class='fu'>traduire_options</span><span class='op'>(</span>language <span class='op'>=</span> <span class='st'>"fr"</span><span class='op'>)</span>
+<span class='va'>opts</span> <span class='op'>&lt;-</span> <span class='fu'>traduire</span><span class='fu'>::</span><span class='fu'>traduire_options</span><span class='op'>(</span>default_namespace <span class='op'>=</span> <span class='st'>"tr"</span>, options <span class='op'>=</span> <span class='va'>opts</span><span class='op'>)</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
