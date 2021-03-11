@@ -141,7 +141,10 @@ names are expanded (non-recursively) to find all <code>.R</code> files.</p></td>
     </tr>
     <tr>
       <th>obj</th>
-      <td><p>A translator object.</p></td>
+      <td><p>A translator object, or `NULL`. If `NULL`, then the
+report will indicate only strings that might be translated vs
+bare strings, rather than check the likely success of
+translation.</p></td>
     </tr>
     <tr>
       <th>language</th>
