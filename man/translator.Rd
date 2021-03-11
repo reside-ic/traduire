@@ -26,7 +26,7 @@ translator_list()
 }
 \arguments{
 \item{...}{For \code{translator_register}, arguments passed to
-\code{\link{i18n}} to build the translator object.  All
+\code{\link{traduire_options}} to build the translator object.  All
 arguments are accepted.  For \code{translator_translate} and
 \code{t_}, arguments passed to the \code{$t} method of the
 translator object, being \code{string}, \code{data},
