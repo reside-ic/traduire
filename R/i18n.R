@@ -40,7 +40,8 @@ R6_i18n <- R6::R6Class(
       resources_js <- read_input(resources)
       private$context <- V8::v8()
       private$context$source(traduire_file("js/bundle.js"))
-      private$context$call("init", resources_js, 
+      private$context$call("init", 
+                           resources_js, 
                            scalar(options[["language"]]),
                            safe_js_null(options[["default_namespace"]]),
                            scalar(options[["debug"]]),

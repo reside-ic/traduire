@@ -65,33 +65,25 @@ traduire_options <- function(..., options = NULL) {
     stop("Options must be of type 'traduire_options'")
   }
   
-  null_or_validate <- function(validate_func) {
-    function(x, name = deparse(substitute(x))) {
-      if (!is.null(x)) {
-        validate_func(x, name)
-      }
-    }
-  }
-  
-  validate_funcs <- list(
-    language = assert_scalar_character,
-    default_namespace = null_or_validate(assert_scalar_character),
-    debug = assert_scalar_logical,
-    resource_pattern = null_or_validate(assert_scalar_character),
-    namespaces = assert_character,
-    languages = null_or_validate(assert_character),
-    fallback = validate_fallback,
-    escape = assert_scalar_logical
-  )
-  
   if (is.null(options)) {
     ## TODO: better defaults for language, but there's lots to consider
     ## with fallbacks still
     language <- args[["language"]] %||% "en"
+    assert_scalar_character(language)
+    validate_or_null(args[["default_namespace"]], 
+                     assert_scalar_character,
+                     "default_namespace")
     debug <- args[["debug"]] %||% FALSE
+    assert_scalar_logical(debug)
+    validate_or_null(args[["resource_pattern"]],
+                     assert_scalar_character,
+                     "resource_pattern")
     namespaces <- args[["namespaces"]] %||% "translation"
-    fallback <- args[["fallback"]] %||% "dev"
+    assert_character(namespaces)
+    validate_or_null(args[["languages"]], assert_character, "languages")
+    fallback <- validate_fallback(args[["fallback"]] %||% "dev")
     escape <- args[["escape"]] %||% FALSE
+    assert_scalar_logical(escape)
     options <- list(
       language = language,
       default_namespace = args[["default_namespace"]],
@@ -101,17 +93,42 @@ traduire_options <- function(..., options = NULL) {
       languages = args[["languages"]],
       fallback = fallback,
       escape = escape)
-    for (option in names(options)) {
-      validate_func <- validate_funcs[[option]]
-      validate_func(options[[option]], option)
-    }
     options <- structure(options, class = "traduire_options")
   } else {
-    ## Overwrite args which have been passed in
-    for (arg in names(args)) {
-      validate_func <- validate_funcs[[arg]]
-      validate_func(args[[arg]], arg)
-      options[[arg]] <- args[[arg]]
+    if ("language" %in% names(args)) {
+      assert_scalar_character(args[["language"]], "language")
+      options[["language"]] <- args[["language"]]
+    }
+    if ("default_namespace" %in% names(args)) {
+      validate_or_null(args[["default_namespace"]], 
+                       assert_scalar_character,
+                       "default_namespace")
+      options[["default_namespace"]] <- args[["default_namespace"]]
+    }
+    if ("debug" %in% names(args)) {
+      assert_scalar_logical(args[["debug"]], "debug")
+      options[["debug"]] <- args[["debug"]]
+    }
+    if ("resource_pattern" %in% names(args)) {
+      validate_or_null(args[["resource_pattern"]], 
+                       assert_scalar_character,
+                       "resource_pattern")
+      options[["resource_pattern"]] <- args[["resource_pattern"]]
+    }
+    if ("namespaces" %in% names(args)) {
+      assert_character(args[["namespaces"]], "namesapces")
+      options[["namespaces"]] <- args[["namespaces"]]
+    }
+    if ("languages" %in% names(args)) {
+      validate_or_null(args[["languages"]], assert_character, "languages")
+      options[["languages"]] <- args[["languages"]]
+    }
+    if ("fallback" %in% names(args)) {
+      options[["fallback"]] <- validate_fallback(args[["fallback"]])
+    }
+    if ("escape" %in% names(args)) {
+      assert_scalar_logical(args[["escape"]], "escape")
+      options[["escape"]] <- args[["escape"]]
     }
   }
   options
@@ -119,4 +136,10 @@ traduire_options <- function(..., options = NULL) {
 
 is_traduire_options <- function(obj) {
   inherits(obj, "traduire_options")
+}
+
+validate_or_null <- function(x, fn, name = deparse(substitute(x))) {
+  if (!is.null(x)) {
+    fn(x, name)
+  }
 }
