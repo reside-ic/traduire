@@ -1,12 +1,12 @@
-#' Create a set of options for traduire
-#' 
-#' Takes a named set of options and optionally an already created 
-#' options object. If both are set, named options will overwrite 
-#' any options in the object.
-#' 
-#' These options are passed to i18next.
-#'
-#' @param ... Named options
+##' Create a set of options for traduire
+##' 
+##' Takes a named set of options and optionally an already created 
+##' options object. If both are set, named options will overwrite 
+##' any options in the object.
+##' 
+##' These options are passed to i18next.
+##'
+##' @param ... Named options
 ##' 
 ##' language The default language for the translation
 ##'
@@ -47,12 +47,15 @@
 ##'   be, by default, escaped (see the i18next interpolation
 ##'   documentation).  The i18next implementation is to prevent xss
 ##'   attacks, and so is disabled by default in traduire.
-#' @param options traduire_options object
-#'
-#' @return
-#' @export
-#'
-#' @examples
+##' @param options traduire_options object
+##'
+##' @return A 'traduire_options' object
+##' @export
+##'
+##' @examples
+##' opts <- traduire::traduire_options()
+##' opts <- traduire::traduire_options(language = "fr")
+##' opts <- traduire::traduire_options(default_namespace = "tr", options = opts)
 traduire_options <- function(..., options = NULL) {
   args <- list(...)
   if (length(args) > 0) {

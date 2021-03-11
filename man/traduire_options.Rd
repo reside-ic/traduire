@@ -52,7 +52,7 @@ escape Logical, indicating if the translation output should
 \item{options}{traduire_options object}
 }
 \value{
-
+A 'traduire_options' object
 }
 \description{
 Takes a named set of options and optionally an already created 
@@ -61,4 +61,9 @@ any options in the object.
 }
 \details{
 These options are passed to i18next.
+}
+\examples{
+opts <- traduire::traduire_options()
+opts <- traduire::traduire_options(language = "fr")
+opts <- traduire::traduire_options(default_namespace = "tr", options = opts)
 }
