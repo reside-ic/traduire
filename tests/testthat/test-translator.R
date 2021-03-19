@@ -113,3 +113,29 @@ test_that("translate from another package", {
   })
   mockery::expect_args(mock_translator, 1, "name", "package")
 })
+
+
+test_that("translator registered with resource_pattern", {
+  root <- traduire_file("examples/structured")
+  name <- rand_str()
+  res <- translator_register(
+    NULL,
+    name = name,
+    resource_pattern = sprintf("%s/{language}-{namespace}.json", root),
+    default_namespace = "common",
+    namespaces = c("common", "login"),
+    language = "en",
+    languages = c("en", "fr"))
+  expect_is(res, "i18n")
+  expect_true(name %in% translator_list())
+  
+  expect_identical(translator(name), res)
+  expect_equal(translator_translate("hello", language = "fr", name = name),
+               "salut le monde")
+  expect_equal(t_("hello", language = "fr", name = name),
+               "salut le monde")
+  expect_true(exists(name, translators))
+  translator_unregister(name)
+  expect_false(exists(name, translators))
+  expect_false(name %in% translator_list())
+})
