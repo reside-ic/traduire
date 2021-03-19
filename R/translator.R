@@ -57,6 +57,8 @@
 ##'
 ##' @title Register a translator
 ##'
+##' @inheritParams i18n
+##' 
 ##' @param ... For \code{translator_register}, arguments passed to
 ##'   \code{\link{traduire_options}} to build the translator object.  All
 ##'   arguments are accepted.  For \code{translator_translate} and
@@ -85,9 +87,9 @@
 ##' traduire::t_("hello", language = "fr", name = "myexample")
 ##' "myexample" %in% traduire::translator_list()
 ##' traduire::translator_unregister("myexample")
-translator_register <- function(..., name = NULL) {
+translator_register <- function(resources, ..., name = NULL) {
   name <- name_from_context(name, NULL, strict = TRUE)
-  translators[[name]] <- i18n(...)
+  translators[[name]] <- i18n(resources = resources, ...)
 }
 
 

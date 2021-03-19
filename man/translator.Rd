@@ -10,7 +10,7 @@
 \alias{translator_list}
 \title{Register a translator}
 \usage{
-translator_register(..., name = NULL)
+translator_register(resources, ..., name = NULL)
 
 translator_unregister(name = NULL)
 
@@ -25,6 +25,11 @@ translator_set_language(language, name = NULL, package = NULL)
 translator_list()
 }
 \arguments{
+\item{resources}{Path to a json file containing translation
+resources. If given in this way, then on-demand translation
+loading (via \code{resource_pattern}) is disabled unless a
+currently unexposed i18next option is used.}
+
 \item{...}{For \code{translator_register}, arguments passed to
 \code{\link{traduire_options}} to build the translator object.  All
 arguments are accepted.  For \code{translator_translate} and
