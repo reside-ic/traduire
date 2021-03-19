@@ -78,7 +78,7 @@ converted into package:&amp;lt;packagename)." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">traduire</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.6</span>
       </span>
     </div>
 
@@ -132,7 +132,7 @@ the <code>name</code> argument can be omitted and will be automatically
 converted into <code>package:&lt;packagename</code>).</p>
     </div>
 
-    <pre class="usage"><span class='fu'>translator_register</span><span class='op'>(</span><span class='va'>...</span>, name <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span>
+    <pre class="usage"><span class='fu'>translator_register</span><span class='op'>(</span><span class='va'>resources</span>, <span class='va'>...</span>, name <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span>
 
 <span class='fu'>translator_unregister</span><span class='op'>(</span>name <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span>
 
@@ -149,6 +149,13 @@ converted into <code>package:&lt;packagename</code>).</p>
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>resources</th>
+      <td><p>Path to a json file containing translation
+resources. If given in this way, then on-demand translation
+loading (via <code>resource_pattern</code>) is disabled unless a
+currently unexposed i18next option is used.</p></td>
+    </tr>
     <tr>
       <th>...</th>
       <td><p>For <code>translator_register</code>, arguments passed to
