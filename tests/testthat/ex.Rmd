@@ -1,0 +1,25 @@
+---
+title: Example
+author: Me
+params:
+  language: en
+traduire:
+  resources: "ex.json"
+---
+
+```{r, echo = FALSE, results = "asis"}
+traduire::traduire_rmarkdown_enable()
+```
+
+::: {#translate language="en"}
+Plot of random points
+:::
+
+::: {#translate language="fr"}
+Tracé de points aléatoires
+:::
+
+```{r}
+set.seed(1)
+plot(runif(10), xlab = t_("time"), ylab = t_("things"))
+```

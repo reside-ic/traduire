@@ -1,0 +1,14 @@
+{
+    "en": {
+        "translation": {
+            "time": "Time",
+            "things": "Things"
+        }
+    },
+    "fr": {
+        "translation": {
+            "time": "Temps",
+            "things": "Choses"
+        }
+    }
+}
