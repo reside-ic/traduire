@@ -10,5 +10,11 @@
             "time": "Temps",
             "things": "Choses"
         }
+    },
+    "es": {
+        "translation": {
+            "time": "Hora",
+            "things": "Cosas"
+        }
     }
 }
