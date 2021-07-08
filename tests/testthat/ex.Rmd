@@ -1,6 +1,6 @@
 ---
 title: Example
-author: Me
+author: A. N. Author
 params:
   language: en
 traduire:

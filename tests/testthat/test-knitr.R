@@ -63,3 +63,23 @@ test_that("generate sensible css", {
                 "</style>")
   expect_equal(knitr_prose_css("fr"), expected)
 })
+
+
+test_that("Can translate an Rmd", {
+  dest_fr <- tempfile(fileext = ".html")
+  dest_en <- tempfile(fileext = ".html")
+  rmarkdown::render("ex.Rmd", output_file = dest_fr,
+                    params = list(language = "fr"),
+                    quiet = TRUE)
+  rmarkdown::render("ex.Rmd", output_file = dest_en,
+                    params = list(language = "en"),
+                    quiet = TRUE)
+
+  txt_fr <- readLines(dest_fr)
+  expect_length(grep("Things", txt_fr), 0)
+  expect_length(grep("Choses", txt_fr), 1)
+
+  txt_en <- readLines(dest_en)
+  expect_length(grep("Things", txt_en), 1)
+  expect_length(grep("Choses", txt_en), 0)
+})
