@@ -1,7 +1,78 @@
-traduire_rmarkdown_enable <- function(default = TRUE) {
+##' Configure an "rmarkdown" document to be translatable. This
+##' configures a set of hooks and styling which will allow both code
+##' chunks and prose to be translated/internationalised. It must be
+##' called from within an Rmarkdown document
+##'
+##' To use, first configure traduire by adding appropriate elements to
+##' your yaml frontmatter. For example
+##'
+##' \preformatted{
+##' ---
+##' params:
+##'   language: fr
+##' traduire:
+##'   resources: "resources.json"
+##' ---
+##' }
+##'
+##' (among any other bits of frontmatter) would configure traduire to
+##' use the resources file \code{resources.json} and set the default
+##' language to be \code{fr}, which will be overrideable by passing in a
+##' parameter to rmarkdown via its \code{params} argument.
+##'
+##'
+##' Then, early in the document (before anything that needs
+##' internationalisation) create a code block like:
+##'
+##' \preformatted{
+##' ```{r, echo = FALSE, results = "asis"}
+##' traduire::traduire_rmarkdown_enable()
+##' ```
+##' }
+##'
+##' It is important to include the `results = "asis"` part as this
+##' will emit some CSS which enables translation of prose.
+##'
+##' After this, you can internationalise any code block, for example:
+##'
+##' \preformatted{
+##' ```{r}
+##' plot(runif(10), xlab = t_("time"), ylab = t_("things"))
+##' ```
+##' }
+##'
+##' With this code block, `traduire` will replace the keys \code{time}
+##' and \code{things} with values from your resource file for the
+##' corresponding file. Importantly, this will happen *before* the
+##' code chunk is evaluated so that both the echo'd code and the
+##' output will be internationalised.
+##'
+##' Prose blocks do require more direct interaction, and one might write:
+##'
+##' \preformatted{
+##' ::: {#translate language="en"}
+##' Plot of random points
+##' :::
+##'
+##' ::: {#translate language="fr"}
+##' Tracé de points aléatoires
+##' :::
+##' }
+##'
+##' which will render based on the language setting.
+##'
+##' @title Rmarkdown support
+##'
+##' @return Nothing, called for its side effect within an Rmarkdown
+##'   document.
+##' @export
+traduire_rmarkdown_enable <- function() {
   envir <- parent.frame()
   tr <- traduire_rmarkdown_translator(envir$params, rmarkdown::metadata)
-  traduire_knitr_enable(tr, default = default)
+  traduire_knitr_enable(tr)
+  ## TODO: Only do this for an html output; for latex etc we want to
+  ## do something slightly different, but not sure what. We should be
+  ## able to detect this.
   writeLines(knitr_prose_css(envir$params$language))
 }
 
@@ -30,13 +101,10 @@ traduire_rmarkdown_translator <- function(params, metadata) {
 }
 
 
-traduire_knitr_enable <- function(tr, language = NULL, default = TRUE) {
-  ## We can access rmarkdown::metadata for this, which might be the
-  ## best way of configuring it, really.
+## TODO: work on inline chunks too?
+traduire_knitr_enable <- function(tr, language = NULL) {
   knitr::opts_hooks$set(translate = knitr_rewrite_code(tr, language))
-  if (default) {
-    knitr::opts_chunk$set(translate = TRUE)
-  }
+  knitr::opts_chunk$set(translate = TRUE)
 }
 
 
