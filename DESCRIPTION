@@ -26,7 +26,8 @@ Suggests:
     mockery,
     rmarkdown,
     xml2,
-    testthat
+    testthat,
+    withr
 RoxygenNote: 7.1.1
 Roxygen: list(markdown = TRUE)
 VignetteBuilder: knitr
