@@ -13,13 +13,13 @@ test_that("can translate a code chunk", {
 
 test_that("build a translator object from rmarkdown metadata", {
   expect_error(
-    traduire_rmarkdown_translator(list()),
+    markdown_translator(list()),
     "Did not find 'traduire' section in metadata")
   expect_error(
-    traduire_rmarkdown_translator(list(traduire = NULL)),
+    markdown_translator(list(traduire = NULL)),
     "The 'traduire' section in metadata must have a 'resources' element")
   metadata <- list(traduire = list(resources = "ex.json"))
-  tr <- traduire_rmarkdown_translator(metadata)
+  tr <- markdown_translator(metadata)
   expect_s3_class(tr, "i18n")
   expect_equal(tr$t("time"), "Time")
 })
@@ -29,7 +29,7 @@ test_that("Pass additional traduire options", {
   metadata <- list(traduire = list(resources = "ex.json",
                                    options = list(language = "es")))
   expect_equal(
-    traduire_rmarkdown_translator(metadata)$language(),
+    markdown_translator(metadata)$language(),
     "es")
 })
 
