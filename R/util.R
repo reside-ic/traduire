@@ -192,3 +192,45 @@ parse_data_match_call <- function(i, data, definition) {
   call <- as.call(c(list(quote(.)), set_names(args, nms)))
   as.list(match.call(definition, call))[-1L]
 }
+
+
+parse_data_find_call <- function(i, data) {
+  stopifnot(data$token[[i + 2L]] == "'('")
+  j <- which(data$index > i + 2L & data$depth == data$depth[[i]])[[1]]
+  d <- data[i:j, ]
+  n <- nrow(d)
+  start <- list(line = d$line1[[1]], col = d$col1[[1]])
+  end <- list(line = d$line1[[n]], col = d$col1[[n]])
+
+  if (start$line != end$line) {
+    stop("CHECKME")
+  }
+
+  ## Could also get this from the input too?
+  text <- paste(d$text, collapse = "")
+
+  list(text = text, start = start, end = end)
+}
+
+
+string_common_prefix <- function(x) {
+  common <- ""
+  for (i in seq_len(min(nchar(x)))) {
+    prefix <- substr(x, 1L, i)
+    if (all(prefix == prefix[[1L]])) {
+      common <- prefix[[1L]]
+    } else {
+      break
+    }
+  }
+  common
+}
+
+
+common_filename <- function(files) {
+  ## TODO: this has a terrible failure mode where we could end up with
+  ## [path/a.html, path/b.html] giving "foo/.html" when we should
+  ## error.
+  prefix <- string_common_prefix(files)
+  sprintf("%s.%s", sub("-$", "", prefix), tools::file_ext(files[[1]]))
+}

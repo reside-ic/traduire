@@ -66,7 +66,7 @@ converted into \code{package:<packagename}).
 
 
 The intention is that this would typically be called from
-  \code{.onLoad}, something like:
+\code{.onLoad}, something like:
 
 \preformatted{
 .onLoad <- function(...) {
@@ -88,29 +88,29 @@ traduire::translator_set_language("es")
 }
 
 Every package's translator object is isolated from every other
-  package, and if the \code{traduire} functions are called from
-  your package code, then the correct translator should be found
-  automatically.
+package, and if the \code{traduire} functions are called from
+your package code, then the correct translator should be found
+automatically.
 
 If you need to get a translation for another package, you should
-  use \code{package} argument, for example:
+use \code{package} argument, for example:
 
 \preformatted{
 traduire::t_("key", package = "other")
 }
 
 You can change the language in another package (e.g., using
-  \code{traduire::change_language("en", package = "other")}) but
-  should be careful to reset this using the returned reset
-  function.
+\code{traduire::change_language("en", package = "other")}) but
+should be careful to reset this using the returned reset
+function.
 
 It is not possible to unregister a translator in another package,
-  or to overwrite one.
+or to overwrite one.
 
 Translators provided in other packages will be listed by
-  \code{traduire::translator_list} with the prefix \code{package:}
-  (e.g., \code{package:other}) however, you should not access them
-  directly using \code{name = "package:other"}.
+\code{traduire::translator_list} with the prefix \code{package:}
+(e.g., \code{package:other}) however, you should not access them
+directly using \code{name = "package:other"}.
 }
 
 \examples{

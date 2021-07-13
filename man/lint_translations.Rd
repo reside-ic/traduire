@@ -14,7 +14,7 @@ lint_translations_package(root, language = NULL)
 character vector of file names and directory names - directory
 names are expanded (non-recursively) to find all \code{.R} files.}
 
-\item{obj}{A translator object, or `NULL`. If `NULL`, then the
+\item{obj}{A translator object, or \code{NULL}. If \code{NULL}, then the
 report will indicate only strings that might be translated vs
 bare strings, rather than check the likely success of
 translation.}
@@ -31,7 +31,7 @@ shortens the reported filenames considerably}
 }
 \value{
 A \code{lint_translations} object, which can be passed
-  through to \code{\link{lint_translations_report}}
+through to \code{\link{lint_translations_report}}
 }
 \description{
 Find likely translation errors using static source code analysis.

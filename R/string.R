@@ -33,6 +33,29 @@ str_insert <- function(str, at, value) {
 }
 
 
+str_swap_chunk <- function(str, start, end, value) {
+  if (start$line == end$line) {
+    line <- start$line
+    str[[line]] <- paste0(substr(str[[line]], 0L, start$col - 1L),
+                          value,
+                          substr(str[[line]], end$col + 1L, nchar(str[[line]])))
+  } else {
+    stop("FIXME")
+  }
+  str
+}
+
+
+str_extract_chunk <- function(str, start, end) {
+  if (start$line == end$line) {
+    line <- start$line
+    substr(str[[line]], start$col, end$col)
+  } else {
+    stop("FIXME")
+  }
+}
+
+
 Markup <- R6::R6Class(
   "Markup",
   public = list(

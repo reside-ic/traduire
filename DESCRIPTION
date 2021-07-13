@@ -1,6 +1,6 @@
 Package: traduire
 Title: Example Translation in a Package
-Version: 0.0.6
+Version: 0.0.7
 Authors@R:
     c(person(given = "Rich",
              family = "FitzJohn",
@@ -20,12 +20,16 @@ Imports:
     R6,
     glue
 Suggests:
+    commonmark,
     jsonlite,
     knitr,
     mockery,
     rmarkdown,
-    testthat
+    xml2,
+    testthat,
+    withr
 RoxygenNote: 7.1.1
+Roxygen: list(markdown = TRUE)
 VignetteBuilder: knitr
 Language: en-GB
 URL: https://github.com/reside-ic/traduire
