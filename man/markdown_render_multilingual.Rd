@@ -29,6 +29,9 @@ section will be rendered (see Details)}
 
 \item{tr}{Optionally a translator object. If given, then it
 overrides any definition in the metadata.}
+
+\item{combine}{Logical, indicating if a combined html document
+should be created, if possible (this might change).}
 }
 \value{
 A list with information about the created files

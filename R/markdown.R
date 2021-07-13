@@ -110,6 +110,9 @@
 ##' @param tr Optionally a translator object. If given, then it
 ##'   overrides any definition in the metadata.
 ##'
+##' @param combine Logical, indicating if a combined html document
+##'   should be created, if possible (this might change).
+##'
 ##' @export
 ##' @return A list with information about the created files
 markdown_render_multilingual <- function(input, ..., languages = NULL,
