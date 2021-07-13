@@ -211,3 +211,26 @@ parse_data_find_call <- function(i, data) {
 
   list(text = text, start = start, end = end)
 }
+
+
+string_common_prefix <- function(x) {
+  common <- ""
+  for (i in seq_len(min(nchar(x)))) {
+    prefix <- substr(x, 1L, i)
+    if (all(prefix == prefix[[1L]])) {
+      common <- prefix[[1L]]
+    } else {
+      break
+    }
+  }
+  common
+}
+
+
+common_filename <- function(files) {
+  ## TODO: this has a terrible failure mode where we could end up with
+  ## [path/a.html, path/b.html] giving "foo/.html" when we should
+  ## error.
+  prefix <- string_common_prefix(files)
+  sprintf("%s.%s", sub("-$", "", prefix), tools::file_ext(files[[1]]))
+}

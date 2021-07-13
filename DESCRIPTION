@@ -20,12 +20,15 @@ Imports:
     R6,
     glue
 Suggests:
+    commonmark,
     jsonlite,
     knitr,
     mockery,
     rmarkdown,
+    xml2,
     testthat
 RoxygenNote: 7.1.1
+Roxygen: list(markdown = TRUE)
 VignetteBuilder: knitr
 Language: en-GB
 URL: https://github.com/reside-ic/traduire

@@ -2,19 +2,22 @@
     "en": {
         "translation": {
             "time": "Time",
-            "things": "Things"
+            "things": "Things",
+            "title": "My document"
         }
     },
     "fr": {
         "translation": {
             "time": "Temps",
-            "things": "Choses"
+            "things": "Choses",
+            "title": "Mon document"
         }
     },
     "es": {
         "translation": {
             "time": "Hora",
-            "things": "Cosas"
+            "things": "Cosas",
+            "title": "Mi documentdo"
         }
     }
 }

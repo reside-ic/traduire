@@ -1,22 +1,21 @@
 ---
-title: Example
+title: t_("title")
 author: A. N. Author
-params:
-  language: en
 traduire:
   resources: "ex.json"
+  languages: ["en", "fr", "es"]
 ---
 
-```{r, echo = FALSE, results = "asis"}
-traduire::traduire_rmarkdown_enable()
-```
-
-::: {#translate language="en"}
+::: {lang=en}
 Plot of random points
 :::
 
-::: {#translate language="fr"}
+::: {lang=fr}
 Tracé de points aléatoires
+:::
+
+::: {lang=es}
+Gráfico de puntos aleatorios
 :::
 
 ```{r}
