@@ -104,7 +104,7 @@ translator_unregister <- function(name = NULL) {
 ##' @export
 ##' @rdname translator
 translator_translate <- function(..., name = NULL, package = NULL) {
-  translator(name, package)$t(...)
+  translator(name, package, FALSE)$t(...)
 }
 
 
@@ -114,10 +114,21 @@ t_ <- translator_translate
 
 
 ##' @export
+##'
+##' @param required Logical, indicating if the translator object must
+##'   be found. `TRUE`, then an error is thrown, otherwise an empty
+##'   translator object is used, which will practically mean that
+##'   `t_("string", ...)` will return `"string"` (i.e., all
+##'   translations return their key).
+##'
 ##' @rdname translator
-translator <- function(name = NULL, package = NULL) {
-  name <- name_from_context(name, package, FALSE)
-  translator <- translators[[name]]
+translator <- function(name = NULL, package = NULL, required = TRUE) {
+  name <- name_from_context(name, package, FALSE, required)
+  if (is.null(name)) {
+    translator <- i18n(NULL)
+  } else {
+    translator <- translators[[name]]
+  }
   if (is.null(translator)) {
     stop(sprintf("Did not find translator '%s'", name))
   }
@@ -151,7 +162,10 @@ translator_list <- function() {
 ## In order to prevent registration/unregistration of translators from
 ## other packages, if  package *is* provided and strict  is TRUE, then
 ## we verify that the correct name was given.
-name_from_context <- function(name, package, strict) {
+##
+## If required is FALSE then we're allowed to fall through here,
+## otherwise it's an error.
+name_from_context <- function(name, package, strict, required) {
   prefix <- "package:"
   if (!is.null(package)) {
     validate_package_name(package, strict)
@@ -160,20 +174,24 @@ name_from_context <- function(name, package, strict) {
     stop(sprintf("Do not use '%s' prefix directly", prefix))
   }
   if (is.null(name)) {
-    package <- package_from_context()
-    name <- paste0(prefix, package)
+    package <- package_from_context(required)
+    if (is.null(package)) {
+      name <- NULL
+    } else {
+      name <- paste0(prefix, package)
+    }
   }
   name
 }
 
 
-package_from_context <- function(depth = 1L) {
+package_from_context <- function(required, depth = 1L) {
   name <- utils::packageName(parent.frame(depth))
   while (!is.null(name) && name == "traduire") {
     depth <- depth + 1L
     name <- utils::packageName(parent.frame(depth))
   }
-  if (is.null(name) || !nzchar(name)) {
+  if (required && (is.null(name) || !nzchar(name))) {
     stop("Did not determine environment name")
   }
   name
@@ -189,6 +207,12 @@ validate_package_name <- function(given, strict) {
     }
   }
 }
+
+
+null_translator <- list(
+  t = function(string, ...) {
+    string
+  })
 
 
 translators <- new.env(parent = emptyenv())

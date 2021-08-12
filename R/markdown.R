@@ -130,7 +130,8 @@ markdown_render_multilingual <- function(input, ..., languages = NULL,
   ## So, not ideal, and I expect a source of considerable corner
   ## cases in future.
   ##
-  ## TODO: consider restoring the seed here, at least as an option,   ## that we do get more similar renderings for each language.
+  ## TODO: consider restoring the seed here, at least as an option,
+  ## so that we do get more similar renderings for each language.
   ret <- lapply(src, rmarkdown::render, ...)
 
   ## Check here that we have a single html:

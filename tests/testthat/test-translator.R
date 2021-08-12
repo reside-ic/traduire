@@ -44,7 +44,7 @@ test_that("package from context", {
     package_from_context,
     "utils::packageName",
     mock_package_name)
-  expect_equal(package_from_context(), "foo")
+  expect_equal(package_from_context(TRUE), "foo")
 })
 
 
@@ -55,7 +55,8 @@ test_that("package from context", {
     package_from_context,
     "utils::packageName",
     mock_package_name)
-  expect_error(package_from_context(), "Did not determine environment name")
+  expect_error(package_from_context(TRUE),
+               "Did not determine environment name")
 })
 
 
@@ -84,9 +85,9 @@ test_that("name_from_context finds name in package", {
     name_from_context,
     "package_from_context",
     mock_package_from_context)
-  expect_equal(name_from_context("given", NULL, FALSE), "given")
-  expect_equal(name_from_context(NULL, NULL, FALSE), "package:pkg")
-  expect_equal(name_from_context(NULL, "pkg", FALSE), "package:pkg")
+  expect_equal(name_from_context("given", NULL, FALSE, TRUE), "given")
+  expect_equal(name_from_context(NULL, NULL, FALSE, TRUE), "package:pkg")
+  expect_equal(name_from_context(NULL, "pkg", FALSE, TRUE), "package:pkg")
 })
 
 
@@ -111,7 +112,7 @@ test_that("translate from another package", {
       translator_translate("hello", package = "package", name = "name"),
       "Bonjour le Monde!")
   })
-  mockery::expect_args(mock_translator, 1, "name", "package")
+  mockery::expect_args(mock_translator, 1, "name", "package", FALSE)
 })
 
 
