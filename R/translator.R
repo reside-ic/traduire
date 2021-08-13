@@ -190,6 +190,10 @@ package_from_context <- function(required, depth = 1L) {
   while (!is.null(name) && name == "traduire") {
     depth <- depth + 1L
     name <- utils::packageName(parent.frame(depth))
+    if (name == "base") {
+      name <- NULL
+      break
+    }
   }
   if (required && (is.null(name) || !nzchar(name))) {
     stop("Did not determine environment name")

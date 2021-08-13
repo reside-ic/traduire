@@ -152,6 +152,12 @@ markdown_render_multilingual <- function(input, ..., languages = NULL,
 }
 
 
+markdown_knit_button <- function(input, ...) {
+  markdown_render_multilingual(input, ..., envir = globalenv(),
+                               languages = "default", combine = FALSE)
+}
+
+
 ##' @export
 ##' @rdname markdown_render_multilingual
 markdown_localise <- function(input, languages = NULL, tr = NULL) {
@@ -167,6 +173,8 @@ markdown_localise <- function(input, languages = NULL, tr = NULL) {
     ## resources, but it doesn't make it out to the object
     ## (reside-246)
     languages <- metadata$traduire$languages
+  } else if (identical(languages, "default")) {
+    languages <- stats::head(metadata$traduire$languages, 1)
   }
 
   if (length(languages) == 0L) {

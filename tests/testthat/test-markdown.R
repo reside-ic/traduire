@@ -61,3 +61,16 @@ test_that("simple example", {
   expect_length(grep("Things", txt_en), 1)
   expect_length(grep("Choses", txt_en), 0)
 })
+
+
+test_that("Can run markdown example without translation", {
+  tmp <- tempfile()
+  on.exit(unlink(tmp, recursive = TRUE))
+  dir.create(tmp, FALSE, TRUE)
+  file.copy("ex.Rmd", file.path(tmp, "example.Rmd"))
+  file.copy("ex.json", tmp)
+  res <- withr::with_dir(
+    tmp,
+    rmarkdown::render("example.Rmd", quiet = TRUE))
+  expect_true(file.exists(file.path(tmp, "example.html")))
+})

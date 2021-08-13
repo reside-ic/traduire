@@ -1,4 +1,5 @@
 ---
+knit: traduire:::markdown_knit_button
 title: t_("title")
 author: A. N. Author
 traduire:
