@@ -23,8 +23,8 @@ Create a new translator object
 
 
 Note that the argument list here \emph{will} change.  The only
-  part of this that we consider stable is that the first argument
-  will represent a resource bundle.
+part of this that we consider stable is that the first argument
+will represent a resource bundle.
 }
 
 \examples{

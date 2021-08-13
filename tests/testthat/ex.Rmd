@@ -1,0 +1,25 @@
+---
+knit: traduire:::markdown_knit_button
+title: t_("title")
+author: A. N. Author
+traduire:
+  resources: "ex.json"
+  languages: ["en", "fr", "es"]
+---
+
+::: {lang=en}
+Plot of random points
+:::
+
+::: {lang=fr}
+Tracé de points aléatoires
+:::
+
+::: {lang=es}
+Gráfico de puntos aleatorios
+:::
+
+```{r}
+set.seed(1)
+plot(runif(10), xlab = t_("time"), ylab = t_("things"))
+```

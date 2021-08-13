@@ -15,8 +15,8 @@ temporary file with a file extension of \code{.html}).}
 }
 \value{
 This function is called for the side effect of viewing a
-  report.  It will return (invisibly) the path to the produced
-  report.
+report.  It will return (invisibly) the path to the produced
+report.
 }
 \description{
 Report on translation linting.  At present this produces a
