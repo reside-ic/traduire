@@ -44,12 +44,8 @@ pre {
     color: #777;
 }
 
-span.line {
-    counter-increment: line;
-}
-
 span.line::before {
-    content: counter(line);
+    content: attr(line-number);
     display: inline-block;
     width: 2em;
     border-right: 1px solid #ddd;

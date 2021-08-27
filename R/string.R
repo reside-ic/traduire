@@ -117,9 +117,16 @@ markup_render <- function(tags, spans, text, filter = TRUE, group = NULL,
   messages <- data_frame(tag = tag[i], line = line[i], value = msg[i])
 
   if (filter) {
+    browser()
+    lines <- unique(line)
+    max_length <- length(text)
+    lines <- vapply(lines, function(l) {
+      lower <- max(1, l - 5) ## Can't include line less than line 1
+      upper <- min(max_length, l + 5) ## Can't go beyond last line
+      c(lower, upper)
+    })
     lines <- min(line):max(line)
     text <- text[lines]
-    messages$index <- messages$line - lines[[1]] + 1L
   } else {
     lines <- seq_along(text)
   }

@@ -97,3 +97,42 @@ test_that("lint_translations_package corner cases", {
     lint_translations_package(path),
     "Invalid DESCRIPTION")
 })
+
+test_that("long files are truncated", {
+  src <- c(
+    'a <- t_("hello")',
+    'a <- 2',
+    'a <- 2',
+    'a <- 2',
+    'a <- 2',
+    'a <- 2',
+    'a <- 2',
+    'a <- 2',
+    'a <- 2',
+    'a <- 2',
+    'a <- 2',
+    'a <- 2',
+    'b <- "string multiple',
+    ' lines)"',
+    'a <- 2',
+    'a <- 2',
+    'a <- 2',
+    'a <- 2',
+    'a <- 2',
+    'a <- 2',
+    'a <- 2',
+    'a <- 2',
+    'a <- 2',
+    'a <- 2')
+  p <- tempfile()
+  dir.create(p)
+  writeLines(src, file.path(p, "a.R"))
+  obj <- i18n(traduire_file("examples/simple.json"))
+  x <- lint_translations("a.R", obj, root = p)
+  res <- lint_translations_html_report(x)
+  
+  t <- tempfile(fileext = ".html")
+  writeLines(res, t)
+  browse_html(res)
+})
+  
