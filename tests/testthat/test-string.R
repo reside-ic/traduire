@@ -93,13 +93,13 @@ test_that("render", {
   m$add("ASSIGN", i)
   tags <- list(ASSIGN = html_span("assign"))
   res <- m$render(tags, filter = FALSE, escape = TRUE)
-  expect_equal(res$lines, 1)
+  expect_equal(res$line_labels, 1)
   expect_equal(res$text, "a <span class=\"assign\">&lt;-</span> 1")
 })
 
 
 test_that("render - filter group", {
-  text <- c("a <- 1", "b = 2")
+  text <- c("a <- 1", rep("b = 2", 9))
   exprs <- parse(text = paste(text, collapse = "\n"), keep.source = TRUE)
   data <- parse_data(exprs)
   m <- Markup$new(text, data)
@@ -107,15 +107,31 @@ test_that("render - filter group", {
   m$start()
   m$add("ASSIGN", data$index[data$token == "LEFT_ASSIGN"])
   m$start()
-  m$add("ASSIGN", data$index[data$token == "EQ_ASSIGN"])
+  eq <- data$index[data$token == "EQ_ASSIGN"]
+  for (index in eq) {
+    m$add("ASSIGN", index)
+  }
 
   tags <- list(ASSIGN = html_span("assign"))
 
   res1 <- m$render(tags, group = 1, filter = TRUE)
-  expect_equal(res1$lines, 1)
-  expect_equal(res1$text, "a <span class=\"assign\"><-</span> 1")
+  expect_equal(res1$line_labels, c(1:6, "..."))
+  expect_equal(res1$text, c("a <span class=\"assign\"><-</span> 1",
+                            rep("b = 2", 5),
+                            "..."))
 
   res2 <- m$render(tags, filter = FALSE, group = 2)
-  expect_equal(res2$lines, 1:2)
-  expect_equal(res2$text, c("a <- 1", "b <span class=\"assign\">=</span> 2"))
+  expect_equal(res2$line_labels, 1:10)
+  expect_equal(res2$text, c("a <- 1", 
+                            rep("b <span class=\"assign\">=</span> 2", 9)))
+})
+
+test_that("can calculate union of set of intervals", {
+  intervals <- cbind(c(1, 2), c(9, 10), c(3, 4), c(6, 8), c(7, 10))
+  expect_equal(union_intervals(intervals),
+               cbind(c(1, 4), c(6, 10)))
+  expect_equal(union_intervals(cbind(c(4, 10))),
+               cbind(c(4, 10)))
+  expect_equal(union_intervals(cbind(c(4, 10), c(5, 6))),
+               cbind(c(4, 10)))
 })

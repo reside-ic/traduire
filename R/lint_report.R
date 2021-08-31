@@ -20,10 +20,9 @@ lint_translations_html_report <- function(x) {
 
 lint_translations_html_report_file <- function(x) {
   ans <- x$info$render(lint_tags_html(), escape = TRUE, filter = TRUE)
-  browser()
   fmt <- '<div id="%s" class="tabcontent">\n<pre>\n%s\n</pre>\n</div>'
   code <- sprintf('<span class="line" line-number="%s"></span>%s', 
-                  ans$lines, ans$text)
+                  ans$line_labels, ans$text)
   tab <- sprintf(
     '<button class="tablinks" onclick="openTab(event, \'%s\')">%s</button>',
     x$path, x$path)
