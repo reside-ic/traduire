@@ -116,15 +116,28 @@ markup_render <- function(tags, spans, text, filter = TRUE, group = NULL,
   i <- !is.na(msg)
   messages <- data_frame(tag = tag[i], line = line[i], value = msg[i])
 
-  if (filter) {
-    lines <- min(line):max(line)
-    text <- text[lines]
-    messages$index <- messages$line - lines[[1]] + 1L
+  lines <- unique(line)
+  max_length <- length(text)
+  if (length(lines) == 0) {
+    ## There are no "interesting" lines so default to showing 5
+    page <- select_text(text, cbind(c(1, min(max_length, 5))), max_length)
+    line_labels <- page$line_labels
+    text <- page$text
+  } else if (filter) {
+    lines <- vapply(lines, function(l) {
+      lower <- max(1L, as.integer(l) - 5L) ## Can't include line before line 1
+      upper <- min(max_length, as.integer(l) + 5L) ## Can't go beyond last line
+      c(lower, upper)
+    }, integer(2))
+    lines <- union_intervals(lines)
+    page <- select_text(text, lines, max_length)
+    line_labels <- page$line_labels
+    text <- page$text
   } else {
-    lines <- seq_along(text)
+    line_labels <- seq_along(text)
   }
 
-  list(lines = lines, text = text, messages = messages)
+  list(line_labels = line_labels, text = text, messages = messages)
 }
 
 
@@ -153,4 +166,64 @@ html_escape <- function(text, line, col, open) {
   }
 
   list(text = text, col = col)
+}
+
+## Note intervals must be ordered before this can be used
+## for unioning. By ordered for a set of intervals
+## (a1, b1), (a2, b2), .. (an, bn)
+## It must be that a(i) <= b(i) for all i in 1,...n
+## and a(i) <= a(i+1) for all i in 1,..(n-1)
+IntervalStack <- R6::R6Class(
+  "IntervalStack",
+  cloneable = FALSE,
+  public = list(
+    stack = NULL,
+    length = NULL,
+    push = function(interval) {
+      if (is.null(self$length)) {
+        self$stack <- matrix(interval)
+        self$length <- 1
+      } else {
+        last_interval <- self$stack[, self$length]
+        ## All intervals are closed so we compare with interval + 1 for the case
+        ## e.g. intervals [1, 2], [3, 4] this should return [1, 4]
+        if (last_interval[2] + 1 < interval[1]) {
+          self$stack <- unname(cbind(self$stack, interval))
+          self$length <- self$length + 1
+        } else {
+          new_interval <- c(last_interval[1], 
+                            max(last_interval[2], interval[2]))
+          self$stack <- unname(cbind(self$stack[, -(self$length)], 
+                                     new_interval))
+        }
+      }
+    }
+  )
+)
+
+union_intervals <- function(intervals) {
+  ordered <- intervals[, order(intervals[1, ]), drop = FALSE]
+  unioned <- IntervalStack$new()
+  for (i in seq.int(ncol(ordered))) {
+    unioned$push(ordered[, i])
+  }
+  unioned$stack
+}
+
+select_text <- function(text, lines, max_length) {
+  connector_line <- "..."
+  sections <- lapply(seq.int(ncol(lines)), function(i) {
+    interval <- lines[, i]
+    section_lines <- seq.int(interval[1], interval[2])
+    section <- text[section_lines]
+    if (interval[2] != max_length) {
+      ## Interval has ended before the end of the document, so add a line break
+      section <- c(section, connector_line)
+      section_lines <- c(section_lines, "...")
+    }
+    list(section = section,
+         line_labels = section_lines)
+  })
+  list(text = unlist(lapply(sections, "[[", "section")),
+       line_labels = unlist(lapply(sections, "[[", "line_labels")))
 }

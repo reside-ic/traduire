@@ -36,13 +36,13 @@ test_that("report for file", {
   spans <- strsplit(trimws(code), "\n", fixed = TRUE)[[1]]
   expect_equal(
     spans[[1]],
-    '<span class="line"></span>a &lt;- <span class="valid" data-tooltip="hello world"><span class="expr">t_("hello")</span></span>')
+    '<span class="line" line-number="1"></span>a &lt;- <span class="valid" data-tooltip="hello world"><span class="expr">t_("hello")</span></span>')
   expect_equal(
     spans[[2]],
-    '<span class="line"></span>b &lt;- <span class="expr">t_(<span class="error-missing" data-tooltip="Translation key \'translation:missing\' not found">"missing"</span>)</span>')
+    '<span class="line" line-number="2"></span>b &lt;- <span class="expr">t_(<span class="error-missing" data-tooltip="Translation key \'translation:missing\' not found">"missing"</span>)</span>')
   expect_equal(
     spans[[3]],
-    '<span class="line"></span>f(<span class="warning-bare-string"><span class="expr">"some string"</span></span>)')
+    '<span class="line" line-number="3"></span>f(<span class="warning-bare-string"><span class="expr">"some string"</span></span>)')
 })
 
 
@@ -97,3 +97,66 @@ test_that("lint_translations_package corner cases", {
     lint_translations_package(path),
     "Invalid DESCRIPTION")
 })
+
+test_that("long files are truncated", {
+  src <- c(
+    'a <- t_("hello")',
+    rep('a <- 2', 15),
+    'b <- "string multiple',
+    ' lines)"',
+    rep('a <- 2', 10))
+  p <- tempfile()
+  dir.create(p)
+  writeLines(src, file.path(p, "a.R"))
+  obj <- i18n(traduire_file("examples/simple.json"))
+  x <- lint_translations("a.R", obj, root = p)
+  res <- lint_translations_html_report(x)
+  
+  ## 2 lines are skip lines
+  re <- '<span class=\"line\" line-number=\"...\"></span>...'
+  expect_match(res, re)
+  occurances <- gregexpr(re, res)
+  expect_length(occurances[[1]], 2)
+  ## Final line is a skip line
+  re <- '<span class=\"line\" line-number=\"...\"></span>...\n</pre>'
+  expect_match(res, re)
+  occurances <- gregexpr(re, res)
+  expect_length(occurances[[1]], 1)
+})
+
+test_that("short files with no interesting lines displays all lines", {
+  src <- c("a <- 1", "b <- 2")
+  p <- tempfile()
+  dir.create(p)
+  writeLines(src, file.path(p, "a.R"))
+  obj <- i18n(traduire_file("examples/simple.json"))
+  x <- lint_translations("a.R", obj, root = p)
+  res <- lint_translations_html_report(x)
+  
+  ## 2 lines of content shown
+  re <- '<span class=\"line\" line-number=\"1\"></span>...'
+  expect_match(res, re)
+  re <- '<span class=\"line\" line-number=\"2\"></span>...'
+  expect_match(res, re)
+  re <- '<span class=\"line\" line-number=\"3\"></span>...'
+  expect_false(grepl(re, res))
+})
+
+test_that("files with no interesting lines are truncated", {
+  src <- c(rep("a <- 1", 10))
+  p <- tempfile()
+  dir.create(p)
+  writeLines(src, file.path(p, "a.R"))
+  obj <- i18n(traduire_file("examples/simple.json"))
+  x <- lint_translations("a.R", obj, root = p)
+  res <- lint_translations_html_report(x)
+  
+  ## 5 lines of content shown
+  re <- '<span class=\"line\" line-number=\"1\"></span>...'
+  expect_match(res, re)
+  re <- '<span class=\"line\" line-number=\"5\"></span>...'
+  expect_match(res, re)
+  re <- '<span class=\"line\" line-number=\"6\"></span>...'
+  expect_false(grepl(re, res))
+})
+  
