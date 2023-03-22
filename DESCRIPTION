@@ -1,6 +1,6 @@
 Package: traduire
 Title: Internationalisation on the Fly
-Version: 0.0.6
+Version: 0.1.0
 Authors@R:
     c(person(given = "Rich",
              family = "FitzJohn",
