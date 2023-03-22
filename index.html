@@ -5,13 +5,13 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Example Translation in a Package • traduire</title>
+<title>Internationalisation on the Fly • traduire</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="bootstrap-toc.css">
 <script src="bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
-<script src="pkgdown.js"></script><meta property="og:title" content="Example Translation in a Package">
+<script src="pkgdown.js"></script><meta property="og:title" content="Internationalisation on the Fly">
 <meta property="og:description" content="Internationalisation (i18n) support for R, switching
     languages at runtime, based on the i18next JavaScript library.
     This provides an alternative approach to internationalisation than
@@ -22,6 +22,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -34,18 +36,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">traduire</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.0</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="articles/traduire.html">Get started</a>
 </li>
@@ -55,7 +51,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/reside-ic/traduire/">
+  <a href="https://github.com/reside-ic/traduire/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -73,36 +69,36 @@
       </header><div class="row">
   <div class="contents col-md-9">
 
-<div id="traduire" class="section level2">
-<h2 class="hasAnchor">
-<a href="#traduire" class="anchor"></a>traduire</h2>
+<div class="section level2">
+<h2 id="traduire">traduire<a class="anchor" aria-label="anchor" href="#traduire"></a>
+</h2>
 <!-- badges: start -->
 
-<p>The <code>traduire</code> R package provides a wrapper around the <a href="https://www.i18next.com"><code>i18next</code> JavaScript library</a>. It presents an alternative interface to R’s built-in internationalisation functions, with a focus on the ability to change the target language within a session. Currently the package presents only a stripped down interface to the underlying library, though this may expand in future.</p>
-<p><a href="https://cran.r-project.org/doc/manuals/R-exts.html#Internationalization">R’s built-in internationalisation</a> is focussed on translating messages, warnings and errors transparently for package authors, within a session that does not change language. The translation is completely transparent, as one writes:</p>
-<pre><code><a href="https://rdrr.io/r/base/warning.html">warning("spline: first and last y values differ - using y[1] for both")</a></code></pre>
-<p>(for example, in <code><a href="https://rdrr.io/r/stats/splinefun.html">stats::spline</a></code>), and the text used will vary depending on the locale (the environment variable <code>LC_MESSAGES</code>) to show, in a French locale:</p>
+<p>The <code>traduire</code> R package provides a wrapper around the <a href="https://www.i18next.com" class="external-link"><code>i18next</code> JavaScript library</a>. It presents an alternative interface to R’s built-in internationalisation functions, with a focus on the ability to change the target language within a session. Currently the package presents only a stripped down interface to the underlying library, though this may expand in future.</p>
+<p><a href="https://cran.r-project.org/doc/manuals/R-exts.html#Internationalization" class="external-link">R’s built-in internationalisation</a> is focussed on translating messages, warnings and errors transparently for package authors, within a session that does not change language. The translation is completely transparent, as one writes:</p>
+<pre><code><span><span class="kw"><a href="https://rdrr.io/r/base/warning.html" class="external-link">warning</a></span><span class="op">(</span><span class="st">"spline: first and last y values differ - using y[1] for both"</span><span class="op">)</span></span></code></pre>
+<p>(for example, in <code><a href="https://rdrr.io/r/stats/splinefun.html" class="external-link">stats::spline</a></code>), and the text used will vary depending on the locale (the environment variable <code>LC_MESSAGES</code>) to show, in a French locale:</p>
 <pre><code>Warning message:
 In stats::spline(1:10, 1:10, method = "periodic") :
   spline : la première et la dernière valeurs de y diffèrent - y[1] utilisé pour les deux</code></pre>
-<p>It is harder to generate translations in contexts other than messages, warnings and errors - for example the axes of a plot, the output of a <a href="https://cran.r-project.org/package=knitr">knitr</a> document, or the results of a <a href="https://cran.r-project.org/package=plumber">web service</a>. It is also not straightforward to change the language of translation during a session (e.g., to produce knitr output in two different languages, or to respond to a query in a language that changes at the client’s request).</p>
+<p>It is harder to generate translations in contexts other than messages, warnings and errors - for example the axes of a plot, the output of a <a href="https://cran.r-project.org/package=knitr" class="external-link">knitr</a> document, or the results of a <a href="https://cran.r-project.org/package=plumber" class="external-link">web service</a>. It is also not straightforward to change the language of translation during a session (e.g., to produce knitr output in two different languages, or to respond to a query in a language that changes at the client’s request).</p>
 <p>For this, we wanted the ability to internationalise strings on the fly, changing languages within a session, and decoupled from messages. When used within a package, the interface is lightweight.</p>
-<p>For an introduction to the package, see <a href="https://reside-ic.github.io/traduire/articles/traduire.html">the vignette</a>, which shows how to internationalise strings, including strings requiring interpolation (substitution of variables), and for a more complete example that implements an internationalised “hello-world-as-a-service”, showing how to change languages dynamically.</p>
+<p>For an introduction to the package, see <a href="https://reside-ic.github.io/traduire/articles/traduire.html" class="external-link">the vignette</a>, which shows how to internationalise strings, including strings requiring interpolation (substitution of variables), and for a more complete example that implements an internationalised “hello-world-as-a-service”, showing how to change languages dynamically.</p>
 <p>Note that this package is designed only to help with tooling your package or application to allow it to be translated; the translations of content must still be carried out by hand.</p>
 </div>
-<div id="installation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h2>
-<p>Install with <a href="https://cran.r-project.org/package=drat">drat</a> from our <a href="https://mrc-ide.github.io/drat/">repository</a></p>
+<div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h2>
+<p>Install with <a href="https://cran.r-project.org/package=drat" class="external-link">drat</a> from our <a href="https://mrc-ide.github.io/drat/" class="external-link">repository</a></p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">drat</span><span class="fu">:::</span><span class="fu">add</span><span class="op">(</span><span class="st">"mrc-ide"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"traduire"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">drat</span><span class="fu">:::</span><span class="fu">add</span><span class="op">(</span><span class="st">"mrc-ide"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"traduire"</span><span class="op">)</span></span></code></pre></div>
 <p>Or, install directly from GitHub:</p>
-<pre><code><a href="https://remotes.r-lib.org/reference/install_github.html">remotes::install_github("reside-ic/traduire")</a></code></pre>
+<pre><code><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"reside-ic/traduire"</span><span class="op">)</span></span></code></pre>
 </div>
-<div id="license" class="section level2">
-<h2 class="hasAnchor">
-<a href="#license" class="anchor"></a>License</h2>
+<div class="section level2">
+<h2 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
+</h2>
 <p>MIT © Imperial College of Science, Technology and Medicine</p>
 </div>
 
@@ -110,48 +106,59 @@ In stats::spline(1:10, 1:10, method = "periodic") :
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <div class="links">
-<h2>Links</h2>
+<h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li>Browse source code at <br><a href="https://github.com/reside-ic/traduire/">https://​github.com/​reside-ic/​traduire/​</a>
-</li>
-<li>Report a bug at <br><a href="https://github.com/reside-ic/traduire/issues">https://​github.com/​reside-ic/​traduire/​issues</a>
-</li>
-</ul>
-</div>
-<div class="license">
-<h2>License</h2>
-<ul class="list-unstyled">
-<li>
-<a href="https://opensource.org/licenses/mit-license.php">MIT</a> + file <a href="LICENSE-text.html">LICENSE</a>
-</li>
-</ul>
-</div>
-<div class="developers">
-<h2>Developers</h2>
-<ul class="list-unstyled">
-<li>Rich FitzJohn <br><small class="roles"> Author, maintainer </small>  </li>
-<li><a href="authors.html">All authors...</a></li>
+<li><a href="https://github.com/reside-ic/traduire/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/reside-ic/traduire/issues" class="external-link">Report a bug</a></li>
 </ul>
 </div>
 
-  <div class="dev-status">
-<h2>Dev status</h2>
+<div class="license">
+<h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
-<li><a href="https://www.repostatus.org/#concept"><img src="https://www.repostatus.org/badges/latest/concept.svg" alt="Project Status: Concept – Minimal or no implementation has been done yet, or the repository is only intended to be a limited example, demo, or proof-of-concept."></a></li>
-<li><a href="https://travis-ci.com/reside-ic/traduire"><img src="https://travis-ci.com/reside-ic/traduire.svg?branch=master" alt="Build Status"></a></li>
-<li><a href="https://codecov.io/github/reside-ic/traduire?branch=master"><img src="https://codecov.io/github/reside-ic/traduire/coverage.svg?branch=master" alt="codecov.io"></a></li>
+<li>
+<a href="https://opensource.org/licenses/mit-license.php" class="external-link">MIT</a> + file <a href="LICENSE-text.html">LICENSE</a>
+</li>
 </ul>
 </div>
+
+
+<div class="citation">
+<h2 data-toc-skip>Citation</h2>
+<ul class="list-unstyled">
+<li><a href="authors.html#citation">Citing traduire</a></li>
+</ul>
 </div>
+
+<div class="developers">
+<h2 data-toc-skip>Developers</h2>
+<ul class="list-unstyled">
+<li>Rich FitzJohn <br><small class="roles"> Author, maintainer </small>  </li>
+<li><a href="authors.html">More about authors...</a></li>
+</ul>
+</div>
+
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://www.repostatus.org/#wip" class="external-link"><img src="https://www.repostatus.org/badges/latest/wip.svg" alt="Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public."></a></li>
+<li><a href="https://github.com/reside-ic/traduire/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/reside-ic/traduire/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
+<li><a href="https://codecov.io/github/reside-ic/traduire?branch=master" class="external-link"><img src="https://codecov.io/github/reside-ic/traduire/coverage.svg?branch=master" alt="codecov.io"></a></li>
+</ul>
+</div>
+
+  </div>
 </div>
 
 
       <footer><div class="copyright">
-  <p>Developed by Rich FitzJohn.</p>
+  <p></p>
+<p>Developed by Rich FitzJohn.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>
@@ -159,6 +166,8 @@ In stats::spline(1:10, 1:10, method = "periodic") :
 
   
 
+
+  
 
   </body>
 </html>
