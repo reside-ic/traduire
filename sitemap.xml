@@ -1,39 +1,15 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>/404.html</loc>
-  </url>
-  <url>
-    <loc>/LICENSE-text.html</loc>
-  </url>
-  <url>
-    <loc>/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>/articles/traduire.html</loc>
-  </url>
-  <url>
-    <loc>/authors.html</loc>
-  </url>
-  <url>
-    <loc>/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/i18n.html</loc>
-  </url>
-  <url>
-    <loc>/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/lint_translations.html</loc>
-  </url>
-  <url>
-    <loc>/reference/lint_translations_report.html</loc>
-  </url>
-  <url>
-    <loc>/reference/traduire_options.html</loc>
-  </url>
-  <url>
-    <loc>/reference/translator.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>/404.html</loc></url>
+<url><loc>/LICENSE-text.html</loc></url>
+<url><loc>/articles/index.html</loc></url>
+<url><loc>/articles/traduire.html</loc></url>
+<url><loc>/authors.html</loc></url>
+<url><loc>/index.html</loc></url>
+<url><loc>/reference/i18n.html</loc></url>
+<url><loc>/reference/index.html</loc></url>
+<url><loc>/reference/lint_translations.html</loc></url>
+<url><loc>/reference/lint_translations_report.html</loc></url>
+<url><loc>/reference/traduire_options.html</loc></url>
+<url><loc>/reference/translator.html</loc></url>
 </urlset>
+
