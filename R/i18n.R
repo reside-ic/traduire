@@ -176,7 +176,7 @@ i18n_backend_read <- function(pattern, language, namespace) {
     return(jsonlite::unbox("null"))
   }
   data <- list(language = language, namespace = namespace)
-  path <- glue::glue(pattern, .envir = data)
+  path <- glue::glue_data(data, pattern)
   tryCatch(
     read_input(path),
     error = function(e) {

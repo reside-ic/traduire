@@ -14,7 +14,7 @@ lint_translations_html_report <- function(x) {
   d <- list(title = title, style = style, script = script,
             tabs = tabs, content = content)
 
-  unclass(glue::glue(template, .envir = d))
+  unclass(glue::glue_data(d, template))
 }
 
 
