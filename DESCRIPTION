@@ -1,6 +1,6 @@
 Package: traduire
 Title: Internationalisation on the Fly
-Version: 0.1.0
+Version: 0.1.1
 Authors@R:
     c(person(given = "Rich",
              family = "FitzJohn",
@@ -18,7 +18,7 @@ Encoding: UTF-8
 Imports:
     V8,
     R6,
-    glue
+    glue (>= 1.8.0)
 Suggests:
     jsonlite,
     knitr,
